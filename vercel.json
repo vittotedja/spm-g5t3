@@ -1,7 +1,7 @@
 {
 	"rewrites": [{"source": "/(.*)", "destination": "/"}],
 	"functions": {
-		"src/api/*.py": {
+		"api/*.py": {
 			"memory": 512
 		}
 	}
