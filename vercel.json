@@ -3,17 +3,17 @@
 	"builds": [
 	  {
 		"src": "/",
-		"use": "@vercel/static-build"
+		"use": "@vercel/node"
 	  },
 	  {
-		"src": "src/api",
-		"use": "@vercel/node"
+		"src": "src/api/main.py",
+		"use": "@vercel/python"
 	  }
 	],
 	"routes": [
 	  {
-		"src": "/api/(.*)",
-		"dest": "/api"
+		"src": "src/api/(.*)",
+		"dest": "src/api/main.py"
 	  },
 	  {
 		"src": "/(.*)",
