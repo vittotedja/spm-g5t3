@@ -1,8 +1,8 @@
 {
 	"rewrites": [{"source": "/(.*)", "destination": "/"}],
 	"functions": {
-		"src/api/*": {
-			"memory": 512
+		"src/api/*.py": {
+			"runtime": "python3.10"
 		}
 	}
 }
