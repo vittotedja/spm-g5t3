@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173"
+    "*"
 ]
 
 app.add_middleware(
@@ -15,6 +15,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@app.get("/api/main")
 async def root():
     return {"message": "Hello World"}

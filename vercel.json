@@ -1,26 +1,8 @@
 {
-	"version": 2,
-	"builds": [
-	  {
-		"src": "/",
-		"use": "@vercel/static-build",
-		"config": {
-		  "distDir": "frontend/dist"
+	"rewrites": [{"source": "/(.*)", "destination": "/"}],
+	"functions": {
+		"api/*.py": {
+			"memory": 512
 		}
-	  },
-	  {
-		"src": "src/api",
-		"use": "@vercel/node"
-	  }
-	],
-	"routes": [
-	  {
-		"src": "/api/(.*)",
-		"dest": "/api"
-	  },
-	  {
-		"src": "/(.*)",
-		"dest": "/"
-	  }
-	]
-  }
+	}
+}
