@@ -1,5 +1,5 @@
 export default function formatDate(date: Date | null): string | undefined {
-    if (!date) return;
+    if (!date) return "N.A.";
 
     const day = date.getDate();
     const month = date.toLocaleString('default', { month: 'long' });

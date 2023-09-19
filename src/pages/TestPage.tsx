@@ -20,12 +20,20 @@ interface Role {
 const TestPage: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const response = await getAsync("api/roles?userid=1");
+      const response = await getAsync(`api/roles?userid=1&page=${page}&limit=5`);
       const data = await response.json();
+      if (data.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setRoles(prevRoles => [...prevRoles, ...data.data]);
+        setPage(prevPage => prevPage + 1);
+      }
       setRoles(data.data);
       setLoading(false);
     };
@@ -39,6 +47,7 @@ const TestPage: React.FC = () => {
         roles.map((role) => (
           <RoleCard
             key={role.Role_ID}
+            role_ID={role.Role_ID}
             role_name={role.Role_Name}
             role_dept={role.Dept}
             role_percentage_match={role.percentage_match}

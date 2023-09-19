@@ -1,3 +1,4 @@
+import math
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -32,41 +33,37 @@ async def root():
 
 
 @app.get("/api/roles")
-async def get_roles(userid: int = None):
-    userid = str(userid)
+async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
+    offset = (page - 1) * limit
     if userid:
-        # Fetch the roles the user has already applied to
-        applied_roles = supabase.table("Applications").select(
-            "Role_ID").eq("Staff_ID", userid).execute()
-        applied_role_IDs = [role["Role_ID"]
-                        for role in applied_roles.get("data", [])]
+        applied_roles_response = supabase.table("Applications").select("Role_ID").eq("Staff_ID", str(userid)).execute()
+        applied_role_IDs = [role["Role_ID"] for role in applied_roles_response.get("data", [])]
+        all_roles_response = supabase.table("Roles").select("*,Role_Skill(Skill_ID)").execute()
+        all_roles = all_roles_response.get("data", [])
+        all_unapplied_roles = [role for role in all_roles if role["Role_ID"] not in applied_role_IDs]
+        all_unapplied_roles = sorted(all_unapplied_roles, key=lambda x: x['Role_ID'])
+        unapplied_roles = all_unapplied_roles[offset:offset+limit]
 
-        # Fetch all roles
-        all_roles = supabase.table("Roles").select("*").execute().get("data", [])
-
-        # Filter out roles the user has already applied to
-        unapplied_roles = [
-        role for role in all_roles if role["Role_ID"] not in applied_role_IDs]
-
-        # Fetch the user's skills
-        user_skills_data = supabase.table("Staff_Skill").select(
-            "Skill_ID").eq("Staff_ID", userid).execute()
-        user_skills_IDs = user_skills_data.get("data", [])
-        # Calculate the percentage match for each role
+        user_skills_response = supabase.table("Staff_Skill").select("Skill_ID").eq("Staff_ID", str(userid)).execute()
+        user_skills = user_skills_response.get("data", [])
+        user_skill_ids_set = {skill['Skill_ID'] for skill in user_skills}
         for role in unapplied_roles:
-            role_skills_data = supabase.table("Role_Skill").select(
-                "Skill_ID").eq("Role_ID", str(role["Role_ID"])).execute()
-            role_skills_IDs = role_skills_data.get("data", [])
-
-            user_skill_ids_set = {skill['Skill_ID'] for skill in user_skills_IDs}
-            role_skill_ids_set = {skill['Skill_ID'] for skill in role_skills_IDs}
-
+            role_skill_ids_set = {skill['Skill_ID'] for skill in role['Role_Skill']}
             matched_skills = user_skill_ids_set.intersection(role_skill_ids_set)
-            percentage_match = (
-                len(matched_skills) / len(role_skills_IDs)) * 100 if role_skills_IDs else 0
+            percentage_match = (len(matched_skills) / len(role_skill_ids_set)) * 100 if role_skill_ids_set else 0
             role["percentage_match"] = percentage_match
 
-        return {"data": unapplied_roles}
+        total_roles = len(all_unapplied_roles)
+        total_pages = math.ceil(total_roles / limit)
+        return {
+            "data": unapplied_roles,
+            "pagination": {
+                "current_page": page,
+                "total_pages": total_pages,
+                "limit": limit,
+                "total_records": total_roles
+            }
+        }
     else:
         result = supabase.table("Roles").select().execute()
         if 'error' in result:
