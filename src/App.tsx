@@ -1,12 +1,15 @@
 import './App.css';
 import {Route, Routes} from 'react-router-dom';
+import {Login} from './pages/Login';
+import { AuthProvider } from './components/Auth';
 
 function App() {
 	return (
 		<>
+		<AuthProvider>
 			<Routes>
 				<Route path="/" element={<h1>Home</h1>} />
-				<Route path="/login" element={<h1>Login</h1>} />
+				<Route path="/login" element={<Login />} />
 				<Route
 					path="*"
 					element={
@@ -16,6 +19,7 @@ function App() {
 					}
 				/>
 			</Routes>
+		</AuthProvider>
 		</>
 	);
 }
