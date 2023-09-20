@@ -36,19 +36,20 @@ async def root():
 async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
     offset = (page - 1) * limit
     if userid:
-        applied_roles_response = supabase.table("Applications").select("Role_ID").eq("Staff_ID", str(userid)).execute()
-        applied_role_IDs = [role["Role_ID"] for role in applied_roles_response.get("data", [])]
-        all_roles_response = supabase.table("Roles").select("*,Role_Skill(Skill_ID)").execute()
+        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(userid)).execute()
+        applied_role_IDs = applied_roles_response.get("data", [])
+        applied_role_IDs = [role["role_id"] for role in applied_role_IDs]
+        all_roles_response = supabase.table("role").select("*,role_skill(skill_id)").execute()
         all_roles = all_roles_response.get("data", [])
-        all_unapplied_roles = [role for role in all_roles if role["Role_ID"] not in applied_role_IDs]
-        all_unapplied_roles = sorted(all_unapplied_roles, key=lambda x: x['Role_ID'])
+        all_unapplied_roles = [role for role in all_roles if role["role_id"] not in applied_role_IDs]
+        all_unapplied_roles = sorted(all_unapplied_roles, key=lambda x: x['role_id'])
         unapplied_roles = all_unapplied_roles[offset:offset+limit]
 
-        user_skills_response = supabase.table("Staff_Skill").select("Skill_ID").eq("Staff_ID", str(userid)).execute()
+        user_skills_response = supabase.table("staff_skill").select("skill_id").eq("staff_id", str(userid)).execute()
         user_skills = user_skills_response.get("data", [])
-        user_skill_ids_set = {skill['Skill_ID'] for skill in user_skills}
+        user_skill_ids_set = {skill['skill_id'] for skill in user_skills}
         for role in unapplied_roles:
-            role_skill_ids_set = {skill['Skill_ID'] for skill in role['Role_Skill']}
+            role_skill_ids_set = {skill['skill_id'] for skill in role['role_skill']}
             matched_skills = user_skill_ids_set.intersection(role_skill_ids_set)
             percentage_match = (len(matched_skills) / len(role_skill_ids_set)) * 100 if role_skill_ids_set else 0
             role["percentage_match"] = percentage_match
@@ -65,7 +66,7 @@ async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
             }
         }
     else:
-        result = supabase.table("Roles").select().execute()
+        result = supabase.table("roles").select().execute()
         if 'error' in result:
             return {"error": result.get("error", "Failed to fetch data from Supabase")}
 
