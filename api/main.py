@@ -28,7 +28,7 @@ app.add_middleware(
 
 @app.get("/api/main") 
 async def main():
-    return {"message": "Hello World"}
+    return {"message": "Hello World"}   
 
 @app.get("/api/staff")
 async def get_staff(staff_id: int):
