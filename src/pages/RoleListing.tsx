@@ -4,17 +4,17 @@ import { getAsync } from "../utilities/Services";
 import FilterBox from "../components/FilterRoleListing";
 
 interface Role {
-  Role_ID: number;
-  Created_At: string;
-  Role_Name: string;
-  Role_Desc: string;
-  Dept: string;
-  "Deleted?": boolean;
-  Deleted_At: string | null;
-  Level: string | null;
-  Location: string | null;
-  Appl_Close_Date: Date | null;
-  Responsibilities: string | null;
+  role_id: number;
+  created_at: string;
+  role_name: string;
+  role_desc: string;
+  dept: string;
+  "deleted?": boolean;
+  deleted_At: string | null;
+  level: string | null;
+  location: string | null;
+  appl_close_date: Date | null;
+  responsibilities: string | null;
   percentage_match: number;
 }
 
@@ -52,13 +52,13 @@ const RoleListing: React.FC = () => {
         ) : (
           roles.map((role) => (
             <RoleCard
-              key={role.Role_ID}
-              role_ID={role.Role_ID}
-              role_name={role.Role_Name}
-              role_dept={role.Dept}
+              key={role.role_id}
+              role_ID={role.role_id}
+              role_name={role.role_name}
+              role_dept={role.dept}
               role_percentage_match={role.percentage_match}
-              role_deadline={role?.Appl_Close_Date}
-              role_location={role?.Location}
+              role_deadline={role?.appl_close_date}
+              role_location={role?.location}
             />
           ))
         )}
