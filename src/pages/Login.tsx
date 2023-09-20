@@ -15,7 +15,7 @@ export {supabase}
 export function Login() {
   const emailRef = useRef()
   const passwordRef = useRef()
-  const [isFormValid, setIsFormValid] = useState(false)
+  // const [isFormValid, setIsFormValid] = useState(false)
   
   // function handleInputChange() {
   //   const email = emailRef.current.value;
@@ -82,8 +82,8 @@ export function Login() {
 
             <button 
               type="submit" 
-              disabled={!isFormValid}
-              className='font-bold mt-6 bg-emerald-600 text-white p-2 w-1/4 rounded-md hover:bg-emerald-500 focus:outline-none focus:border-emerald-700 focus:ring focus:ring-emerald-200 justify-content-end float-right
+              // disabled={!isFormValid}
+              className='font-bold mt-6 bg-emerald-600 text-white p-2 w-1/4 rounded-md hover:bg-emerald-900 focus:outline-none focus:border-emerald-700 focus:ring focus:ring-emerald-900 justify-content-end float-right
               '>
               Login
             </button>
