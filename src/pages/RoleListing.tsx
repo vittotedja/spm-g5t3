@@ -22,7 +22,7 @@ const RoleListing: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  // const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +32,7 @@ const RoleListing: React.FC = () => {
       );
       const data = await response.json();
       if (data.data.length === 0) {
-        setHasMore(false);
+        // setHasMore(false);
       } else {
         setRoles((prevRoles) => [...prevRoles, ...data.data]);
         setPage((prevPage) => prevPage + 1);
