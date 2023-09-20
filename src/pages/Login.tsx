@@ -1,10 +1,10 @@
-import React from 'react';
+// import React from 'react';
 import { createClient } from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useAuth } from '../components/Auth';
 // import { useHistory } from 'react-router-dom';
-import react from '../assets/react.svg';
+// import react from '../assets/react.svg';
 
 const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A'
