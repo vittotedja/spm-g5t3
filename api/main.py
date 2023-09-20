@@ -1,18 +1,19 @@
+import math
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 import os
+from supabase_py import create_client, Client
 from dotenv import load_dotenv
-from supabase import create_client, Client
 
 import pandas as pd
-
+# Load environment variables from .env file
 load_dotenv()
-url: str = os.getenv("SUPABASE_URL")
-key: str = os.getenv("SUPABASE_KEY")
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-app = FastAPI()
+app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
 
 origins = [
     "*"
@@ -26,39 +27,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/api/main") 
-async def main():
-    return {"message": "Hello World"}   
 
-@app.get("/api/staff")
-async def get_staff(staff_id: int):
-    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
-    return staff
+@app.get("/api/main")
+async def root():
+    return {"message": "Hello World"}
 
-@app.get("/api/staff_skill")
-async def get_staff_skill(staff_id: int):
-    staff_skill_id = supabase.from_('staff_skill').select("skill_id").eq('staff_id', staff_id).execute().data
-    staff_skill_id = [skill['skill_id'] for skill in staff_skill_id]
 
-    staff_skill = supabase.from_('skill').select("*").in_('skill_id', staff_skill_id).execute().data
-    return staff_skill
+@app.get("/api/roles")
+async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
+    offset = (page - 1) * limit
+    if userid:
+        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(userid)).execute()
+        applied_role_IDs = applied_roles_response.get("data", [])
+        applied_role_IDs = [role["role_id"] for role in applied_role_IDs]
+        all_roles_response = supabase.table("role").select("*,role_skill(skill_id)").execute()
+        all_roles = all_roles_response.get("data", [])
+        all_unapplied_roles = [role for role in all_roles if role["role_id"] not in applied_role_IDs]
+        all_unapplied_roles = sorted(all_unapplied_roles, key=lambda x: x['role_id'])
+        unapplied_roles = all_unapplied_roles[offset:offset+limit]
 
-@app.get("/api/staff_role_skill")
-async def get_staff_role_skill(staff_id: int, role_id: int):
-    staff_skill_id = await get_staff_skill(staff_id)
-    staff_skill_id = [skill['skill_id'] for skill in staff_skill_id]
+        user_skills_response = supabase.table("staff_skill").select("skill_id").eq("staff_id", str(userid)).execute()
+        user_skills = user_skills_response.get("data", [])
+        user_skill_ids_set = {skill['skill_id'] for skill in user_skills}
+        for role in unapplied_roles:
+            role_skill_ids_set = {skill['skill_id'] for skill in role['role_skill']}
+            matched_skills = user_skill_ids_set.intersection(role_skill_ids_set)
+            percentage_match = (len(matched_skills) / len(role_skill_ids_set)) * 100 if role_skill_ids_set else 0
+            role["percentage_match"] = percentage_match
 
-    role_skill_id = supabase.from_('role_skill').select("skill_id").eq('role_id', role_id).execute().data
-    role_skill_id = [skill['skill_id'] for skill in role_skill_id]
+        total_roles = len(all_unapplied_roles)
+        total_pages = math.ceil(total_roles / limit)
+        return {
+            "data": unapplied_roles,
+            "pagination": {
+                "current_page": page,
+                "total_pages": total_pages,
+                "limit": limit,
+                "total_records": total_roles
+            }
+        }
+    else:
+        result = supabase.table("roles").select().execute()
+        if 'error' in result:
+            return {"error": result.get("error", "Failed to fetch data from Supabase")}
 
-    # Get the details of the staff_skill
-    role_skill = supabase.from_('skill').select("*").in_('skill_id', role_skill_id).execute().data
-
-    # Add a 'qualified' field to the staff_skill list
-    for skill in role_skill:
-        skill['qualified'] = skill['skill_id'] in staff_skill_id
-    
-    # Sort the staff_skill list based on the 'qualified' field
-    role_skill = sorted(role_skill, key=lambda x: not x['qualified'])
-
-    return role_skill
+        return {"data":  result.get("data", [])}
