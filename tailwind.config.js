@@ -10,7 +10,10 @@ export default {
 				'green-dark': '#1F8A63',
 				'red': '#AD0626',
 				'red-dark': '#990523'
-			}
+			},
+			fontFamily: {
+				gotham: ['Gotham Book', 'sans-serif'],
+			},
 		},
 	},
 	plugins: [],

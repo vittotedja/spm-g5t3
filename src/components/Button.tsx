@@ -17,7 +17,7 @@ const Button: FC<ButtonProps> = ({
   onClick,
 }) => {
   const baseStyles =
-    "relative flex items-center justify-center text-transform-none rounded-lg px-4 py-2 text-lg h-10";
+    "relative flex items-center justify-center text-transform-none rounded-lg px-4 py-2 text-lg h-10 font-gotham";
 
   const stylesMap = {
     normal: loading
