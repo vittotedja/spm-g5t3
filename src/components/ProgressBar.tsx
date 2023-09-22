@@ -19,14 +19,14 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ percentage }) => {
   }
 
   return (
-    <div className="w-full bg-gray-200 rounded-full relative font-bold overflow-hidden">
+    <div className="w-full bg-gray-200 rounded-full relative font-bold overflow-hidden font-gotham">
       <div
-        className={`text-s text-white text-center p-0.5 leading-none rounded-full h-5.5`}
+        className={`text-s text-white text-center p-0.5 leading-none rounded-full h-5.5 font-gotham`}
         style={{ width: `${validPercentage}%`, background: colorClass }}
       >
         <span style={{ visibility: "hidden" }}>0</span>
       </div>
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div className="absolute inset-0 flex items-center justify-center font-gotham">
         {validPercentage}%
       </div>
     </div>

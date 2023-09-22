@@ -5,7 +5,10 @@ export default {
 		extend: {
 			colors: {
 				'olive-green': '#1C4949'
-			}
+			},
+			fontFamily: {
+				gotham: ['Gotham Book', 'sans-serif'],
+			},
 		},
 	},
 	plugins: [],
