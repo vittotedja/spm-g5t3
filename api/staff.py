@@ -26,19 +26,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/api/main")
-async def main():
+@app.get("/api/test")
+async def test():
     return {"message": "Hello World"}
 
-@app.get("/api/main/main2")
-async def main2():
+@app.get("/api/test/test2")
+async def test2():
     return {"message": "Hello World 2"}
 
-@app.get("/api/main/main3")
-async def main3(test: str):
+@app.get("/api/test/test3")
+async def test3(test: str):
     return {"message": f"Hello {test}"}
 
 @app.get("/api/staff")
 async def get_staff(staff_id: int):
     staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
     return staff
+
+@app.get("/api/staff/staff2")
+async def staff2():
+    return {"message": "Hello World 2"}
+
+@app.get("/api/staff/staff3")
+async def staff3(test: str):
+    return {"message": f"Hello {test}"}
