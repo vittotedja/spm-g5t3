@@ -29,7 +29,8 @@ export function Login() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
+    console.log(emailRef.current.value)
+    console.log(passwordRef)
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
 
