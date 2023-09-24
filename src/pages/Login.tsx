@@ -27,6 +27,7 @@ export function Login() {
   const auth = useAuth();
   if (!auth) {
     console.log('auth is null')
+    return <div>Auth Error</div>
   }
   const { signInWithPassword } = auth;
 //   const { history } = useHistory()
