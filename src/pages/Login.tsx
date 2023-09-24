@@ -24,7 +24,11 @@ export function Login() {
   //     setIsFormValid(true)
   //   }
   // }
-  const { signInWithPassword }: { signInWithPassword: (data: any) => Promise<{error?: Error}> } = useAuth()
+  const auth = useAuth();
+  if (!auth) {
+    console.log('auth is null')
+  }
+  const { signInWithPassword } = auth;
 //   const { history } = useHistory()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
