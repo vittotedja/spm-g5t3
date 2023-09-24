@@ -29,8 +29,8 @@ export function Login() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
-    console.log(emailRef.current?.value)
-    console.log(passwordRef.current?.value)
+    console.log((await supabase.auth.getSession()).data.session)
+    // console.log(passwordRef.current?.value)
     const email = emailRef.current ? emailRef.current.value: '';
     const password = passwordRef.current? passwordRef.current.value: '';
 
@@ -51,10 +51,10 @@ export function Login() {
       // } else if (error.message.includes('User not found')) {
       //   errorMessage = 'There is no account asociated with this email.';
       // }
-      console.log(error)
+      // console.log(error)
       alert(errorMessage);
     } else {
-      console.log((await supabase.auth.getSession()).data.session);
+      // console.log((await supabase.auth.getSession()).data.session);
       alert('Log In Succesful')
       }
     }
