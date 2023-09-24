@@ -1,7 +1,14 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { supabase } from '../pages/Login'
+import { User } from '@supabase/supabase-js';
 
-const AuthContext = createContext(null)
+
+type AuthContextType = {
+  signInWithPassword: (data: any) => Promise<any>;
+  signOut: () => Promise<any>;
+  user: User | null;
+}
+const AuthContext = createContext<AuthContextType | null>(null)
 
 export function useAuth() {
     return useContext(AuthContext)
@@ -12,32 +19,40 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-    const [user, setUser] = useState()
+    const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     // console.log(children)
     useEffect(() => {
       // Check active sessions and sets the user
-      const session = supabase.auth.getSession()
-      console.log(session?.PromiseResult)
-      setUser(session?.user ?? null)
-      setLoading(false)
+      async function initializeAuth() {
+        try {
+          const session = supabase.auth.getSession()
+          console.log(session)
+          setUser(session?.user ?? null)
+          setLoading(false);
+      
+        // Listen for changes on auth state (logged in, signed out, etc.)
+        const { data: listener } = supabase.auth.onAuthStateChange(async (_, session) => {
+          setUser(session?.user ?? null)
+          setLoading(false)
+        });
   
-      // Listen for changes on auth state (logged in, signed out, etc.)
-      const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
-        setUser(session?.user ?? null)
-        setLoading(false)
-      })
-  
-      return () => {
-        // console.log(listener)
-        listener?.subscription.unsubscribe()
+        return () => {
+          // console.log(listener)
+          listener?.subscription.unsubscribe()
+        };
+        } catch (error) {
+          console.error("Error initializing authentication:", error);
+          setLoading(false);
+        }
       }
-    }, [])
+      initializeAuth();
+    }, []);
   
     // Will be passed down to Signup, Login and Dashboard components
     const value = {
       // signUp: (data) => supabase.auth.signUp(data),
-      signInWithPassword: (data) => supabase.auth.signInWithPassword(data),
+      signInWithPassword: (data: any) => supabase.auth.signInWithPassword(data),
       signOut: () => supabase.auth.signOut(),
       user,
     }

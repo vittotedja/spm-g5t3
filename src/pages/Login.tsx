@@ -13,8 +13,8 @@ export {supabase}
 
 
 export function Login() {
-  const emailRef = useRef()
-  const passwordRef = useRef()
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
   // const [isFormValid, setIsFormValid] = useState(false)
   
   // function handleInputChange() {
@@ -24,15 +24,15 @@ export function Login() {
   //     setIsFormValid(true)
   //   }
   // }
-  const { signInWithPassword } = useAuth()
+  const { signInWithPassword }: { signInWithPassword: (data: any) => Promise<{error?: Error}> } = useAuth()
 //   const { history } = useHistory()
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
-    console.log(emailRef.current.value)
-    console.log(passwordRef)
-    const email = emailRef.current.value;
-    const password = passwordRef.current.value;
+    console.log(emailRef.current?.value)
+    console.log(passwordRef.current?.value)
+    const email = emailRef.current ? emailRef.current.value: '';
+    const password = passwordRef.current? passwordRef.current.value: '';
 
     const { error } = await signInWithPassword({ email, password });
 
@@ -43,7 +43,7 @@ export function Login() {
 
     if (error) {
       // Check the type of error based on error.message
-      let errorMessage = error;
+      let errorMessage = error.message;
       
       if (error.message.includes('credentials')) {
         errorMessage = 'The credentials you entered is invalid.';
