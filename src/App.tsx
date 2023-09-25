@@ -20,7 +20,6 @@ function App() {
 				<RoleProtection requiredRole='manager'> 
 					{(_role) => <ManagerRoleDetails />}
 				</RoleProtection>} />
-				{/* <Route path="/manager" element={<ManagerRoleDetails />} /> */}
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/role-listing" Component={RoleListing} />
 				<Route path="/role-listing/:role_ID" Component={RoleDetails} />

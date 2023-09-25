@@ -63,7 +63,7 @@ export function Login() {
     } else {
       // console.log((await supabase.auth.getSession()).data.session);
       alert('Log In Succesful')
-      navigate('\role-listing')
+      navigate('/role-listing')
       }
     }
 
