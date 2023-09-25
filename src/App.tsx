@@ -18,7 +18,7 @@ function App() {
 				<Route path="/login" element={<Login />} />
 				<Route path="/manager" element={
 				<RoleProtection requiredRole='manager'> 
-					{(role) => <ManagerRoleDetails />}
+					{(_role) => <ManagerRoleDetails />}
 				</RoleProtection>} />
 				{/* <Route path="/manager" element={<ManagerRoleDetails />} /> */}
 				<Route path="/profile" element={<Profile />} />
