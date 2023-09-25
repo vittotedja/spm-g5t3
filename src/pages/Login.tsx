@@ -2,11 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
 import { useRef } from 'react'
-import { AuthProvider, useAuth } from '../components/Auth';
+import { useAuth } from '../components/Auth';
 // import { useHistory } from 'react-router-dom';
 // import react from '../assets/react.svg';
-import { useNavigate } from 'react-router-dom';
-// import RoleListing from './RoleListing';
 
 const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A'
@@ -33,7 +31,6 @@ export function Login() {
   }
   const { signInWithPassword } = auth;
 //   const { history } = useHistory()
-  const navigate = useNavigate();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
     e.preventDefault();
@@ -62,9 +59,8 @@ export function Login() {
       // console.log(error)
       alert(errorMessage);
     } else {
-      console.log((await supabase.auth.getUser()).data.user?.email)    
+      // console.log((await supabase.auth.getSession()).data.session);
       alert('Log In Succesful')
-      navigate('/role-listing')
       }
     }
 

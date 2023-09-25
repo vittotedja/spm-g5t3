@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../pages/Login';  // Adjust the path to your supabase client
 
@@ -48,4 +48,4 @@ export const RoleProtection: React.FC<ProtectedProps> = ({ requiredRole, childre
   };
 // }
 
-// export default withRoleProtection;
+ export default RoleProtection;
