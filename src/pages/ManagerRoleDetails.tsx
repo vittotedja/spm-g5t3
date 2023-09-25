@@ -1,4 +1,6 @@
 import PostedRoleTable from '../components/PostedRoleTable';
+import withRoleProtection from '../hocs/withRoleProtection';
+
 
 function ManagerRoleDetails() {
 	return (
@@ -21,4 +23,4 @@ function ManagerRoleDetails() {
 	);
 }
 
-export default ManagerRoleDetails;
+export default withRoleProtection(ManagerRoleDetails, 'manager');
