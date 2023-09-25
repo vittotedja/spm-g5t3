@@ -6,6 +6,7 @@ import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
 import {Login} from './pages/Login';
 import { AuthProvider } from './components/Auth';
+import withRoleProtection from './hocs/withRoleProtection';
 
 function App() {
 	return (
@@ -14,8 +15,8 @@ function App() {
 			<Routes>
 				<Route path="/" element={<h1>Hello</h1>} />
 				<Route path="/login" element={<Login />} />
-				<Route path="/manager" element={<ManagerRoleDetails />} />
-				<Route path="/manager" element={<ManagerRoleDetails />} />
+				<Route path="/manager" element={withRoleProtection(<ManagerRoleDetails />, 'manager')} />
+				{/* <Route path="/manager" element={<ManagerRoleDetails />} /> */}
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/role-listing" Component={RoleListing} />
 				<Route path="/role-listing/:role_ID" Component={RoleDetails} />

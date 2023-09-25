@@ -23,4 +23,4 @@ function ManagerRoleDetails() {
 	);
 }
 
-export default withRoleProtection(ManagerRoleDetails, 'manager');
+export default ManagerRoleDetails;

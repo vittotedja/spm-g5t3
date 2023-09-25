@@ -1,4 +1,4 @@
-import React, { ComponentType, ReactElement, useEffect, useState } from 'react';
+import React, { ComponentType, ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../pages/Login';  // Adjust the path to your supabase client
 
@@ -6,13 +6,10 @@ type UserRole = 'manager' | 'staff' | null;
 
 interface ProtectedProps {
   requiredRole: UserRole;
+  children: (role: UserRole) => ReactNode;
 }
 
-function withRoleProtection<P extends object>(
-  WrappedComponent: ComponentType<P>,
-  requiredRole: UserRole
-): React.FC<P & ProtectedProps> {
-  return (props: P):ReactElement | null => {
+export const RoleProtection: React.FC<ProtectedProps> = ({ requiredRole, children }) => {
     const [userRole, setUserRole] = useState<UserRole>(null);
     const navigate = useNavigate();
 
@@ -43,10 +40,12 @@ function withRoleProtection<P extends object>(
     if (userRole !== requiredRole) {
         // alert("You don't have the rights to access this page")
         navigate('/role-listing');
+        return null;
     }
 
-    return <WrappedComponent {...props} />;
+    // return <WrappedComponent {...props} />;
+    return <>{children(userRole)}</>
   };
-}
+// }
 
-export default withRoleProtection;
+// export default withRoleProtection;
