@@ -1,6 +1,5 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from endpoints import get_staff, get_role
 
 import os
 from dotenv import load_dotenv
@@ -14,11 +13,7 @@ key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 app = FastAPI()
-
-origins = [
-    "*"
-]
-
+origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -26,10 +21,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+router = APIRouter()
 
-app.include_router(get_staff.router)
-app.include_router(get_role.router)
-
-@app.get("/api/main")
-async def main():
-    return {"message": "Hello World"}
+from .get_role import get_role
+@app.get("/api/get_staff")
+@router.get("/api/get_staff")
+async def get_staff(staff_id: int):
+    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
+    print(await get_role(role_id=1))
+    return await get_role(role_id=1)
