@@ -1,32 +1,17 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter
 
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
-
-import pandas as pd
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-app = FastAPI()
+router = APIRouter()
 
-origins = [
-    "*"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/api/get_role")
+@router.get("/api/get_role")
 async def get_role(role_id: int):
     staff = supabase.from_('role').select("*").eq('role_id', role_id).execute().data[0]
     return staff

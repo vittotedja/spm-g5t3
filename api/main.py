@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from endpoints import get_staff, get_role
 
 import os
 from dotenv import load_dotenv
@@ -25,6 +26,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(get_staff.router)
+app.include_router(get_role.router)
 
 @app.get("/api/main")
 async def main():
