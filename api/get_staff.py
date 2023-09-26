@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from get_role import get_role
+from api.get_role import get_role
 @app.get("/api/get_staff")
 async def get_staff(staff_id: int):
     staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
