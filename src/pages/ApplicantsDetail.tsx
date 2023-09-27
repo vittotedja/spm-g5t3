@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react";
 import ProgressBar from "../components/ProgressBar";
+import { getAsync } from "../utilities/Services";
 
 export default function ApplicantsDetail() {
     let [applicants, setApplicants] = useState(Object);
     let [skill, setSkill] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:8000/api/staff?staff_id=1")
+        getAsync("api/get_staff?staff_id=1")
             .then((res) => res.json())
             .then((data) => {
                 setApplicants(data);
-                console.log(Object.entries(data))
             });
 
-        fetch("http://localhost:8000/api/staff_role_skill?staff_id=2&role_id=1")
+        getAsync("api/get_staff_role_skill?staff_id=1&role_id=1")
             .then((res) => res.json())
             .then((data) => {
                 setSkill(data);
-                console.log(Object.entries(data))
             });
     }, []);
-    
+
     return (
         <div>
             Back to Applicants List

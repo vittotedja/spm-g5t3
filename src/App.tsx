@@ -8,6 +8,7 @@ import {Login} from './pages/Login';
 import { AuthProvider } from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import Navbar from './components/Navbar';
+import ApplicantsDetail from './pages/ApplicantsDetail';
 
 function App() {
 	const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
 					{(_role) => <ManagerRoleDetails />}
 				</RoleProtection>} />
 				<Route path="/profile" element={<Profile />} />
+				<Route path="/applicantsdetail" element={<ApplicantsDetail />} />
 				<Route path="/role-listing" Component={RoleListing} />
 				<Route path="/role-listing/:role_ID" Component={RoleDetails} />
 				<Route
