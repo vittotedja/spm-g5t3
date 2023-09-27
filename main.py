@@ -1,27 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import get_staff, get_role
-
-import os
-from dotenv import load_dotenv
-from supabase import create_client, Client
-
-import pandas as pd
-
-load_dotenv()
-url: str = os.getenv("SUPABASE_URL")
-key: str = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
+from api import get_staff, get_role, get_staff_skill, get_role_skill, get_staff_role_skill
 
 app = FastAPI()
-
-origins = [
-    "*"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,8 +13,6 @@ app.add_middleware(
 
 app.include_router(get_staff.router)
 app.include_router(get_role.router)
-
-
-@app.get("/api/main")
-async def main():
-    return {"message": "Hello World"}
+app.include_router(get_staff_skill.router)
+app.include_router(get_role_skill.router)
+app.include_router(get_staff_role_skill.router)

@@ -5,8 +5,6 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
-import pandas as pd
-
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
@@ -22,10 +20,11 @@ app.add_middleware(
 )
 router = APIRouter()
 
-from api.get_role import get_role
-@app.get("/api/get_staff")
-@router.get("/api/get_staff")
-async def get_staff(staff_id: int):
-    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
-    print(await get_role(role_id=1))
-    return await get_role(role_id=1)
+@app.get("/api/get_role_skill")
+@router.get("/api/get_role_skill")
+async def get_role_skill(role_id: int):
+    role_skill_id = supabase.from_('role_skill').select("skill_id").eq('role_id', role_id).execute().data
+    role_skill_id = [skill['skill_id'] for skill in role_skill_id]
+
+    role_skill = supabase.from_('skill').select("*").in_('skill_id', role_skill_id).execute().data
+    return role_skill
