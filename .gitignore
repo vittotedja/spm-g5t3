@@ -33,5 +33,6 @@ dist-ssr
 *.sln
 *.sw?
 
-api/pycache/*
-api/pycache
+api/__pycache__/*
+api/__pycache__
+__pycache__/*
