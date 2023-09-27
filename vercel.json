@@ -2,7 +2,7 @@
 	"rewrites": [{"source": "/(.*)", "destination": "/"}],
 	"functions": {
 		"api/*.py": {
-			"memory": 512
+			"memory": 1024
 		}
 	}
 }
