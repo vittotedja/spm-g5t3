@@ -4,7 +4,7 @@ import ManagerRoleDetails from './pages/ManagerRoleDetails';
 import Profile from './pages/Profile';
 import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
-
+import RoleCreation from './pages/RoleCreation';
 
 function App() {
 	return (
@@ -16,6 +16,7 @@ function App() {
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/role-listing" Component={RoleListing} />
 				<Route path="/role-listing/:role_ID" Component={RoleDetails} />
+				<Route path="/manager/rolelisting" Component={RoleCreation} />
 				<Route
 					path="*"
 					element={
