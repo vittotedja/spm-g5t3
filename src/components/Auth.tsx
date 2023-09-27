@@ -2,17 +2,13 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { supabase } from '../pages/Login'
 import { User } from '@supabase/supabase-js';
 import { UserRole } from '../hocs/withRoleProtection'
-type AuthContextType = {  
-  signInWithPassword: (data: any) => Promise<any>;
-  signOut: () => Promise<any>;
-  user: User | null;
-  userRole: UserRole;
-
 
 type AuthContextType = {
   signInWithPassword: (data: any) => Promise<any>;
   signOut: () => Promise<any>;
   user: User | null;
+  userRole: UserRole;
+
 }
 const AuthContext = createContext<AuthContextType | null>(null)
 
