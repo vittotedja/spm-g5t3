@@ -7,6 +7,12 @@ type AuthContextType = {
   signOut: () => Promise<any>;
   user: User | null;
   userRole: UserRole;
+
+
+type AuthContextType = {
+  signInWithPassword: (data: any) => Promise<any>;
+  signOut: () => Promise<any>;
+  user: User | null;
 }
 const AuthContext = createContext<AuthContextType | null>(null)
 
@@ -43,7 +49,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
               console.error("Error fetching user role:", error);
             }
           }
-      
+          console.log(session)
+          setUser(session?.user ?? null)
+          setLoading(false);
         // Listen for changes on auth state (logged in, signed out, etc.)
         const { data: listener } = supabase.auth.onAuthStateChange(async (_, session) => {
           setUser(session?.user ?? null)

@@ -9,6 +9,9 @@ import { AuthProvider } from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import Navbar from './components/Navbar';
 import ApplicantsDetail from './pages/ApplicantsDetail';
+import {Login} from './pages/Login';
+import { AuthProvider } from './components/Auth';
+import RoleProtection from './hocs/withRoleProtection';
 
 function App() {
 	const location = useLocation();
