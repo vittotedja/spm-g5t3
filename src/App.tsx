@@ -1,18 +1,21 @@
 import './App.css';
-import {Route, Routes} from 'react-router-dom';
+import {Route, Routes, useLocation} from 'react-router-dom';
 import ManagerRoleDetails from './pages/ManagerRoleDetails';
 import Profile from './pages/Profile';
 import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
-
 import {Login} from './pages/Login';
 import { AuthProvider } from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
+import Navbar from './components/Navbar';
 
 function App() {
+	const location = useLocation();
+
 	return (
 		<>
 		<AuthProvider>
+			{location.pathname !== '/login' && <Navbar />}
 			<Routes>
 				<Route path="/" element={<h1>Hello</h1>} />
 				<Route path="/login" element={<Login />} />
