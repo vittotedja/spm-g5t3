@@ -36,7 +36,7 @@ export default function ApplicantsDetail() {
             
             <h1>Skills</h1>
             {Object.entries(skill).map((item: any) => (
-                <Badge key={item[1].skill_id} type={item[1].qualified ? "green" : "red"}>
+                <Badge key={item[1].skill_id} styleType={item[1].qualified ? "green" : "red"}>
                     {item[1].skill_name}
                 </Badge>
             ))}
