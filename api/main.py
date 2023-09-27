@@ -1,10 +1,11 @@
-import math
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from supabase_py import create_client, Client
+from supabase import create_client, Client
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
+import math
+import os
 import pandas as pd
 # Load environment variables from .env file
 load_dotenv()
@@ -33,30 +34,61 @@ async def root():
     return {"message": "Hello World"}
 
 
-@app.get("/api/roles")
-async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
-    offset = (page - 1) * limit
+@app.get("/api/staff_role")
+async def get_staff_role(userid: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc'):
     if userid:
-        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(userid)).execute()
-        applied_role_IDs = applied_roles_response.get("data", [])
-        applied_role_IDs = [role["role_id"] for role in applied_role_IDs]
-        all_roles_response = supabase.table("role").select("*,role_skill(skill_id)").execute()
-        all_roles = all_roles_response.get("data", [])
-        all_unapplied_roles = [role for role in all_roles if role["role_id"] not in applied_role_IDs]
-        all_unapplied_roles = sorted(all_unapplied_roles, key=lambda x: x['role_id'])
+        offset = (page - 1) * limit
+
+        # Get applied roles
+        applied_roles_response = supabase.table("application").select(
+            "role_id").eq("staff_id", str(userid)).execute()
+        applied_role_IDs = [role["role_id"]
+                            for role in applied_roles_response.data or []]
+
+        today = datetime.utcnow().replace(tzinfo=timezone.utc)
+
+        # Get all roles and filter out the applied ones
+        all_roles_response = supabase.table("role").select(
+            "*, role_skill!role_skill_role_id_fkey(skill_id)").execute()
+
+        # Separate roles with null appl_close_date and those with a valid date
+        roles_with_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is not None and datetime.fromisoformat(role["appl_close_date"]) >= today and role["role_id"] not in applied_role_IDs]
+        roles_without_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is None and role["role_id"] not in applied_role_IDs]
+
+        if sort_field == 'appl_close_date':
+            roles_with_date.sort(
+                key=lambda x: x["appl_close_date"], reverse=(order == 'desc'))
+            all_unapplied_roles = roles_with_date + roles_without_date
+        else:
+            all_unapplied_roles = roles_with_date + roles_without_date
+            if sort_field in ['created_at', 'application_date']:
+                all_unapplied_roles.sort(key=lambda x: parse_datetime(x.get(
+                    sort_field, '') or '1900-01-01T00:00:00+00:00') if x.get(sort_field) else datetime.min, reverse=(order == 'desc'))
+            else:  # For 'role_name' and 'dept'
+                all_unapplied_roles.sort(key=lambda x: x.get(
+                    sort_field, ''), reverse=(order == 'desc'))
+
+        # Slice the sorted list for pagination
         unapplied_roles = all_unapplied_roles[offset:offset+limit]
 
-        user_skills_response = supabase.table("staff_skill").select("skill_id").eq("staff_id", str(userid)).execute()
-        user_skills = user_skills_response.get("data", [])
-        user_skill_ids_set = {skill['skill_id'] for skill in user_skills}
+        # Get staff skills once outside the loop
+        staff_skill_response = supabase.table("staff_skill").select(
+            "skill_id").eq("staff_id", str(userid)).execute()
+        staff_skill_ids_set = set(skill['skill_id']
+                                  for skill in staff_skill_response.data or [])
+
         for role in unapplied_roles:
-            role_skill_ids_set = {skill['skill_id'] for skill in role['role_skill']}
-            matched_skills = user_skill_ids_set.intersection(role_skill_ids_set)
-            percentage_match = (len(matched_skills) / len(role_skill_ids_set)) * 100 if role_skill_ids_set else 0
+            role_skill_ids_set = {skill['skill_id']
+                                  for skill in role.get('role_skill', [])}
+            matched_skills = staff_skill_ids_set.intersection(
+                role_skill_ids_set)
+            percentage_match = (
+                len(matched_skills) / len(role_skill_ids_set)) * 100 if role_skill_ids_set else 0
             role["percentage_match"] = percentage_match
 
         total_roles = len(all_unapplied_roles)
         total_pages = math.ceil(total_roles / limit)
+
         return {
             "data": unapplied_roles,
             "pagination": {
@@ -68,7 +100,20 @@ async def get_roles(userid: int = None, page: int = 1, limit: int = 5):
         }
     else:
         result = supabase.table("roles").select().execute()
-        if 'error' in result:
-            return {"error": result.get("error", "Failed to fetch data from Supabase")}
+        return {"data": result.data or []}
 
-        return {"data":  result.get("data", [])}
+
+def parse_datetime(datetime_str):
+    formats = [
+        '%Y-%m-%dT%H:%M:%S.%f%z',  # With fractional seconds
+        '%Y-%m-%dT%H:%M:%S%z'     # Without fractional seconds
+    ]
+
+    for fmt in formats:
+        try:
+            return datetime.strptime(datetime_str, fmt)
+        except ValueError:
+            continue
+
+    raise ValueError(
+        f"time data {datetime_str!r} does not match any known formats")
