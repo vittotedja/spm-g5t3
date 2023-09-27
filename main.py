@@ -5,7 +5,7 @@ from api import get_staff, get_role, get_staff_skill, get_role_skill, get_staff_
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
