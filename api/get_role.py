@@ -23,5 +23,5 @@ router = APIRouter()
 @app.get("/api/get_role")
 @router.get("/api/get_role")
 async def get_role(role_id: int):
-    staff = supabase.from_('role').select("*").eq('role_id', role_id).execute().data[0]
-    return staff
+    role = supabase.from_('role').select("*").eq('role_id', role_id).execute().data
+    return role
