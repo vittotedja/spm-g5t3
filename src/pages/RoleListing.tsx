@@ -35,7 +35,7 @@ const RoleListing: React.FC = () => {
     setLoading(true); // Set loading to true
 
     const response = await getAsync(
-      `api/staff_role?userid=1&page=1&limit=5&sort_field=${sortField}&order=${order}`
+      `api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}`
     );
     const data = await response.json();
     if (data.data.length === 0) {
@@ -52,17 +52,18 @@ const RoleListing: React.FC = () => {
     var response;
     if (page === 1) {
       response = await getAsync(
-        `api/staff_role?userid=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}`
+        `api/get_staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}`
       );
       setPage(2);
     } else {
       response = await getAsync(
-        `api/staff_role?userid=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}`
+        `api/get_staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}`
       );
     }
 
     const data = await response.json();
-    if (data.data.length === 0) {
+    console.log(data)
+    if (data.pagination.current_page > data.pagination.total_pages) {
       setHasMore(false);
     } else {
       setRoles((prevRoles) => [...prevRoles, ...data.data]);
