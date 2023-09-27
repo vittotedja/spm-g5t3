@@ -1,36 +1,50 @@
-import React from "react";
+import React from 'react';
 
 interface ProgressBarProps {
-  percentage: number;
+	percentage: number;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ percentage }) => {
-  let colorClass;
-  const validPercentage = Math.min(Math.max(percentage, 0), 100);
+const ProgressBar: React.FC<ProgressBarProps> = ({percentage}) => {
+	let colorClass;
 
-  if (validPercentage > 66) {
-    colorClass = "#299B71"; // Hex color for green
-  } else if (validPercentage > 33) {
-    colorClass = "#FFCA0F"; // Hex color for yellow
-  } else if (validPercentage == 0) {
-    colorClass = "bg-gray-200";
-  } else {
-    colorClass = "#AD0626"; // Hex color for red
-  }
+	if (percentage > 66) {
+		colorClass = '#299B71'; // Hex color for green
+	} else if (percentage > 33) {
+		colorClass = '#FFCA0F'; // Hex color for yellow
+	} else {
+		colorClass = '#AD0626'; // Hex color for red
+	}
 
-  return (
-    <div className="w-full bg-gray-200 rounded-full relative font-bold overflow-hidden ">
-      <div
-        className={`text-s text-white text-center p-0.5 leading-none rounded-full h-5.5 `}
-        style={{ width: `${validPercentage}%`, background: colorClass }}
-      >
-        <span style={{ visibility: "hidden" }}>0</span>
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        {validPercentage}%
-      </div>
-    </div>
-  );
+	var percentageString;
+	if (percentage == 0) {
+		percentageString = (
+			<div
+				className={`text-s text-black text-center p-0.5 leading-none rounded-full h-5.5 flex items-center justify-center w-full`}
+			>
+				{percentage}%
+			</div>
+		);
+	} else {
+		percentageString = (
+			<>
+				<div
+					className={`text-s text-white text-center p-0.5 leading-none rounded-full h-5.5`}
+					style={{width: `${percentage}%`, background: colorClass}}
+				>
+					<span style={{visibility: 'hidden'}}>0</span>
+				</div>
+				<div className="absolute inset-0 flex items-center justify-center">
+					{percentage}%
+				</div>
+			</>
+		);
+	}
+
+	return (
+		<div className="relative w-full font-bold bg-gray-200 rounded-full">
+			{percentageString}
+		</div>
+	);
 };
 
 export default ProgressBar;
