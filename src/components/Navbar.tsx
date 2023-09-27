@@ -7,15 +7,13 @@ export const Navbar: React.FC = () => {
 //   console.log(userRole)
 // console.log('rendering Navbar')
   return (
-    <nav className="bg-green p-4">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="bg-green p-4 ">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2 text-white">
             <Link to="/role-listing" >Role Listing</Link>
-        </div>
-        {userRole === 'manager' && <Link to="/manager">Manager Page</Link>}
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+            {userRole === 'manager' && <Link to="/manager">Manager Page</Link>}
             <Link to="/profile">Profile</Link>
+        {/* Add other links as required */}
         </div>
-      {/* Add other links as required */}
     </nav>
   );
 }
