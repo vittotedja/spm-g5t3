@@ -6,14 +6,21 @@ import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
 import ApplicantsDetail from './pages/ApplicantsDetail';
 
+import {Login} from './pages/Login';
+import { AuthProvider } from './components/Auth';
+import RoleProtection from './hocs/withRoleProtection';
 
 function App() {
 	return (
 		<>
+		<AuthProvider>
 			<Routes>
 				<Route path="/" element={<h1>Hello</h1>} />
-				<Route path="/login" element={<h1>Login</h1>} />
-				<Route path="/manager" element={<ManagerRoleDetails />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/manager" element={
+				<RoleProtection requiredRole='manager'> 
+					{(_role) => <ManagerRoleDetails />}
+				</RoleProtection>} />
 				<Route path="/profile" element={<Profile />} />
 				<Route path="/applicantsdetail" element={<ApplicantsDetail />} />
 				<Route path="/role-listing" Component={RoleListing} />
@@ -27,6 +34,7 @@ function App() {
 					}
 				/>
 			</Routes>
+		</AuthProvider>
 		</>
 	);
 }
