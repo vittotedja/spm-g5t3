@@ -1,8 +1,16 @@
 import {FaArrowLeft} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
+import Select from 'react-select';
+import {useState} from 'react';
+
 const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
+	const [selectedOption, setSelectedOption] = useState(null);
+	const hrOptions = [
+		{value: '1', label: 'HR1'},
+		{value: '2', label: 'HR2'},
+	];
 	return (
 		<>
 			<div className="w-full mt-12">

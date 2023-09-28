@@ -26,6 +26,7 @@ dist-ssr
 .vscode/*
 api/__pycache__/*
 api/__pycache__
+__pycache__/*
 !.vscode/extensions.json
 .idea
 .DS_Store
