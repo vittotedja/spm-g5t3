@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import ManagerIndividualRole from './ManagerIndividualRole';
-import {createClient} from '@supabase/supabase-js';
 import {getAsync} from '../utilities/Services';
 
 export default function PostedRoleTable() {

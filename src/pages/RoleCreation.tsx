@@ -2,15 +2,21 @@ import {FaArrowLeft} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
 import Select from 'react-select';
-import {useState} from 'react';
 
 const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
-	const [selectedOption, setSelectedOption] = useState(null);
+	const countryOptions = [
+		{value: 'sg', label: 'Singapore'},
+		{value: 'my', label: 'Malaysia'},
+		{value: 'id', label: 'Indonesia'},
+		{value: 'vn', label: 'Vietnam'},
+		{value: 'hk', label: 'Hong Kong'},
+	];
 	const hrOptions = [
 		{value: '1', label: 'HR1'},
 		{value: '2', label: 'HR2'},
 	];
+
 	return (
 		<>
 			<div className="w-full mt-12">
@@ -79,17 +85,10 @@ const RoleCreation: React.FC = () => {
 										>
 											Country
 										</label>
-										{/* //TODO: Change to dropdown */}
-										<div className="mt-2">
-											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-												<input
-													type="text"
-													id="rolename"
-													className="block flex-1 border-0 bg-transparent py-1.5 pl-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
-													placeholder="Role Name"
-												/>
-											</div>
-										</div>
+										<Select
+											options={countryOptions}
+											className="mt-2 basic-multi-select"
+										/>
 									</div>
 								</div>
 							</div>
@@ -163,16 +162,11 @@ const RoleCreation: React.FC = () => {
 										>
 											Hiring Managers
 										</label>
-										<div className="mt-2">
-											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-												<input
-													type="text"
-													id="level"
-													className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
-													placeholder="Senior"
-												/>
-											</div>
-										</div>
+										<Select
+											isMulti
+											options={hrOptions}
+											className="mt-2 basic-multi-select"
+										/>
 									</div>
 								</div>
 							</div>
