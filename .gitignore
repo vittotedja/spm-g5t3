@@ -35,3 +35,8 @@ __pycache__/*
 *.njsproj
 *.sln
 *.sw?
+
+__pycache__/
+__pycache__/*
+api/__pycache__/
+api/__pycache__/*

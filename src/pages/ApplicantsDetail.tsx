@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import ProgressBar from '../components/ProgressBar';
 import {getAsync} from '../utilities/Services';
+import Badge from '../components/Badge';
 
 export default function ApplicantsDetail() {
 	let [applicants, setApplicants] = useState(Object);
@@ -12,7 +13,7 @@ export default function ApplicantsDetail() {
 		getAsync('api/get_staff?staff_id=1')
 			.then((res) => res.json())
 			.then((data) => {
-				setApplicants(data);
+				setApplicants(data[0]);
 			});
 
 		getAsync('api/get_staff_role_skill?staff_id=1&role_id=1')
@@ -42,17 +43,12 @@ export default function ApplicantsDetail() {
 			/>
 			<h1>Skills</h1>
 			{Object.entries(skill).map((item: any) => (
-				<span
+				<Badge
 					key={item[1].skill_id}
-					className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset 
-                        ${
-							item[1].qualified
-								? 'bg-green-50 text-green-700 ring-green-600/20'
-								: 'bg-red-50 text-red-700 ring-red-600/20'
-						}`}
+					styleType={item[1].qualified ? 'green' : 'red'}
 				>
 					{item[1].skill_name}
-				</span>
+				</Badge>
 			))}
 		</div>
 	);
