@@ -4,11 +4,9 @@ import PostedRoleTable from '../components/PostedRoleTable';
 import {useNavigate} from 'react-router-dom';
 
 function ManagerRoleDetails() {
-	const [isHR, setIsHR] = useState(true);
+	const isHR = true;
+	// const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();
-
-	//TODO: get isHR from backend
-	setIsHR(true);
 
 	return (
 		<>
