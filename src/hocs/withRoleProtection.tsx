@@ -1,10 +1,5 @@
 
-import React, { ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-// import { supabase } from '../pages/Login';  // Adjust the path to your supabase client
-import { useAuth } from '../components/Auth';
-
-export type UserRole = 'manager' | 'staff' | null;
+// import { useAuth } from '../components/Auth';
 import React, { ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../pages/Login';  // Adjust the path to your supabase client
@@ -19,13 +14,9 @@ interface ProtectedProps {
 export const RoleProtection: React.FC<ProtectedProps> = ({ requiredRole, children }) => {
     const navigate = useNavigate();
 
-    const { userRole } = useAuth() || {};
-    console.log(userRole)
-    if (userRole === null) {
-        return
-    }
+    // const { userRole } = useAuth() || {};
+    // console.log(userRole)
     const [userRole, setUserRole] = useState<UserRole>(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
       const fetchUserRole = async () => {
