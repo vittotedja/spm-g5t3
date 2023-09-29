@@ -5,6 +5,7 @@ import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {getAsync} from '../utilities/Services';
+import {clearScreenDown} from 'readline';
 
 export type SkillProps = {
 	skill_id: string;
@@ -16,6 +17,7 @@ const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
 	const animatedComponents = makeAnimated();
 	const [skillOptions, setSkillOptions] = useState<any>([]);
+	const [managerOptions, setManagerOptions] = useState<any>([]);
 	const countryOptions = [
 		{value: 'sg', label: 'Singapore'},
 		{value: 'my', label: 'Malaysia'},
@@ -23,10 +25,10 @@ const RoleCreation: React.FC = () => {
 		{value: 'vn', label: 'Vietnam'},
 		{value: 'hk', label: 'Hong Kong'},
 	];
-	const managerOptions = [
-		{value: '1', label: 'Jordian Cakep'},
-		{value: '2', label: 'Dennis Ganteng'},
-	];
+	// const managerOptions = [
+	// 	{value: '1', label: 'Jordian Cakep'},
+	// 	{value: '2', label: 'Dennis Ganteng'},
+	// ];
 
 	async function fetchSkillOptions() {
 		const response = await getAsync('api/get_skill');
@@ -36,6 +38,21 @@ const RoleCreation: React.FC = () => {
 			label: skill.skill_name,
 		}));
 		setSkillOptions(mappedData);
+	}
+
+	async function fetchManagerOptions() {
+		const response = await getAsync('api/get_staff');
+		const data = await response.json();
+		//put staff in mappedData if is_Manager is true
+		const mappedData = data.map(
+			(staff: any) =>
+				staff.is_manager && {
+					value: staff.staff_id,
+					label: staff.staff_name,
+				}
+		);
+		const cleanedData = mappedData.filter((data: any) => data !== false);
+		setManagerOptions(cleanedData);
 	}
 
 	// const skillOptions = [
@@ -48,7 +65,9 @@ const RoleCreation: React.FC = () => {
 
 	useEffect(() => {
 		setSkillOptions([]);
+		setManagerOptions([]);
 		fetchSkillOptions();
+		fetchManagerOptions();
 	}, []);
 
 	const colorStyles = {

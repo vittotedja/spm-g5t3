@@ -23,8 +23,16 @@ app.add_middleware(
 router = APIRouter()
 
 from api.get_role import get_role
+
+
 @app.get("/api/get_staff")
 @router.get("/api/get_staff")
-async def get_staff(staff_id: int):
-    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data
+async def get_staff(staff_id: int = 0):
+    # TO GET ALL STUFF USE staff_id = 0
+    if staff_id == 0:
+        staff = supabase.from_("staff").select("*").execute().data
+    else:
+        staff = (
+            supabase.from_("staff").select("*").eq("staff_id", staff_id).execute().data
+        )
     return staff
