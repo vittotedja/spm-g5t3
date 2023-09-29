@@ -1,10 +1,21 @@
+import {useState, useEffect} from 'react';
 import {FaArrowLeft} from 'react-icons/fa';
 import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
 import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import {getAsync} from '../utilities/Services';
+
+export type SkillProps = {
+	skill_id: string;
+	skill_name: string;
+	skill_desc: string;
+};
 
 const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
+	const animatedComponents = makeAnimated();
+	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const countryOptions = [
 		{value: 'sg', label: 'Singapore'},
 		{value: 'my', label: 'Malaysia'},
@@ -12,10 +23,52 @@ const RoleCreation: React.FC = () => {
 		{value: 'vn', label: 'Vietnam'},
 		{value: 'hk', label: 'Hong Kong'},
 	];
-	const hrOptions = [
-		{value: '1', label: 'HR1'},
-		{value: '2', label: 'HR2'},
+	const managerOptions = [
+		{value: '1', label: 'Jordian Cakep'},
+		{value: '2', label: 'Dennis Ganteng'},
 	];
+
+	async function fetchSkillOptions() {
+		const response = await getAsync('api/get_skill');
+		const data = await response.json();
+		const mappedData = data.map((skill: any) => ({
+			value: skill.skill_id,
+			label: skill.skill_name,
+		}));
+		setSkillOptions(mappedData);
+	}
+
+	// const skillOptions = [
+	// 	{value: '1', label: 'React'},
+	// 	{value: '2', label: 'Node'},
+	// 	{value: '3', label: 'Go'},
+	// 	{value: '4', label: 'Python'},
+	// 	{value: '5', label: 'Java'},
+	// ];
+
+	useEffect(() => {
+		setSkillOptions([]);
+		fetchSkillOptions();
+	}, []);
+
+	const colorStyles = {
+		control: (styles: any) => ({
+			...styles,
+			backgroundColor: 'white',
+		}),
+		multiValue: (styles: any) => ({
+			...styles,
+			border: '2px solid #299B71',
+			backgroundColor: 'transparent',
+			borderRadius: '5px',
+			color: '#299B71',
+		}),
+		multiValueLabel: (styles: any) => ({
+			...styles,
+			color: '#299B71',
+			fontStyle: 'italic',
+		}),
+	};
 
 	return (
 		<>
@@ -121,14 +174,14 @@ const RoleCreation: React.FC = () => {
 								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
 									Skills
 								</h2>
-								<div className="px-3 mt-2">
-									{/* TODO: change to dropdowns with chips */}
-									<textarea
-										id="role_resp"
-										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-									/>
-								</div>
-								<span className="hidden pl-4 text-xs text-gray-600 sm:block">
+								<Select
+									isMulti
+									options={skillOptions}
+									className="mx-3 mt-2 basic-multi-select"
+									components={animatedComponents}
+									styles={colorStyles}
+								/>
+								<span className="hidden pl-4 mt-2 text-xs italic text-gray-600 sm:block">
 									Type the skill name to search for the skill.
 									You can add multiple skills.
 								</span>
@@ -164,8 +217,9 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<Select
 											isMulti
-											options={hrOptions}
+											options={managerOptions}
 											className="mt-2 basic-multi-select"
+											styles={colorStyles}
 										/>
 									</div>
 								</div>

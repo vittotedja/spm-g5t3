@@ -5,12 +5,9 @@ import AddRoleListingModal from '../components/AddRoleListingModal';
 import {useNavigate} from 'react-router-dom';
 
 function ManagerRoleDetails() {
-	const [showModal, setShowModal] = useState(false);
+	const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();
 
-	const handleShowModal = () => {
-		setShowModal(!showModal);
-	};
 	return (
 		<>
 			<div className="container items-center justify-center w-4/5 h-screen mx-auto">
@@ -18,24 +15,19 @@ function ManagerRoleDetails() {
 					<h1 className="text-3xl font-bold text-start">
 						All Posted Role Listings
 					</h1>
-					<Button
-						styleType="green"
-						// onClick={() => setShowModal(!showModal)}
-						onClick={() => navigate('/manager/rolelisting')}
-					>
-						+ Add New Role
-					</Button>
+					{isHR && (
+						<Button
+							styleType="green"
+							onClick={() => navigate('/manager/rolelisting')}
+						>
+							+ Add New Role
+						</Button>
+					)}
 				</div>
 
 				<div className="flex flex-col items-center justify-center w-full">
 					<PostedRoleTable />
 				</div>
-				{showModal && (
-					<AddRoleListingModal
-						setHidden={showModal}
-						handleShowModal={handleShowModal}
-					/>
-				)}
 			</div>
 		</>
 	);

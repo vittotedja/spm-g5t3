@@ -1,12 +1,15 @@
 import {useEffect, useState} from 'react';
 import ManagerIndividualRole from './ManagerIndividualRole';
 import {getAsync} from '../utilities/Services';
+// import {useAuth} from '../components/Auth';
 
 export default function PostedRoleTable() {
 	//TODO: Define the type of roles
 	const [managerRoles, setManagerRoles] = useState<any>([]);
 	//TODO: Get the manager id from the session
 	const manager_id = '1';
+	// const session = useAuth();
+	// const user = session?.user;
 
 	async function fetchData() {
 		const response = await getAsync(
