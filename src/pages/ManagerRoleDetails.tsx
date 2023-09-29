@@ -7,6 +7,9 @@ function ManagerRoleDetails() {
 	const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();
 
+	//TODO: get isHR from backend
+	setIsHR(true);
+
 	return (
 		<>
 			<div className="container items-center justify-center w-4/5 h-screen mx-auto">

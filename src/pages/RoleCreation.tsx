@@ -5,7 +5,6 @@ import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {getAsync} from '../utilities/Services';
-import {clearScreenDown} from 'readline';
 
 export type SkillProps = {
 	skill_id: string;
