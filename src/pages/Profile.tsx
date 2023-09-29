@@ -1,44 +1,70 @@
 import{ useEffect, useState } from "react";
-import SkillsPill from "../components/SkillsPill";
 import ApplicationCard from "../components/ApplicationCard";
 import glasswindow_green from "../assets/glasswindow_green.png"
-import Modal from "../components/Modal";
-import PostButton from "../components/PostButton";
+import Badge from "../components/Badge";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+
+interface Staff{
+    staff_id: number;
+    staff_name: string;
+    curr_role: string;
+    curr_dept: string;
+    location: string;
+}
+
+interface Skill{
+    skill_id: number;
+    skill_name: string;
+    qualified: boolean;
+}
+
+interface Application{
+    role_id: number;
+    role_name: string;
+    dept: string;
+    location: string;
+    appl_close_date: string;
+}
 
 export default function Profile() {
-    const staffId = 2
-    let [result, setResult] = useState([])
-    let [staff, setStaff] = useState({})
-    let [skills, setSkills] = useState([])
-    let [application, setApplication] = useState([])
-//     const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const openModal = () => {
-//     setIsModalOpen(true);
-//   };
-
-//   const closeModal = () => {
-//     setIsModalOpen(false);
-//   };
-
+    // TODO: set actual staff ID
+    const staffId = 3
+    let [staff, setStaff] = useState<Staff>({
+        staff_id: 0,
+        staff_name: '',
+        curr_role: '',
+        curr_dept: '',
+        location: '',
+      });
+    let [skills, setSkills] = useState<Skill[]>([])
+    let [application, setApplication] = useState<Application[]>([])
+    const navigate = useNavigate();
+    const roleListingButton = () => {
+        navigate('/role-listing');
+      };
 
     useEffect(() => {
-        fetch(`http://localhost:8000/api/profile?staff_id=${staffId}`)
+        fetch(`http://localhost:8000/api/get_staff?staff_id=${staffId}`)
         .then((response) => response.json())
         .then((data) => {
-            setResult(data)
             setStaff(data[0])
-            setSkills(data[1])
-            setApplication(data[2])
-            console.log(result)
+            console.log(staff)
         })
 
-        // fetch(`http://localhost:8000/api/skills?staff_id=${staffId}`)
-        // .then((response) => response.json())
-        // .then((data) => {
-        //     setSkills(data)
-        //     console.log(skills)
-        // })
+        fetch(`http://localhost:8000/api/get_staff_skill?staff_id=${staffId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            setSkills(data)
+            console.log(skills)
+        })
+
+        fetch(`http://localhost:8000/api/get_staff_application?staff_id=${staffId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            setApplication(data)
+            console.log(application)
+        })
     }
     , [])
     return (
@@ -50,7 +76,7 @@ export default function Profile() {
                     <img src={glasswindow_green} width="100px" className="rounded-full"/>
                 </div>
                 <div className="w-2/3 pl-3 text-left">
-                    <p className="font-extrabold text-2xl">{staff.staff_name}</p>
+                    <p className="font-extrabold text-2xl">{staff.staff_name}</p><br/>
                     <p className="font-bold italic text-base">{staff.curr_role}</p>
                     <p className="font-medium italic text-base">{staff.curr_dept}</p>
                     <p className="font-light italic text-base">{staff.location}</p>
@@ -62,47 +88,39 @@ export default function Profile() {
                 
 
                     {skills[0]
-                    ?<div className="text-left">{skills.map((sk: object)=> <SkillsPill skill={sk.skill_name}/>)}</div>
+                    ?<div className="text-left">{skills.map((sk: {skill_name: string})=> 
+                        <Badge key={sk.skill_name} styleType="green">
+                        {sk.skill_name}
+                    </Badge>
+                    )}</div>
                     :<div className="mb-8">
                     <p className="text-emerald-900 font-medium text-xl mb-2">Your skills have not been recorded in the system.</p>
-                    <button className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1 text-base font-medium text-slate-50">Contact HR staff</button>
+                    <p className="text-emerald-900 font-medium text-md mb-2">Please contact the HR staff at hr@all-in-one.com.</p>
+                    
                     </div>}
                 </div>
             
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Applied Roles</p>
-
+                
                 {/* NO APPLICATION */}
                 {application[0]
-                    ? 
-                    application.map((appl:object) => (
-                        <ApplicationCard application={appl}/>
-                    ))
-                    
+                    ? <div className="flex">
+                    {application.map((appl: {role_id: number, role_name: string, dept: string, location: string, appl_close_date: string}) => (
+                        <ApplicationCard application={appl} staff_id={staffId} />
+                    ))}
+                    </div>
                     : 
                     <div className="mb-8">
                         <p className="text-emerald-900 font-medium text-xl mb-2">You have not applied for any roles.</p>
-                        <button className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1 text-base font-medium text-slate-50">Go to Role Listing</button>
+                        <div className="flex items-center justify-center">
+                        <Button styleType={"green"} onClick={roleListingButton}>Go to Role Listing</Button>
+                        </div>
                     </div>
                 }
-                
+                </div>
 
-            </div>
-
-            {/* <div>
-                <button onClick={openModal} className="bg-blue-500 text-white py-2 px-4 rounded">
-                    Apply
-                </button>
-                <Modal isOpen={isModalOpen} onClose={closeModal}>
-                    <div className="text-left">
-                        <h2 className="text-2xl mb-4 font-bold">Reason for applying</h2>
-                        <form>
-                            <textarea className="w-96 ring-2 ring-emerald-900/20 p-2 rounded-lg">Hello</textarea>
-                        </form>
-                    </div>
-                    
-                </Modal>
-            </div> */}
+            
             
         </div>
         </>

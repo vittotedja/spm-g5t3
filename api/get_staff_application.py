@@ -1,5 +1,4 @@
-import math
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from supabase import create_client, Client
@@ -27,21 +26,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+router = APIRouter()
 
-@app.get("/api/profile")
-async def get_profile(staff_id: int):
-    response = supabase.table("staff").select("*").eq('staff_id', staff_id).execute().data[0]
-    
-    staff_skill = supabase.from_("staff_skill").select("*").eq("staff_id", staff_id).execute().data
-    skill_table = supabase.from_("skill").select("*").execute().data
-    sk_id = []
-    for sk in staff_skill:
-        sk_id.append(sk["skill_id"])
-    skill_name = []
-    for skill in skill_table:
-        if skill["skill_id"] in sk_id:
-            skill_name.append(skill)
-
+@app.get("/api/get_staff_application")
+@router.get("/api/get_staff_application")
+async def get_staff_application(staff_id: int):
     staff_application = supabase.from_("application").select("*").eq("staff_id", staff_id).execute().data
     role_table = supabase.from_("role").select("*").execute().data
     role_id = []
@@ -51,4 +40,4 @@ async def get_profile(staff_id: int):
     for role in role_table:
         if role["role_id"] in role_id:
             role_name.append(role)
-    return response, skill_name, role_name
+    return role_name
