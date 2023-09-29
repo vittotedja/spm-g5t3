@@ -26,6 +26,5 @@ from api.get_role import get_role
 @app.get("/api/get_staff")
 @router.get("/api/get_staff")
 async def get_staff(staff_id: int):
-    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data[0]
-    print(await get_role(role_id=1))
-    return await get_role(role_id=1)
+    staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data
+    return staff
