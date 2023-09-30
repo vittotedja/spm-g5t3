@@ -7,6 +7,7 @@ import Button from "../components/Button";
 
 
 export default function ApplicantDetail() {
+    // TODO: get staff_id and application_id from applicants list page
     const staff_id = 4
     const application_id = 5
     const role_id = 2
@@ -18,7 +19,7 @@ export default function ApplicantDetail() {
         setInitial(setApplicant, `api/get_staff?staff_id=${staff_id}`, false)
         setInitial(setSkill, `api/get_staff_role_skill?staff_id=${staff_id}&role_id=${role_id}`)
     }, []);
-
+    console.log(window.location.host)
     return (
         <div>
             Back to Applicants List
