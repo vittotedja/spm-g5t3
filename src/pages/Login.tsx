@@ -2,7 +2,7 @@
 import { createClient } from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
 import { useRef } from 'react'
-import { useAuth } from '../components/Auth';
+import { useAuth } from '../utilities/Auth';
 // import { useHistory } from 'react-router-dom';
 // import react from '../assets/react.svg';
 import { useNavigate } from 'react-router-dom';
