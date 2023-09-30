@@ -1,4 +1,5 @@
 export const getAsync = (url: string, token: null | string = null) => {
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
-    return fetch(`http://127.0.0.1:8000/${url}`, { headers });
-  };
+    const api_path = import.meta.env.NODE_ENV === 'production' ? window.location.host + '/' : 'http://localhost:8000/'
+    return fetch(api_path + url, { headers });
+};

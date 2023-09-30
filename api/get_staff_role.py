@@ -1,47 +1,36 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from supabase import create_client, Client
-from dotenv import load_dotenv
-from datetime import datetime, timezone
 
-import math
 import os
-import pandas as pd
-# Load environment variables from .env file
-load_dotenv()
+from dotenv import load_dotenv
+from supabase import create_client, Client
+from datetime import datetime, timezone
+import math
 
-url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
+load_dotenv()
+url: str = os.getenv("SUPABASE_URL")
+key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
-
-origins = [
-    "*"
-]
-
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+router = APIRouter()
 
-
-@app.get("/api/main")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/api/staff_role")
-async def get_staff_role(userid: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc'):
-    if userid:
+@app.get("/api/get_staff_role")
+@router.get("/api/get_staff_role")
+async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc'):
+    if user_id:
         offset = (page - 1) * limit
 
         # Get applied roles
         applied_roles_response = supabase.table("application").select(
-            "role_id").eq("staff_id", str(userid)).execute()
+            "role_id").eq("staff_id", str(user_id)).execute()
         applied_role_IDs = [role["role_id"]
                             for role in applied_roles_response.data or []]
 
@@ -73,7 +62,7 @@ async def get_staff_role(userid: int = None, page: int = 1, limit: int = 5, sort
 
         # Get staff skills once outside the loop
         staff_skill_response = supabase.table("staff_skill").select(
-            "skill_id").eq("staff_id", str(userid)).execute()
+            "skill_id").eq("staff_id", str(user_id)).execute()
         staff_skill_ids_set = set(skill['skill_id']
                                   for skill in staff_skill_response.data or [])
 
