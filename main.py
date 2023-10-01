@@ -7,6 +7,7 @@ from api import (
     get_role_skill,
     get_staff_role_skill,
     get_manager_role,
+    get_staff_role,
     get_skill,
 )
 
@@ -26,3 +27,4 @@ app.include_router(get_role_skill.router)
 app.include_router(get_staff_role_skill.router)
 app.include_router(get_manager_role.router)
 app.include_router(get_skill.router)
+app.include_router(get_staff_role.router)
