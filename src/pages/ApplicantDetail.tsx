@@ -77,12 +77,12 @@ export default function ApplicantDetail() {
                     <p className="font-light italic text-base">{applicant.location}</p>
                 </div>
                 <div className="w-4/12 text-right flex justify-end space-x-2">
-                    {application.status
-                        ? <Badge styleType={application.status === 'Shortlisted' ? "green" : "red"}>{application.status}</Badge>
-                        : <>
+                    {application.status === 'Pending'
+                        ? <>
                             <Button styleType="green" onClick={() => update_application('Shortlisted')}>Shortlist</Button>
                             <Button styleType="red" onClick={() => update_application('Rejected')}>Reject</Button>
                           </>
+                        : <Badge styleType={application.status === 'Shortlisted' ? "green" : "red"}>{application.status}</Badge>
                     }
                 </div>
             </div>
