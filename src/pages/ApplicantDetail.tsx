@@ -50,7 +50,7 @@ export default function ApplicantDetail() {
         fetchData()
     }, [])
     
-    // TODO: show update confirmation
+    
     async function update_application(status: string) {
         let res = await putAsync('api/update_application', {application_id: application_id, status: status})
         res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
@@ -111,7 +111,7 @@ export default function ApplicantDetail() {
             
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
-                <p className="text-emerald-900 font-medium text-md text-left">{application.statement}</p>
+                <p className="font-medium text-md text-left">{application.statement}</p>
             </div>        
         </div>
         </>
