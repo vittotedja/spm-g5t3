@@ -5,25 +5,58 @@ import Badge from "../components/Badge";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 
+interface Application {
+    application_id: number,
+    staff_id: number,
+    role_id: number,
+    status: string,
+    statement: string,
+    applied_at: string,
+    updated_at: string,
+}
+
+interface Applicant {
+    staff_id: number,
+    staff_name: string,
+    curr_role: string,
+    curr_dept: string,
+    location: string,
+    created_at: string,
+    updated_at: string,
+}
+
+interface Skill {
+    skill_id: number,
+    skill_name: string,
+    qualified: boolean,
+}[]
+
+
 export default function ApplicantDetail() {
     const navigate = useNavigate()
-    // TODO: get staff_id and application_id from applicants list page
-    const staff_id = 4
-    const application_id = 5
-    const role_id = 2
-
-    // let [application, setApplication] = useState([]);
-    let [applicant, setApplicant] = useState(Object);
-    let [skill, setSkill] = useState([]);
+    // TODO: get application_id from applicants list page
+    const application_id = 1
+    
+    let [application, setApplication] = useState<Application>(Object);
+    let [applicant, setApplicant] = useState<Applicant>(Object);
+    let [skill, setSkill] = useState<Skill[]>([]);
     
     useEffect(() => {
-        // setInitial(setApplication, `api/get_application?staff_id=${staff_id}`, false)
-        setInitial(setApplicant, `api/get_staff?staff_id=${staff_id}`, false)
-        setInitial(setSkill, `api/get_staff_role_skill?staff_id=${staff_id}&role_id=${role_id}`)
-    }, []);
+        async function fetchData() {
+            let application = await setInitial(setApplication, `api/get_application?application_id=${application_id}`, false)
+            setInitial(setApplicant, `api/get_staff?staff_id=${application.staff_id}`, false)
+            setInitial(setSkill, `api/get_staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
+        }
+        fetchData()
+    }, [])
     
-
-
+    // TODO: show update confirmation
+    async function update_application(status: string) {
+        let res = await putAsync('api/update_application', {application_id: application_id, status: status})
+        res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
+    }
+    
+    // TODO: show which role this application is for
     return (
         <>
         {/* <Navbar /> */}
@@ -44,8 +77,13 @@ export default function ApplicantDetail() {
                     <p className="font-light italic text-base">{applicant.location}</p>
                 </div>
                 <div className="w-4/12 text-right flex justify-end space-x-2">
-                    <Button styleType="green" onClick={() => putAsync('api/update_application', {application_id: application_id, status: 'Shortlisted'})}>Shortlist</Button>
-                    <Button styleType="red" onClick={() => putAsync('api/update_application', {application_id: application_id, status: 'Rejected'})}>Reject</Button>
+                    {application.status
+                        ? <Badge styleType={application.status === 'Shortlisted' ? "green" : "red"}>{application.status}</Badge>
+                        : <>
+                            <Button styleType="green" onClick={() => update_application('Shortlisted')}>Shortlist</Button>
+                            <Button styleType="red" onClick={() => update_application('Rejected')}>Reject</Button>
+                          </>
+                    }
                 </div>
             </div>
                         
@@ -58,7 +96,7 @@ export default function ApplicantDetail() {
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
                 {skill[0]
                     ? <div className="text-left">
-                        {skill.map((sk: {skill_name: string, qualified: string}) => 
+                        {skill.map((sk) => 
                             <Badge key={sk.skill_name} styleType={sk.qualified ? "green" : "red"}>
                                 {sk.skill_name}
                             </Badge>
@@ -69,7 +107,12 @@ export default function ApplicantDetail() {
                         <p className="text-emerald-900 font-medium text-md mb-2">Please contact the HR staff at hr@all-in-one.com.</p>
                     </div>
                 }
-            </div>            
+            </div>
+            
+            <div className="container mt-8">
+                <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
+                <p className="text-emerald-900 font-medium text-md text-left">{application.statement}</p>
+            </div>        
         </div>
         </>
     );

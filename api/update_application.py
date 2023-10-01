@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
+from datetime import datetime
+
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
@@ -24,15 +26,14 @@ router = APIRouter()
 class Application(BaseModel):
     application_id: int
     status: str
-    statement: str = None
 
 @app.put("/api/update_application")
 @router.put("/api/update_application")
 async def update_application(application: Application):
-    update_data = {'status': application.status}
-    
-    if application.statement:
-        update_data['statement'] = application.statement
+    update_data = {
+        'status': application.status,
+        'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    }
 
     update = supabase.from_('application').update(update_data).eq('application_id', application.application_id).execute().data
-    return application
+    return update

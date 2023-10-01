@@ -4,6 +4,7 @@ export async function setInitial(setResult: Function, url: string, list: boolean
     const response = await getAsync(url)
     const data = await response.json()
     setResult(list ? data : data[0])
+    return data[0]
 }
 
 export const getAsync = (url: string, token: null | string = null) => {
@@ -25,7 +26,6 @@ export const postAsync = (url: string, data: any, token: null | string = null) =
 
 export const putAsync = (url: string, data: any, token: null | string = null) => {
     const headers = token ? { Authorization: `Bearer ${token}` } : undefined
-    console.log(JSON.stringify(data))
     return fetch(api_path + url, {
         method: "PUT",
         headers: {
