@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../utilities/Auth';  // Adjust the path if needed
 import glasswindow_white from '../assets/glasswindow_white.png'
+import  { CurrentUser } from '../components/CurrentUser'
 export const Navbar: React.FC = () => {
   const { userRole } = useAuth() || {};
 //   console.log(userRole)
@@ -21,7 +22,7 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex-grow-0 flex-shrink-0">
-              <Link to="/profile" className="text-white hover:text-gray-300 transition duration-300">Profile</Link>
+              <CurrentUser />
             </div>
         </div>
     </nav>
