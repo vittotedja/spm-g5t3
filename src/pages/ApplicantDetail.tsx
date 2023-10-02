@@ -11,7 +11,7 @@ interface Application {
     role_id: number,
     status: string,
     statement: string,
-    applied_at: string,
+    created_at: string,
     updated_at: string,
 }
 
@@ -20,9 +20,7 @@ interface Applicant {
     staff_name: string,
     curr_role: string,
     curr_dept: string,
-    location: string,
-    created_at: string,
-    updated_at: string,
+    location: string
 }
 
 interface Skill {
