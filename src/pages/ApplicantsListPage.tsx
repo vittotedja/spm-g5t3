@@ -230,7 +230,7 @@ const ApplicantsListPage = () => {
                         const applicant = applicantsData[i];
                         const staff_id = applicant.staff.staff_id;
                         const applicationId = applicant.application_id;
-                        const handleClick = (staff_id: string) => {
+                        const handleClick = (applicationId: string) => {
                           // Navigate to the details page with the corresponding staff_id
                           window.location.href = `/applicant-details/${applicationId}`
                         };
@@ -240,7 +240,7 @@ const ApplicantsListPage = () => {
                               key={i}
                               className="border-b hover:bg-gray-100"
                               onClick={() =>
-                                handleClick(applicant.staff.staff_id)
+                                handleClick(applicationId)
                               }
                             >
                               <td className="p-2">
