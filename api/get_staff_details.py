@@ -22,8 +22,8 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@app.get("/api/get_staff_id")
-@router.get("/api/get_staff_id")
-async def get_staff_id(email: str):
-    staff_id = supabase.from_('staff').select("staff_id").eq('email', email).execute().data
+@app.get("/api/get_staff_details")
+@router.get("/api/get_staff_details")
+async def get_staff_details(email: str):
+    staff_id = supabase.from_('staff').select("*").eq('email', email).execute().data
     return staff_id
