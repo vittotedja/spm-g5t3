@@ -9,27 +9,14 @@ import ApplicantsDetail from './pages/ApplicantsDetail';
 import {Login} from './pages/Login';
 import { AuthProvider } from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
-import ModalButton from './components/ModalButton';
-import { useState } from 'react';
 
 function App() {
-	let [modalType, setModalType] = useState("reason")
 
 	return (
 		<>
 		<AuthProvider>
 			<Routes>
-				<Route path="/" element={<div>Hello
-					{/* Dropdown list to change modal type */}
-					<select onChange={(e) => setModalType(e.target.value)}>
-						<option value="reason">Reason</option>
-						<option value="success">Success</option>
-						<option value="fail">Fail</option>
-						<option value="confirmation">Confirmation</option>
-					</select>
-					<ModalButton btnTitle="Apply" type={modalType} message="Thank you for applying to be the next top model">
-					</ModalButton>
-				</div>} />
+				<Route path="/" element={<h1>Hello</h1>} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/manager" element={
 				<RoleProtection requiredRole='manager'> 
