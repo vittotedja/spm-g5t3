@@ -4,11 +4,11 @@ import ManagerRoleDetails from './pages/ManagerRoleDetails';
 import Profile from './pages/Profile';
 import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
-import ApplicantDetail from './pages/ApplicantDetail';
 import {Login} from './pages/Login';
 import {AuthProvider} from './utilities/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import Navbar from './components/Navbar';
+import ApplicantsDetail from './pages/ApplicantsDetail';
 
 function App() {
 	const location = useLocation();
@@ -30,8 +30,8 @@ function App() {
 					/>
 					<Route path="/profile" element={<Profile />} />
 					<Route
-						path="/applicantdetail"
-						element={<ApplicantDetail />}
+						path="/applicantsdetail"
+						element={<ApplicantsDetail />}
 					/>
 					<Route path="/role-listing" Component={RoleListing} />
 					<Route

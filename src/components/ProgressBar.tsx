@@ -16,7 +16,15 @@ const ProgressBar: React.FC<ProgressBarProps> = ({percentage}) => {
 	}
 
 	var percentageString;
-	if (percentage > 0) {
+	if (percentage == 0) {
+		percentageString = (
+			<div
+				className={`text-s text-black text-center p-0.5 leading-none rounded-full h-5.5 flex items-center justify-center w-full`}
+			>
+				{percentage}%
+			</div>
+		);
+	} else {
 		percentageString = (
 			<>
 				<div
@@ -26,17 +34,9 @@ const ProgressBar: React.FC<ProgressBarProps> = ({percentage}) => {
 					<span style={{visibility: 'hidden'}}>0</span>
 				</div>
 				<div className="absolute inset-0 flex items-center justify-center">
-					{Math.round(percentage)}%
+					{percentage}%
 				</div>
 			</>
-		);
-	} else {
-		percentageString = (
-			<div
-				className={`text-s text-black text-center p-0.5 leading-none rounded-full h-5.5 flex items-center justify-center w-full`}
-			>
-				0%
-			</div>
 		);
 	}
 
