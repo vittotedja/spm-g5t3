@@ -33,7 +33,7 @@ function App() {
           <Route path="/applicantsdetail" element={<ApplicantsDetail />} />
           <Route path="/role-listing" Component={RoleListing} />
           <Route path="/applicants-list/:role_ID" Component={ApplicantsListPage} />
-          <Route path="/role-listing/:role_ID" Component={RoleDetailsPage} />
+          <Route path="/role-details/:role_ID" Component={RoleDetailsPage} />
           <Route
             path="*"
             element={
