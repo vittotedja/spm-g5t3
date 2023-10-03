@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import get_staff, get_role, get_staff_skill, get_role_skill, get_staff_role_skill, create_role_listing, get_staff_role
+from api import get_staff, get_role, get_staff_skill, get_role_skill, get_staff_role_skill, get_staff_role, get_all_role, get_all_skill, get_all_region, get_all_department
 
 app = FastAPI()
 app.add_middleware(
@@ -16,5 +16,10 @@ app.include_router(get_role.router)
 app.include_router(get_staff_skill.router)
 app.include_router(get_role_skill.router)
 app.include_router(get_staff_role_skill.router)
-app.include_router(create_role_listing)
+# app.include_router(create_role_listing.router)
 app.include_router(get_staff_role.router)
+app.include_router(get_all_role.router)
+app.include_router(get_all_skill.router)
+app.include_router(get_all_region.router)
+app.include_router(get_all_department.router)
+

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import RoleCard from "../components/RoleCard";
 import { getAsync } from "../utilities/Services";
-import FilterBox from "../components/FilterRoleListing";
+import FilterBox from "../components/FilterBox";
 import SortComponent from "../components/SortComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
+import confused_guy from "../assets/confused_guy.png";
 
 interface Role {
   role_id: number;
@@ -19,6 +20,10 @@ interface Role {
   responsibilities: string | null;
   percentage_match: number;
 }
+interface FilterItem {
+  name: string;
+  values: string[];
+}
 
 const RoleListing: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
@@ -27,15 +32,39 @@ const RoleListing: React.FC = () => {
   const [sortField, setSortField] = useState("created_at");
   const [order, setOrder] = useState("asc");
   const [hasMore, setHasMore] = useState(true);
+  const [filters, setFilters] = useState<FilterItem[]>([]);
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >({});
+
+  const fetchFilters = async () => {
+    const skillsResponse = await getAsync(`api/get_all_skill`);
+    const skillsData: string[] = await skillsResponse.json();
+    const regionResponse = await getAsync(`api/get_all_region`);
+    const regionData: string[] = await regionResponse.json();
+    const roleNameResponse = await getAsync(`api/get_all_role`);
+    const roleNameData: string[] = await roleNameResponse.json();
+    const departmentResponse = await getAsync(`api/get_all_department`);
+    const departmentData: string[] = await departmentResponse.json();
+    const filters = [
+      { name: "Skills", values: skillsData },
+      { name: "Region", values: regionData },
+      { name: "Role Name", values: roleNameData },
+      { name: "Department", values: departmentData },
+    ];
+    setFilters(filters);
+  };
 
   const fetchFirst = async () => {
     setPage(1); // Reset to the first page
     setRoles([]); // Clear existing roles
     setHasMore(true); // Reset hasMore
     setLoading(true); // Set loading to true
-
+    await fetchFilters();
     const response = await getAsync(
-      `api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}`
+      `api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        selectedFilters
+      )}`
     );
     const data = await response.json();
     if (data.data.length === 0) {
@@ -52,17 +81,21 @@ const RoleListing: React.FC = () => {
     var response;
     if (page === 1) {
       response = await getAsync(
-        `api/get_staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}`
+        `api/get_staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+          selectedFilters
+        )}`
       );
       setPage(2);
     } else {
       response = await getAsync(
-        `api/get_staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}`
+        `api/get_staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+          selectedFilters
+        )}`
       );
     }
 
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     if (data.pagination.current_page > data.pagination.total_pages) {
       setHasMore(false);
     } else {
@@ -80,13 +113,17 @@ const RoleListing: React.FC = () => {
     setOrder(newOrder);
   };
 
+  const handleFilterChange = (name: string, values: string[]) => {
+    setSelectedFilters((prev) => ({ ...prev, [name]: values }));
+  };
+
   useEffect(() => {
-    fetchFirst(); // Fetch the first page of data when the component mounts or when sortField or order changes
-  }, [sortField, order]);
+    fetchFirst();
+  }, [sortField, order, selectedFilters]);
 
   return (
     <div className="flex justify-around">
-      <FilterBox />
+      <FilterBox filters={filters} onFilterChange={handleFilterChange} />
       <div className="flex-col justify-center w-4/6">
         <h2 className="font-bold text-2xl text-left">Role Listings</h2>
         <SortComponent
@@ -99,24 +136,35 @@ const RoleListing: React.FC = () => {
           onSortFieldChange={handleSortFieldChange}
           onOrderChange={handleOrderChange}
         />
-        <InfiniteScroll
-          dataLength={roles.length}
-          next={fetchMore}
-          hasMore={hasMore}
-          loader={<span></span>}
-        >
-          {roles.map((role) => (
-            <RoleCard
-              key={role.role_id}
-              role_ID={role.role_id}
-              role_name={role.role_name}
-              role_dept={role.dept}
-              role_percentage_match={role.percentage_match}
-              role_deadline={role?.appl_close_date}
-              role_location={role?.location}
-            />
-          ))}
-        </InfiniteScroll>
+        {roles.length > 0 ? (
+          <InfiniteScroll
+            dataLength={roles.length}
+            next={fetchMore}
+            hasMore={hasMore}
+            loader={<span></span>}
+          >
+            {roles.map((role) => (
+              <RoleCard
+                key={role.role_id}
+                role_ID={role.role_id}
+                role_name={role.role_name}
+                role_dept={role.dept}
+                role_percentage_match={role.percentage_match}
+                role_deadline={role?.appl_close_date}
+                role_location={role?.location}
+              />
+            ))}
+          </InfiniteScroll>
+        ) : (
+          !loading && (
+            <div className="flex flex-col items-center justify-center text-center my-12">
+              <img src={confused_guy} width={500}></img>
+              <h2 className="font-bold text-2xl">
+                No roles found. Please try again.
+              </h2>
+            </div>
+          )
+        )}
       </div>
     </div>
   );

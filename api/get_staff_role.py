@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 from datetime import datetime, timezone
 import math
+import json
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -22,11 +23,44 @@ app.add_middleware(
 )
 router = APIRouter()
 
+
 @app.get("/api/get_staff_role")
 @router.get("/api/get_staff_role")
-async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc'):
+async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc', filters: str = '{}'):
+    parsed_filters = json.loads(filters)
     if user_id:
         offset = (page - 1) * limit
+      # Default query to fetch roles and their associated skills
+        query = supabase.table("role").select(
+            "*, role_skill!role_skill_role_id_fkey(skill_id)")
+
+        # Fetch all skills, role_skills, and roles in one go
+        all_skills = supabase.table("skill").select("*").execute().data
+        all_role_skills = supabase.table("role_skill").select("*").execute().data
+
+        # If skill filter is applied
+        if 'Skills' in parsed_filters and parsed_filters['Skills']:
+            skill_name_filters = parsed_filters['Skills']
+            print(skill_name_filters)
+
+            # Find the skill_id for the given skill_name from the fetched data
+            matching_skill_ids = [skill['skill_id'] for skill in all_skills if skill['skill_name'] in skill_name_filters]
+            print("MATCHING IDS",matching_skill_ids)
+            
+            # Extract role_ids associated with the skill_id from the fetched role_skill data
+            role_ids = [role_skill['role_id'] for role_skill in all_role_skills if role_skill['skill_id'] in matching_skill_ids]
+            print("ROLE IDS",role_ids)
+            query = query.in_("role_id", role_ids)
+
+        if 'Region' in parsed_filters and parsed_filters['Region']:
+            region_filters = parsed_filters['Region']
+            query = query.in_("location", region_filters)
+        if 'Role Name' in parsed_filters and parsed_filters['Role Name']:
+            role_name_filters = parsed_filters['Role Name']
+            query = query.in_("role_name", role_name_filters)
+        if 'Department' in parsed_filters and parsed_filters['Department']:
+            department_filters = parsed_filters['Department']
+            query = query.in_("dept", department_filters)
 
         # Get applied roles
         applied_roles_response = supabase.table("application").select(
@@ -37,12 +71,13 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
         today = datetime.utcnow().replace(tzinfo=timezone.utc)
 
         # Get all roles and filter out the applied ones
-        all_roles_response = supabase.table("role").select(
-            "*, role_skill!role_skill_role_id_fkey(skill_id)").execute()
+        all_roles_response = query.execute()
 
         # Separate roles with null appl_close_date and those with a valid date
-        roles_with_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is not None and datetime.fromisoformat(role["appl_close_date"]) >= today and role["role_id"] not in applied_role_IDs]
-        roles_without_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is None and role["role_id"] not in applied_role_IDs]
+        roles_with_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is not None and datetime.fromisoformat(
+            role["appl_close_date"]) >= today and role["role_id"] not in applied_role_IDs]
+        roles_without_date = [role for role in all_roles_response.data or [
+        ] if role["appl_close_date"] is None and role["role_id"] not in applied_role_IDs]
 
         if sort_field == 'appl_close_date':
             roles_with_date.sort(
