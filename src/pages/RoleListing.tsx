@@ -160,7 +160,7 @@ const RoleListing: React.FC = () => {
             <div className="flex flex-col items-center justify-center text-center my-12">
               <img src={confused_guy} width={500}></img>
               <h2 className="font-bold text-2xl">
-                No roles found. Please try again.
+                No job openings match the selected filters, please try again.
               </h2>
             </div>
           )
