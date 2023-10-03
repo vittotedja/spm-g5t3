@@ -2,7 +2,6 @@ import './App.css';
 import {Route, Routes, useLocation} from 'react-router-dom';
 import ManagerRoleDetails from './pages/ManagerRoleDetails';
 import Profile from './pages/Profile';
-import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
 import ApplicantDetail from './pages/ApplicantDetail';
 import {Login} from './pages/Login';
