@@ -25,7 +25,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleID }) => {
         setLoading(true);
         
         const response = await fetch(
-          `http://127.0.0.1:8000/api/get_role?roleid=${roleID}`
+          `http://127.0.0.1:8000/api/role?roleid=${roleID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

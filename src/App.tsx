@@ -7,6 +7,7 @@ import ApplicantDetail from "./pages/ApplicantDetail";
 import ApplicantsListPage from "./pages/ApplicantsListPage";
 import RoleDetailsPage from "./pages/RoleDetailsPage";
 import { Login } from "./pages/Login";
+import { AuthProvider } from "./utilities/Auth";
 import RoleProtection from "./hocs/withRoleProtection";
 import Navbar from "./components/Navbar";
 
