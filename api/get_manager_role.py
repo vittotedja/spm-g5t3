@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 from api.get_role import get_role
 
+import pandas as pd
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -26,24 +27,21 @@ router = APIRouter()
 @app.get("/api/get_manager_role")
 @router.get("/api/get_manager_role")
 async def get_manager_role(manager_id: int):
-    role_ids = (
+    roles = (
         supabase.from_("role_manager")
-        .select("role_id")
+        .select("role_id", "role(*)")
         .eq("manager_id", manager_id)
         .execute()
         .data
     )
-    roles = []
-    for role_id in role_ids:
-        role = await get_role(role_id["role_id"])
+
+    for role in roles:
         no_of_applicant = (
             supabase.from_("application")
             .select("*")
-            .eq("role_id", role_id["role_id"])
+            .eq("role_id", role["role_id"])
             .execute()
             .data
         )
-        role[0]["no_of_applicants"] = len(no_of_applicant)
-        roles.append(role[0])
-
+        role["role"]["no_of_applicants"] = len(no_of_applicant)
     return roles

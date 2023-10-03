@@ -16,6 +16,7 @@ export default function PostedRoleTable() {
 			'api/get_manager_role?manager_id=' + manager_id
 		);
 		const data = await response.json();
+		console.log(data);
 		setManagerRoles(data);
 	}
 
@@ -24,7 +25,7 @@ export default function PostedRoleTable() {
 		fetchData();
 	}, []);
 
-	if (managerRoles.length > 0) {
+	if (managerRoles != null && managerRoles.length > 0) {
 		return (
 			<table className="w-full mt-5 border border-teal-900 table-auto border-opacity-20">
 				<thead className="text-white bg-teal-900">
@@ -41,13 +42,13 @@ export default function PostedRoleTable() {
 					{managerRoles.map((role: any) => {
 						return (
 							<ManagerIndividualRole
-								key={role.role_id}
-								roleName={role.role_name}
-								roleID={role.role_id}
-								level={role.level}
-								country={role.location}
-								applicationEndDate={role.appl_close_date}
-								noOfApplicants={role.no_of_applicants}
+								key={role.role.role_id}
+								roleName={role.role.role_name}
+								roleID={role.role.role_id}
+								level={role.role.level}
+								country={role.role.location}
+								applicationEndDate={role.role.appl_close_date}
+								noOfApplicants={role.role.no_of_applicants}
 							/>
 						);
 					})}
