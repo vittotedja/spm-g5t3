@@ -229,9 +229,10 @@ const ApplicantsListPage = () => {
                       for (let i = 0; i < totalRows; i++) {
                         const applicant = applicantsData[i];
                         const staff_id = applicant.staff.staff_id;
+                        const applicationId = applicant.application_id;
                         const handleClick = (staff_id: string) => {
                           // Navigate to the details page with the corresponding staff_id
-                          window.location.href = `/applicant-details/${staff_id}`;
+                          window.location.href = `/applicant-details/${applicationId}`
                         };
                         if (applicant.status === view) {
                           rows.push(
