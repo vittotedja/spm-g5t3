@@ -54,6 +54,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
                           ? [...(selectedFilters[filter.name] || []), value]
                           : (selectedFilters[filter.name] || []).filter((v) => v !== value);
                         onFilterChange(filter.name, updatedValues);
+                        setSelectedFilters((prev) => ({ ...prev, [filter.name]: updatedValues }));
                       }}
                     />
                     {value}
