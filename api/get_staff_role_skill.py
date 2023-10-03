@@ -33,10 +33,7 @@ async def get_staff_role_skill(staff_id: int, role_id: int):
     role_skill = pd.DataFrame.from_dict(await get_role_skill(role_id))
     
     # Add a 'qualified' field to the staff_skill list
-    if not staff_skill.empty:
-        role_skill['qualified'] = role_skill['skill_id'].isin(staff_skill['skill_id'])
-    else:
-        role_skill['qualified'] = False 
+    role_skill['qualified'] = role_skill['skill_id'].isin(staff_skill['skill_id'])
 
     # Sort the staff_skill list based on the 'qualified' field
     staff_role_skill = role_skill.sort_values(by=['qualified', 'skill_name'], ascending=[False, True])
