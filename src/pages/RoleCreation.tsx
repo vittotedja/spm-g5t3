@@ -91,7 +91,7 @@ const RoleCreation: React.FC = () => {
 
 	return (
 		<>
-			<div className="w-full mt-12">
+			<div className="w-full mt-12 mb-10">
 				<div className="flex flex-col justify-start w-full ml-16 cursor-pointer sm:w-1/2 text-start">
 					<div
 						className="flex pb-2"
@@ -249,6 +249,7 @@ const RoleCreation: React.FC = () => {
 											options={managerOptions}
 											className="mt-2 basic-multi-select"
 											styles={colorStyles}
+											components={animatedComponents}
 										/>
 									</div>
 								</div>
