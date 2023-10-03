@@ -21,17 +21,18 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleID }) => {
         if (!validRoleID) {
           throw new Error(`Invalid roleID: ${roleID}`);
         }
+
         setLoading(true);
         
         const response = await fetch(
-          `http://127.0.0.1:8000/api/role?roleid=${roleID}`
+          `http://127.0.0.1:8000/api/get_role?roleid=${roleID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        setRoleData(data.data.data[0]);
+        setRoleData(data.data[0]);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
