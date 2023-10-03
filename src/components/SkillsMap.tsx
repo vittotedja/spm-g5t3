@@ -10,6 +10,8 @@ interface SkillsMapProps {
 
 const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
   const [skillMatchData, setskillMatchData] = useState<any>(null);
+  const [applyLoading, setApplyLoading] = useState<any>(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +40,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
 
   const handleApply = async () => {
     try {
+      setApplyLoading(true);
       const staffID = 4;
       const roleID = 10;
       const response = await fetch(
@@ -51,9 +54,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
       if (data.have_applied) {
         //show have applied modal
         alert("you have already applied for this role");
+        setApplyLoading(false);
       } else if (data.total_applications >= 5) {
         //show max limit modal
         alert("More than 5 applications are not allowed!");
+        setApplyLoading(false);
       } else {
         //show reason modal
         const reason = window.prompt("Please enter your reason for applying");
@@ -81,6 +86,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
           if (applyData) {
             alert("Application submitted successfully!");
           }
+          setApplyLoading(false);
         }
       }
     } catch (error) {
@@ -125,6 +131,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
         styleType="green"
         className="bg-emerald-600 text-white py-2 px-6 ml-3.5 rounded-md text-lg font-semibold hover:bg-emerald-900 w-11/12"
         onClick={handleApply}
+        loading={applyLoading}
       >
         Apply
       </Button>

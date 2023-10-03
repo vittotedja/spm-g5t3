@@ -89,7 +89,7 @@ const ApplicantsListPage = () => {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto mt-6">
       <div className="flex items-center justify-between mb-4">
         <button
           className="flex items-center text-emerald-900 hover:underline"
