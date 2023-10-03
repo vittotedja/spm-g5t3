@@ -4,11 +4,14 @@ from api import (
     get_staff,
     get_role,
     get_staff_skill,
+    get_staff_id,
     get_role_skill,
-    get_staff_role_skill,
-    get_manager_role,
-    get_staff_role,
     get_skill,
+    get_staff_role_skill,
+    get_staff_role,
+    get_manager_role,
+    get_application,
+    update_application,
 )
 
 app = FastAPI()
@@ -21,6 +24,7 @@ app.add_middleware(
 )
 
 app.include_router(get_staff.router)
+app.include_router(get_staff_id.router)
 app.include_router(get_role.router)
 app.include_router(get_staff_skill.router)
 app.include_router(get_role_skill.router)
@@ -28,3 +32,5 @@ app.include_router(get_staff_role_skill.router)
 app.include_router(get_manager_role.router)
 app.include_router(get_skill.router)
 app.include_router(get_staff_role.router)
+app.include_router(get_application.router)
+app.include_router(update_application.router)

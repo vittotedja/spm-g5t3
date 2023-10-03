@@ -9,7 +9,7 @@ import ApplicantsDetail from './pages/ApplicantsDetail';
 import {Login} from './pages/Login';
 import {AuthProvider} from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
-// import Navbar from './components/Navbar';
+import Navbar from './components/Navbar';
 
 function App() {
 	// const location = useLocation();
@@ -30,8 +30,8 @@ function App() {
 					/>
 					<Route path="/profile" element={<Profile />} />
 					<Route
-						path="/applicantsdetail"
-						element={<ApplicantsDetail />}
+						path="/applicantdetail"
+						element={<ApplicantDetail />}
 					/>
 					<Route path="/role-listing" Component={RoleListing} />
 					<Route
