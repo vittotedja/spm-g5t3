@@ -12,10 +12,11 @@ app.add_middleware(
 )
 
 app.include_router(get_staff.router)
-app.include_router(get_staff_id.router)
 app.include_router(get_role.router)
 app.include_router(get_staff_skill.router)
 app.include_router(get_role_skill.router)
 app.include_router(get_staff_role_skill.router)
 # app.include_router(create_role_listing)
 app.include_router(get_staff_role.router)
+app.include_router(get_staff_id.router)
+app.include_router(get_current_staff_role.router)
