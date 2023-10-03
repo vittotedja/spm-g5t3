@@ -5,11 +5,11 @@ import Profile from './pages/Profile';
 import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
 import RoleCreation from './pages/RoleCreation';
-import ApplicantsDetail from './pages/ApplicantsDetail';
+import ApplicantDetail from './pages/ApplicantDetail';
 import {Login} from './pages/Login';
 import {AuthProvider} from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
-import Navbar from './components/Navbar';
+// import Navbar from './components/Navbar';
 
 function App() {
 	// const location = useLocation();
