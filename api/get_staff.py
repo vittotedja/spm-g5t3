@@ -22,6 +22,7 @@ app.add_middleware(
 )
 router = APIRouter()
 
+from api.get_role import get_role
 @app.get("/api/get_staff")
 @router.get("/api/get_staff")
 async def get_staff(staff_id: int):

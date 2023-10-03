@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
+import pandas as pd
+
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
@@ -20,8 +22,9 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@app.get("/api/get_application")
-@router.get("/api/get_application")
-async def get_application(application_id: int):
-    application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
-    return application
+from api.get_role import get_role
+@app.get("/api/get_current_staff_role")
+@router.get("/api/get_current_staff_role")
+async def get_staff(staff_id: int):
+    curr_role = supabase.from_('staff').select("curr_role").eq('staff_id', staff_id).execute().data
+    return curr_role
