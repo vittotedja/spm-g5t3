@@ -11,7 +11,6 @@ import { AuthProvider } from './components/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import ModalButton from './components/ModalButton';
 import { useState } from 'react';
-import TestModal from './components/TestModal';
 
 function App() {
 	let [modalType, setModalType] = useState("reason")
