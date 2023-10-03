@@ -19,6 +19,7 @@ function ManagerRoleDetails() {
 						<Button
 							styleType="green"
 							onClick={() => navigate('/manager/rolelisting')}
+							className="text-black bg-green"
 						>
 							+ Add New Role
 						</Button>

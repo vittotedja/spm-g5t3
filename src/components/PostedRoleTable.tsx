@@ -24,35 +24,38 @@ export default function PostedRoleTable() {
 		fetchData();
 	}, []);
 
-	return (
-		<table className="w-full mt-5 border border-teal-900 table-auto border-opacity-20">
-			<thead className="text-white bg-teal-900">
-				<tr className="">
-					<th className="py-2">Role Name</th>
-					<th>Role Id</th>
-					<th>Level</th>
-					<th>Country</th>
-					<th>No. of Applicants</th>
-					<th>Application Start Date</th>
-				</tr>
-			</thead>
-			<tbody>
-				{managerRoles.map((role: any) => {
-					return (
-						<ManagerIndividualRole
-							key={role.role_id}
-							roleName={role.role_name}
-							roleID={role.role_id}
-							level={role.level}
-							country={role.location}
-							applicationEndDate={role.appl_close_date}
-							noOfApplicants={role.no_of_applicants}
-						/>
-					);
-				})}
-			</tbody>
-		</table>
-	);
+	if (managerRoles.length > 0) {
+		return (
+			<table className="w-full mt-5 border border-teal-900 table-auto border-opacity-20">
+				<thead className="text-white bg-teal-900">
+					<tr className="">
+						<th className="py-2">Role Name</th>
+						<th>Role Id</th>
+						<th>Level</th>
+						<th>Country</th>
+						<th>No. of Applicants</th>
+						<th>Application Start Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					{managerRoles.map((role: any) => {
+						return (
+							<ManagerIndividualRole
+								key={role.role_id}
+								roleName={role.role_name}
+								roleID={role.role_id}
+								level={role.level}
+								country={role.location}
+								applicationEndDate={role.appl_close_date}
+								noOfApplicants={role.no_of_applicants}
+							/>
+						);
+					})}
+				</tbody>
+			</table>
+		);
+	}
+	return <h1>You have no open Roles</h1>;
 }
 
 // export default PostedRoleTable;

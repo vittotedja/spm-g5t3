@@ -5,6 +5,13 @@ import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import {getAsync} from '../utilities/Services';
+import {
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+} from '../components/ui/popover';
+import {Calendar} from '../components/ui/calendar';
+import formatDate from '../utilities/Utiliities';
 
 export type SkillProps = {
 	skill_id: string;
@@ -17,6 +24,7 @@ const RoleCreation: React.FC = () => {
 	const animatedComponents = makeAnimated();
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const [managerOptions, setManagerOptions] = useState<any>([]);
+	const [date, setDate] = useState<Date | undefined>(new Date());
 	const countryOptions = [
 		{value: 'sg', label: 'Singapore'},
 		{value: 'my', label: 'Malaysia'},
@@ -24,10 +32,6 @@ const RoleCreation: React.FC = () => {
 		{value: 'vn', label: 'Vietnam'},
 		{value: 'hk', label: 'Hong Kong'},
 	];
-	// const managerOptions = [
-	// 	{value: '1', label: 'Jordian Cakep'},
-	// 	{value: '2', label: 'Dennis Ganteng'},
-	// ];
 
 	async function fetchSkillOptions() {
 		const response = await getAsync('api/get_skill');
@@ -54,20 +58,17 @@ const RoleCreation: React.FC = () => {
 		setManagerOptions(cleanedData);
 	}
 
-	// const skillOptions = [
-	// 	{value: '1', label: 'React'},
-	// 	{value: '2', label: 'Node'},
-	// 	{value: '3', label: 'Go'},
-	// 	{value: '4', label: 'Python'},
-	// 	{value: '5', label: 'Java'},
-	// ];
-
 	useEffect(() => {
 		setSkillOptions([]);
 		setManagerOptions([]);
 		fetchSkillOptions();
 		fetchManagerOptions();
 	}, []);
+
+	const isDateDisabled = (date: Date) => {
+		// Disable dates before today
+		return date < new Date();
+	};
 
 	const colorStyles = {
 		control: (styles: any) => ({
@@ -117,7 +118,7 @@ const RoleCreation: React.FC = () => {
 											Role Name
 										</label>
 										<div className="mt-2">
-											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md">
 												<input
 													type="text"
 													id="rolename"
@@ -137,7 +138,7 @@ const RoleCreation: React.FC = () => {
 											Level
 										</label>
 										<div className="mt-2">
-											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md">
 												<input
 													type="text"
 													id="level"
@@ -171,7 +172,7 @@ const RoleCreation: React.FC = () => {
 								<div className="px-3 mt-2">
 									<textarea
 										id="role_desc"
-										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus-within:ring-emerald-600"
 									/>
 								</div>
 							</div>
@@ -183,7 +184,7 @@ const RoleCreation: React.FC = () => {
 								<div className="px-3 mt-2">
 									<textarea
 										id="role_resp"
-										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus-within:ring-emerald-600"
 									/>
 								</div>
 							</div>
@@ -213,15 +214,25 @@ const RoleCreation: React.FC = () => {
 										>
 											Application Close Date
 										</label>
-										<div className="mt-2">
-											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-												<input
-													type="text"
-													id="rolename"
-													className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
-													placeholder="Role Name"
-												/>
-											</div>
+										<div className="w-full py-1 mt-2 align-middle border rounded-md sm:w-2/3">
+											<Popover>
+												<PopoverTrigger className="justify-center w-full align-middle">
+													{date
+														? formatDate(date)
+														: 'Select Date'}
+												</PopoverTrigger>
+												<PopoverContent>
+													<Calendar
+														mode="single"
+														selected={date}
+														onSelect={setDate}
+														className="mx-auto"
+														disabled={
+															isDateDisabled
+														}
+													/>
+												</PopoverContent>
+											</Popover>
 										</div>
 									</div>
 								</div>
