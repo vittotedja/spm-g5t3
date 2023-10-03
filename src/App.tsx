@@ -32,7 +32,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/applicantsdetail" element={<ApplicantsDetail />} />
           <Route path="/role-listing" Component={RoleListing} />
-          <Route path="/applicants-list" Component={ApplicantsListPage} />
+          <Route path="/applicants-list/:role_ID" Component={ApplicantsListPage} />
           <Route path="/role-listing/:role_ID" Component={RoleDetailsPage} />
           <Route
             path="*"
