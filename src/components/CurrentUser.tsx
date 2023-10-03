@@ -9,7 +9,7 @@ export const CurrentUser: React.FC = () => {
     const [currentUser, setCurrentUser] = useState<any>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [currentRole, setCurrentRole] = useState<any>(null);
+    // const [currentRole, setCurrentRole] = useState<any>(null);
 
     useEffect(() => {
         const fetchStaff = async () => {
@@ -19,8 +19,8 @@ export const CurrentUser: React.FC = () => {
                     let staffData = await setInitial(setCurrentUser, `api/get_staff_id?email=${user.email}`, false);
                     setCurrentUser(staffData);
                     console.log(staffData)
-                    const roleData = await setInitial(setCurrentRole, `api/get_current_staff_role?staff_id=${staffData.staff_id}`, false);
-                    setCurrentRole(roleData);
+                    // const roleData = await setInitial(setCurrentRole, `api/get_current_staff_role?staff_id=${staffData.staff_id}`, false);
+                    // console.log(staffData.staff_name);
                 } catch (e) {
                     setError('Failed to fetch data');
                 } finally {
@@ -32,8 +32,8 @@ export const CurrentUser: React.FC = () => {
         fetchStaff();
     }, [user?.email]);  // Dependency array
 
-    const userName = currentUser?.name || user?.email || 'User Name';
-
+    const userName = currentUser?.staff_name || user?.email || 'User Name';
+    const currentRole = currentUser?.curr_role
     return loading ? (
         <div className="text-white">Loading...</div>
     ) : error ? (
