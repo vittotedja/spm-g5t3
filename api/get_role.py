@@ -28,11 +28,11 @@ app.add_middleware(
 router = APIRouter()
 
 #view a single role details
-@app.get("/api/role")
-@router.get("/api/role")
+@app.get("/api/get_role")
+@router.get("/api/get_role")
 async def get_role(roleid: int = None):
     if roleid:
         role_response = supabase.from_("role").select("*").eq("role_id", str(roleid)).execute()
-        return {"data": role_response}
+        return role_response
 
     

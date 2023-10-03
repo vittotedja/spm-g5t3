@@ -29,8 +29,8 @@ router = APIRouter()
 
 
 
-@app.get("/api/applicants")
-@router.get("/api/applicants")
+@app.get("/api/get_applicants")
+@router.get("/api/get_applicants")
 async def get_applicants(roleid: int = None):
     if roleid:
         response = supabase.from_("application").select("staff_id", "status").eq("role_id", str(roleid)).execute()

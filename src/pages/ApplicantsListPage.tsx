@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaLocationDot } from "react-icons/fa6";
 import Button from "../components/Button";
-
+import { getAsync } from "../utilities/Services";
 
 const ApplicantsListPage = () => {
   const role_ID = useParams<{ role_ID: string | undefined }>();
@@ -19,9 +19,7 @@ const ApplicantsListPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/role?roleid=${roleid}`
-        );
+        const response = await getAsync(`api/get_role?roleid=${roleid}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -39,9 +37,7 @@ const ApplicantsListPage = () => {
 
     const fetchApplicants = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:8000/api/applicants?roleid=${roleid}`
-        );
+        const response = await getAsync(`api/get_applicants?roleid=${roleid}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -63,9 +59,12 @@ const ApplicantsListPage = () => {
   }
 
   if (!roleData) {
-    return <div className="text-3xl">Error 404 There is no Role with the ID {roleid}</div>
+    return (
+      <div className="text-3xl">
+        Error 404 There is no Role with the ID {roleid}
+      </div>
+    );
   }
-
 
   let totalRows = 0;
 
@@ -217,13 +216,13 @@ const ApplicantsListPage = () => {
                 <tbody>
                   {(() => {
                     if (applicantsData.length === 0) {
-                      return(
+                      return (
                         <tr className="border-b">
-                        <td colSpan={7} className="p-4 text-center">
-                          No Applicants Yet
-                        </td>
-                      </tr>
-                      )
+                          <td colSpan={7} className="p-4 text-center">
+                            No Applicants Yet
+                          </td>
+                        </tr>
+                      );
                     } else {
                       const rows = [];
                       for (let i = 0; i < totalRows; i++) {
@@ -232,16 +231,14 @@ const ApplicantsListPage = () => {
                         const applicationId = applicant.application_id;
                         const handleClick = (applicationId: string) => {
                           // Navigate to the details page with the corresponding staff_id
-                          window.location.href = `/applicant-details/${applicationId}`
+                          window.location.href = `/applicant-details/${applicationId}`;
                         };
                         if (applicant.status === view) {
                           rows.push(
                             <tr
                               key={i}
                               className="border-b hover:bg-gray-100"
-                              onClick={() =>
-                                handleClick(applicationId)
-                              }
+                              onClick={() => handleClick(applicationId)}
                             >
                               <td className="p-2">
                                 {applicant.staff.staff_name}

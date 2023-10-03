@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Button from "./Button";
 import Badge from "./Badge";
+import { getAsync } from "../utilities/Services";
 
 interface SkillsMapProps {
   staffID: string | undefined;
@@ -12,12 +13,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
   const [skillMatchData, setskillMatchData] = useState<any>(null);
   const [applyLoading, setApplyLoading] = useState<any>(null);
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/skillmatch?roleid=${roleID}&staffid=${staffID}`
+        const response = await getAsync(
+          `api/skillmatch?roleid=${roleID}&staffid=${staffID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,8 +43,8 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
       setApplyLoading(true);
       const staffID = 4;
       const roleID = 10;
-      const response = await fetch(
-        `http://localhost:8000/api/totalapplications?staffid=${staffID}&roleid=${roleID}`
+      const response = await getAsync(
+        `api/totalapplications?staffid=${staffID}&roleid=${roleID}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

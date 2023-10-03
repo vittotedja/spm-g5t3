@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
+import { getAsync } from "../utilities/Services";
 
 interface RoleDetailsProps {
   roleID: string | undefined;
@@ -23,10 +24,8 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleID }) => {
         }
 
         setLoading(true);
-        
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/role?roleid=${roleID}`
-        );
+
+        const response = await getAsync(`api/get_role?roleid=${roleID}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
