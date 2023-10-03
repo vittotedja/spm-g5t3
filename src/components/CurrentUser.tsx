@@ -2,38 +2,48 @@ import React, { useEffect, useState } from 'react';
 import Avatar from 'react-avatar';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../utilities/Auth';
-import { supabase } from '../pages/Login';
+import { setInitial } from '../utilities/Services';  
 
 export const CurrentUser: React.FC = () => {
-    let { user, userRole } = useAuth() || {};
-    let [currentUser, setCurrentUser] = useState<any>(null); // Changed Object to null and added a generic type any
+    const { user } = useAuth() || {};
+    const [currentUser, setCurrentUser] = useState<any>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [currentRole, setCurrentRole] = useState<any>(null);
 
     useEffect(() => {
         const fetchStaff = async () => {
-            const staff_email = (await supabase.auth.getUser())?.data.user?.email;
-            if (staff_email) {
-                fetch(`api/get_staff_id?email=${staff_email}`) // Changed to use template literals
-                    .then(res => {
-                        if (!res.ok) throw new Error("Network response was not ok " + res.statusText);
-                        return res.json();
-                    })
-                    .then(data => {
-                        setCurrentUser(data);
-                    })
-                    .catch(error => console.error('There has been a problem with your fetch operation:', error.message));
+            if (user?.email) {
+                setLoading(true);
+                try {
+                    let staffData = await setInitial(setCurrentUser, `api/get_staff_id?email=${user.email}`, false);
+                    setCurrentUser(staffData);
+                    console.log(staffData)
+                    const roleData = await setInitial(setCurrentRole, `api/get_current_staff_role?staff_id=${staffData}`, false);
+                    setCurrentRole(roleData);
+                } catch (e) {
+                    setError('Failed to fetch data');
+                } finally {
+                    setLoading(false);
+                }
             }
         };
+
         fetchStaff();
-    }, []);
+    }, [user?.email]);  // Dependency array
 
-    const userName = user?.email || 'User Name';
+    const userName = currentUser?.name || user?.email || 'User Name';
 
-    return (
+    return loading ? (
+        <div className="text-white">Loading...</div>
+    ) : error ? (
+        <div className="text-red-500">{error}</div>
+    ) : (
         <Link to="/profile" className="flex items-center space-x-2 cursor-pointer hover:underline">
             <Avatar name={userName} size="40" round={true} />
             <div className="text-white">
                 <div className="font-bold">{userName}</div>
-                <div className="text-sm">{userRole}</div>
+                <div className="text-sm">{currentRole}</div>
             </div>
         </Link>
     );
