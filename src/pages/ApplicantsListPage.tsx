@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaLocationDot } from "react-icons/fa6";
 import Button from "../components/Button";
-import {useAuth} from '../components/Auth';
 
 
 const ApplicantsListPage = () => {
   const role_ID = useParams<{ role_ID: string | undefined }>();
-  const session = useAuth();
   const [roleData, setRoleData] = useState<any>(null);
   const [applicantsData, setApplicantsData] = useState<any>(null);
   const [view, setView] = useState<string>("Pending");

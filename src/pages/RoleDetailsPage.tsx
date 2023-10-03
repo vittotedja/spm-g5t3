@@ -2,12 +2,10 @@ import RoleDetails from "../components/RoleDetails";
 import SkillsMapComponent from "../components/SkillsMap";
 import { useParams } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
-import {useAuth} from '../components/Auth';
 
 
 const RoleDetailsPage = () => {
 
-  const session = useAuth();
   //const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
   const staffID = "1"
   console.log(staffID)
