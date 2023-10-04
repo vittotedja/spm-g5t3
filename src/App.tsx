@@ -4,11 +4,11 @@ import ManagerRoleDetails from './pages/ManagerRoleDetails';
 import Profile from './pages/Profile';
 import RoleDetails from './pages/RoleDetails';
 import RoleListing from './pages/RoleListing';
-import ApplicantDetail from './pages/ApplicantDetail';
 import {Login} from './pages/Login';
-import {AuthProvider} from './components/Auth';
+import {AuthProvider} from './utilities/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import Navbar from './components/Navbar';
+import ApplicantDetail from './pages/ApplicantDetail';
 
 function App() {
 	const location = useLocation();
