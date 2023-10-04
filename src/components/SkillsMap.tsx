@@ -17,7 +17,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
     const fetchData = async () => {
       try {
         const response = await getAsync(
-          `api/skillmatch?roleid=${roleID}&staffid=${staffID}`
+          `api/get_skillmatch?roleid=${roleID}&staffid=${staffID}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

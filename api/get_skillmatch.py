@@ -27,8 +27,8 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@app.get("/api/skillmatch")
-@router.get("/api/skillmatch")
+@app.get("/api/get_skillmatch")
+@router.get("/api/get_skillmatch")
 async def get_skillmatch(roleid: int = None, staffid: int = None):
     if roleid and staffid:
         try:
