@@ -34,11 +34,11 @@ export default function ApplicantDetail() {
     const navigate = useNavigate()
     // TODO: get application_id from applicants list page
     const application_id = 1
-    
+
     let [application, setApplication] = useState<Application>(Object);
     let [applicant, setApplicant] = useState<Applicant>(Object);
     let [skill, setSkill] = useState<Skill[]>([]);
-    
+
     useEffect(() => {
         async function fetchData() {
             let application = await setInitial(setApplication, `api/get_application?application_id=${application_id}`, false)
@@ -47,13 +47,13 @@ export default function ApplicantDetail() {
         }
         fetchData()
     }, [])
-    
-    
+
+
     async function update_application(status: string) {
         let res = await putAsync('api/update_application', {application_id: application_id, status: status})
         res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
     }
-    
+
     // TODO: show which role this application is for
     return (
         <>
@@ -84,12 +84,12 @@ export default function ApplicantDetail() {
                     }
                 </div>
             </div>
-                        
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills-Match %</p>
                 <ProgressBar percentage={skill.filter((s: any) => s.qualified).length/skill.length*100}/>
             </div>
-        
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
                 {skill[0]
@@ -106,7 +106,7 @@ export default function ApplicantDetail() {
                     </div>
                 }
             </div>
-            
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
                 <p className="font-medium text-md text-left">{application.statement}</p>
