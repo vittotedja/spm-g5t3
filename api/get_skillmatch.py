@@ -27,8 +27,8 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@app.get("/api/skillmatch")
-@router.get("/api/skillmatch")
+@app.get("/api/get_skillmatch")
+@router.get("/api/get_skillmatch")
 async def get_skillmatch(roleid: int = None, staffid: int = None):
     if roleid and staffid:
         try:
@@ -71,11 +71,11 @@ async def get_skillmatch(roleid: int = None, staffid: int = None):
             percentage = round(count / len(roleskillname) * 100)
 
             return {
-                "data": {
+                
                     "In_Both": inbothskill,
                     "Only_In_Roles": onlyinroleskill,
                     "percentage": percentage
-                }
+                
             }
         except Exception as e:
             return {"error": str(e)}

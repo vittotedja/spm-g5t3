@@ -1,61 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
-import { getAsync } from "../utilities/Services";
-
+import { setInitial } from "../utilities/Services";
+import formatDate from "../utilities/Utiliities";
 interface RoleDetailsProps {
-  roleID: string | undefined;
+  roleid: string | undefined;
 }
 
-const RoleDetails: React.FC<RoleDetailsProps> = ({ roleID }) => {
-  const [roleData, setRoleData] = useState<any>(null);
+interface Role {
+  role_id: number;
+  role_name: string;
+  created_at: Date;
+  appl_close_date: Date;
+  dept: string;
+  level: string;
+  location: string;
+  role_desc: string;
+  responsibility: string;
+}
+
+const RoleDetails: React.FC<RoleDetailsProps> = ({ roleid }) => {
+  const [roleData, setRoleData] = useState<Role>(Object);
   const [loading, setLoading] = useState<any>(null);
 
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (roleID === undefined || roleID == "0") {
-          throw new Error("roleID is undefined");
-        }
-
-        const validRoleID = /^\d+$/.test(roleID);
-
-        if (!validRoleID) {
-          throw new Error(`Invalid roleID: ${roleID}`);
-        }
-
-        setLoading(true);
-
-        const response = await getAsync(`api/get_role?roleid=${roleID}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setRoleData(data.data[0]);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle error (e.g., set an error state)
-      }
-    };
-
-    if (roleID) {
-      fetchData();
+    async function fetchData() {
+      setLoading(true);
+        setInitial(setRoleData, `api/get_role?roleid=${roleid}`,false);
     }
-  }, [roleID]);
+    fetchData();
+    setLoading(false);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (roleData === null || roleData === undefined) {
-    return <div>Error 404 There is no Role with the ID {roleID}</div>;
+  if (roleData == null || roleData == undefined) {
+    return <div>Error 404 There is no Role with the ID {roleid}</div>;
   }
 
-  const close_date = new Date(roleData.appl_close_date)
-    .toISOString()
-    .split("T")[0];
 
+
+  var close_date = formatDate(roleData.appl_close_date ?new Date(roleData.appl_close_date):null)
+  
   return (
     <div className="w-full lg:w-3/4 mb-8 lg:mb-0">
       <section className="rounded-lg m-2 p-8 min-h-[100%] relative border border-solid border-gray-200">

@@ -33,11 +33,12 @@ router = APIRouter()
 @router.get("/api/get_applicants")
 async def get_applicants(roleid: int = None):
     if roleid:
-        response = supabase.from_("application").select("staff_id", "status").eq("role_id", str(roleid)).execute()
+        response = supabase.from_("application").select("staff_id", "status","application_id").eq("role_id", str(roleid)).execute()
         data = response.data
         
         staffid = [entry["staff_id"] for entry in data]
         statuses = [entry["status"] for entry in data]
+        application_ids = [entry["application_id"] for entry in data]
 
         staffs = []
 
@@ -59,12 +60,13 @@ async def get_applicants(roleid: int = None):
             if skill_data:
                 staff_entry = {
                     "status": statuses[i],
+                    "application_id": application_ids[i],
                     "staff": skill_data[0],
                     "percentage_match": percentage_match
                 }
                 staffs.append(staff_entry)
         
         
-        return {"data": staffs}
+        return staffs
     else:
-        return {"error": "."}
+        return {"error": "failed to fetch"}

@@ -33,6 +33,6 @@ router = APIRouter()
 async def get_role(roleid: int = None):
     if roleid:
         role_response = supabase.from_("role").select("*").eq("role_id", str(roleid)).execute()
-        return role_response
+        return role_response.data
 
     

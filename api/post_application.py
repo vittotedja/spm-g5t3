@@ -42,9 +42,9 @@ class Application(BaseModel):
     status: str = "Pending"
     statement: str
 
-@app.post("/api/apply")
-@router.post("/api/apply")
-async def post_apply(application: Application = Body(...)):
+@app.post("/api/post_application")
+@router.post("/api/post_application")
+async def post_application(application: Application = Body(...)):
     
     try:
         data, error = supabase.table('application').insert([

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Button from "./Button";
 import Badge from "./Badge";
-import { getAsync } from "../utilities/Services";
+import { getAsync, postAsync } from "../utilities/Services";
+import { setInitial } from "../utilities/Services";
 
 interface SkillsMapProps {
   staffID: string | undefined;
@@ -14,37 +15,27 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
   const [applyLoading, setApplyLoading] = useState<any>(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getAsync(
-          `api/skillmatch?roleid=${roleID}&staffid=${staffID}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setskillMatchData(data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    if (roleID) {
-      fetchData();
+    async function fetchData() {
+      setInitial(
+        setskillMatchData,
+        `api/get_skillmatch?roleid=${roleID}&staffid=${staffID}`
+      );
     }
-  }, [staffID, roleID]);
+    fetchData();
+  }, []);
 
-  if (!skillMatchData) {
-    return <div></div>;
+  console.log(skillMatchData);
+
+  if (skillMatchData === null) {
+    return null;
   }
-
   const handleApply = async () => {
     try {
       setApplyLoading(true);
       const staffID = 4;
       const roleID = 10;
       const response = await getAsync(
-        `api/totalapplications?staffid=${staffID}&roleid=${roleID}`
+        `api/get_totalapplications?staffid=${staffID}&roleid=${roleID}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,19 +55,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
         const reason = window.prompt("Please enter your reason for applying");
         if (reason !== null && reason !== "") {
           //insert data
-          const applyResponse = await fetch("http://localhost:8000/api/apply", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              application_id: (
-                Math.floor(Math.random() * 100000) + 1
-              ).toString(),
-              staff_id: staffID,
-              role_id: roleID,
-              statement: reason,
-            }),
+          const applyResponse = await postAsync("api/post_application", {
+            application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
+            staff_id: staffID,
+            role_id: roleID,
+            statement: reason,
           });
 
           if (!applyResponse.ok) {
@@ -107,21 +90,25 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
               Required Skills
             </h4>
             <ul>
-              {skillMatchData.In_Both.map((item: string, index: string) => (
-                <li className="flex items-center p-1" key={index}>
-                  <Badge styleType="green" children={item} />
-                </li>
-              ))}
-              {skillMatchData.Only_In_Roles.map(
-                (item: string, index: string) => (
-                  <li
-                    className="flex items-center p-1"
-                    style={{ color: "#AD0626" }}
-                    key={index}
-                  >
-                    <Badge styleType="red" children={item} />
-                  </li>
-                )
+              {skillMatchData && (
+                <>
+                  {skillMatchData.In_Both.map((item: string, index: string) => (
+                    <li className="flex items-center p-1" key={index}>
+                      <Badge styleType="green" children={item} />
+                    </li>
+                  ))}
+                  {skillMatchData.Only_In_Roles.map(
+                    (item: string, index: string) => (
+                      <li
+                        className="flex items-center p-1"
+                        style={{ color: "#AD0626" }}
+                        key={index}
+                      >
+                        <Badge styleType="red" children={item} />
+                      </li>
+                    )
+                  )}
+                </>
               )}
             </ul>
           </div>

@@ -5,61 +5,37 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaLocationDot } from "react-icons/fa6";
 import Button from "../components/Button";
 import { setInitial } from "../utilities/Services";
+import formatDate from "../utilities/Utiliities";
 import { useNavigate } from "react-router-dom";
 
-
 interface Role {
-  role_id: number,
-  role_name: string,
-  created_at: string,
-  appl_close_date: string,
-  dept: string,
-  level: string,
-  location: string
+  role_id: number;
+  role_name: string;
+  created_at: Date;
+  appl_close_date: Date;
+  dept: string;
+  level: string;
+  location: string;
 }
 
 const ApplicantsListPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const role_ID = useParams<{ role_ID: string | undefined }>();
   const [roleData, setRoleData] = useState<Role>(Object);
   const roleid = role_ID.role_ID;
-  const [applicantsData, setApplicantsData] = useState<String>(Object);
-  const [view, setView] = useState<string>("Pending");
+  const [applicantsData, setApplicantsData] = useState<any>(Object);
+  const [view, setView] = useState<string>("Applied");
 
-  /*useEffect(() => {
-    async function fetchData() {
-        let role = await setInitial(setRoleData,`api/get_role?roleid=${roleid}`)
-        console.log(role);
-      }
-
-    }
-    fetchData()
-    const fetchApplicants = async () => {
-      try {
-        const response = await getAsync(`api/get_applicants?roleid=${roleid}`);
-        const data = await response.json();
-        setApplicantsData(data.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle error (e.g., set an error state)
-      }
-    };
-
-    if (roleid) {
-      fetchApplicants();
-    }
-
-    
-  }, [roleid]);*/
-  
   useEffect(() => {
     async function fetchData() {
-        setInitial(setRoleData, `api/get_role?roleid=${roleid}`, false);
+        setInitial(setRoleData, `api/get_role?roleid=${roleid}`,false);
+        setInitial(setApplicantsData, `api/get_applicants?roleid=${roleid}`)
     }
     fetchData();
   }, []);
 
   console.log(roleData);
+  console.log(applicantsData)
 
 
   if (!applicantsData) {
@@ -82,25 +58,25 @@ const ApplicantsListPage = () => {
     }
   }
 
-  /*const close_date = new Date(roleData.appl_close_date)
-    .toISOString()
-    .split("T")[0];
+  var close_date = formatDate(roleData.appl_close_date ?new Date(roleData.appl_close_date):null)
+  var created_at = formatDate(roleData.created_at ?new Date(roleData.created_at):null)
 
-  const create_date = new Date(roleData.created_at).toISOString().split("T")[0];*/
 
   const selectShortlist = async () => {
     setView("Shortlisted");
   };
   const selectApplicants = async () => {
-    setView("Pending");
+    setView("Applied");
   };
+
+  console.log(view)
 
   return (
     <div className="container mx-auto mt-6">
       <div className="flex items-center justify-between mb-4">
         <button
           className="flex items-center text-emerald-900 hover:underline"
-          onClick={() => window.history.back()}
+          onClick={() => navigate(`/role-listing`)}
         >
           <AiOutlineArrowLeft />
           Back to Role Listings
@@ -108,7 +84,7 @@ const ApplicantsListPage = () => {
         <Button
           styleType="green"
           className="mr-10"
-          onClick={() => (window.location.href = `/update-role/${roleid}`)}
+          onClick={() => navigate(`/update-role/${roleid}`)}
         >
           Update Role
         </Button>
@@ -123,7 +99,7 @@ const ApplicantsListPage = () => {
                     {roleData.role_name}
                   </h2>
                   <p className="text-l text-gray-600 text-left mb-1 whitespace-nowrap">
-                    {"create_date"}
+                    {created_at}
                   </p>
                   <div className="flex items-center">
                     <FaLocationDot className="text-gray-400" />
@@ -152,7 +128,7 @@ const ApplicantsListPage = () => {
                   Application Close Date
                 </h3>
                 <p className="text-l text-emerald-900 mb-4 font-bold italic">
-                  {"close_date"}
+                  {close_date}
                 </p>
               </div>
             </div>
@@ -167,7 +143,7 @@ const ApplicantsListPage = () => {
           >
             <button
               className={`hover:bg-gray-500 ${
-                view === "Pending" ? "bg-emerald-900" : "bg-gray-200"
+                view === "Applied" ? "bg-emerald-900" : "bg-gray-300"
               } text-white py-2 px-6 rounded-md text-lg font-semibold`}
               style={{
                 borderBottomRightRadius: "0",
@@ -221,7 +197,7 @@ const ApplicantsListPage = () => {
                     <th className="p-4">Skill Match (%)</th>
                   </tr>
                 </thead>
-                {/*<tbody>
+                {<tbody>
                   {(() => {
                     if (applicantsData.length === 0) {
                       return (
@@ -242,7 +218,7 @@ const ApplicantsListPage = () => {
                             <tr
                               key={i}
                               className="border-b hover:bg-gray-100"
-                              onClick={() => navigate(`/applicant-detail/${applicationId}`)}
+                              onClick={() => navigate(`/applicantdetail/${applicationId}`)}
                             >
                               <td className="p-2">
                                 {applicant.staff.staff_name}
@@ -275,7 +251,7 @@ const ApplicantsListPage = () => {
                       return rows;
                     }
                   })()}
-                </tbody>*/}
+                </tbody>}
               </table>
             </div>
           </div>

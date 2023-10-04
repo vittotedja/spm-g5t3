@@ -1,4 +1,4 @@
-const api_path = window.location.host === 'localhost:5173' ? 'http://localhost:8000/' : ''
+const api_path = window.location.host === 'localhost:5173' ? 'http://localhost:8000/' : window.location.origin + '/';
 
 export async function setInitial(setResult: Function, url: string, list: boolean = true) {
     const response = await getAsync(url)

@@ -8,8 +8,9 @@ const RoleDetailsPage = () => {
 
   //const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
   const staffID = "1"
-  console.log(staffID)
+  console.log("This is staff ID", staffID)
   const role_ID = useParams<{ role_ID: string | undefined }>();
+  console.log("This is role id", role_ID.role_ID)
   
 
   return (
@@ -24,7 +25,7 @@ const RoleDetailsPage = () => {
         </button>
       </div>
       <div className="flex flex-col lg:flex-row">
-        <RoleDetails roleID={role_ID.role_ID} />
+        <RoleDetails roleid={role_ID.role_ID} />
         <SkillsMapComponent staffID={staffID} roleID={role_ID.role_ID} />
       </div>
     </div>
