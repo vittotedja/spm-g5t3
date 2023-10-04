@@ -1,102 +1,114 @@
-// import{ useEffect, useState } from "react";
+import{ useEffect, useState } from "react";
+import ApplicationCard from "../components/ApplicationCard";
+import glasswindow_green from "../assets/glasswindow_green.png"
+import Badge from "../components/Badge";
+import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+import { setInitial } from "../utilities/Services";
+import { useAuth } from "../utilities/Auth";
+
+interface Staff{
+    staff_id: number;
+    staff_name: string;
+    curr_role: string;
+    curr_dept: string;
+    location: string;
+}
+
+interface Skill{
+    skill_id: number;
+    skill_name: string;
+    qualified: boolean;
+}[]
+
+interface Application{
+    application_id: number
+    status: 'Applied' | 'Shortlisted' | 'Rejected'
+    role: {
+        role_id: number;
+        role_name: string;
+        dept: string;
+        location: string;
+        appl_close_date: string;
+    }
+}[]
 
 export default function Profile() {
+    const auth = useAuth()
+    const staff_email = auth?.user?.email
+
+    let [staff, setStaff] = useState<Staff>(Object);
+    let [skills, setSkills] = useState<Skill[]>([])
+    let [application, setApplication] = useState<Application[]>([])
+    const navigate = useNavigate();
+    const roleListingButton = () => {
+        navigate('/role-listing');
+      };
+
+    useEffect(() => {
+        async function fetchFirst() {
+            let staff = await setInitial(setStaff, `api/get_staff?email=${staff_email}`, false)
+            setInitial(setSkills, `api/get_staff_skill?staff_id=${staff.staff_id}`)
+            setInitial(setApplication, `api/get_application?staff_id=${staff.staff_id}`)
+        }
+        fetchFirst()
+    }
+    , [])
     return (
         <>
         {/* <Navbar /> */}
         <div className="container mx-auto px-4 mt-10">
             <div className="container flex">
-                <div className="w-1/3">
-                    <img src="../assets/glasswindow_green.png" width="100px" className="rounded-full"/>
-                    <p className="p-1">Image</p>
+                <div className="w-2/12">
+                    <img src={glasswindow_green} width="100px" className="rounded-full"/>
                 </div>
                 <div className="w-2/3 pl-3 text-left">
-                    <p className="font-extrabold text-2xl">Name</p>
-                    <p className="font-bold italic text-base">Position</p>
-                    <p className="font-medium italic text-base">Department Division</p>
-                    <p className="font-light italic text-base">Year of entrance</p>
+                    <p className="font-extrabold text-2xl">{staff.staff_name}</p>
+                    <p className="font-bold italic text-base">{staff.curr_role}</p>
+                    <p className="font-medium italic text-base">{staff.curr_dept}</p>
+                    <p className="font-light italic text-base">{staff.location}</p>
                 </div>
             </div>
 
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
-                <div className="text-left">
-                    <span className="inline-flex items-center rounded-md  px-3 py-1 text-base font-medium text-green-600 ring-2 ring-inset ring-emerald-600 mr-2">
-                    Leadership
-                    </span>
-                    <span className="inline-flex items-center rounded-md  px-3 py-1 text-base font-medium text-green-600 ring-2 ring-inset ring-emerald-600 mr-2">
-                    Communication
-                    </span>
-                    <span className="inline-flex items-center rounded-md  px-3 py-1 text-base font-medium text-green-600 ring-2 ring-inset ring-emerald-600 mr-2">
-                    Organizational
-                    </span>
+                
+
+                    {skills[0]
+                    ?<div className="text-left">{skills.map((sk)=> 
+                        <Badge key={sk.skill_name} styleType="green">
+                        {sk.skill_name}
+                    </Badge>
+                    )}</div>
+                    :<div className="mb-8">
+                    <p className="text-emerald-900 font-medium text-xl mb-2">Your skills have not been recorded in the system.</p>
+                    <p className="text-emerald-900 font-medium text-md mb-2">Please contact the HR staff at hr@all-in-one.com.</p>
+                    
+                    </div>}
                 </div>
-            </div>
+            
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Applied Roles</p>
-
+                
                 {/* NO APPLICATION */}
-                <div className="mb-8">
-                    <p className="text-emerald-900 font-medium text-xl mb-2">You have not applied for any roles.</p>
-                    <button className="inline-flex items-center rounded-md bg-emerald-600 px-3 py-1 text-base font-medium text-slate-50">Go to Role Listing</button>
+                {application[0]
+                    ? <div className="flex">
+                    {application.map((appl) => (
+                        <ApplicationCard key={appl.application_id} application={appl} staff_id={staff.staff_id} />
+                    ))}
+                    </div>
+                    : 
+                    <div className="mb-8">
+                        <p className="text-emerald-900 font-medium text-xl mb-2">You have not applied for any roles.</p>
+                        <div className="flex items-center justify-center">
+                        <Button styleType={"green"} onClick={roleListingButton}>Go to Role Listing</Button>
+                        </div>
+                    </div>
+                }
                 </div>
 
-            </div>
-            <div className="container mt-8 flex">
-                {/* CARD */}
-                <div className="rounded-lg shadow-md ring-2 ring-outset ring-emerald-900 p-5 w-1/3 text-left">
-                <div className="text-left w-48">
-                <p className="text-sm text-gray-500 mb-1">Department</p>
-                <h2 className="text-xl font-bold mb-1">Role Name</h2>
-                <div className="flex justify-start">
-                {/* <img src={maps_pointer} className="mr-2"></img>*/}
-                Singapore
-                </div>
-
-                <div className="w-64 flex-col justify-between items-center mt-3">
-                <p className="mb-2 text-sm">Skill - Match %</p>
-                {/* <ProgressBar
-                    percentage={parseFloat(role_percentage_match.toFixed(0))}
-                /> */}
-                </div>
-                <div className="flex-col items-center pt-3">
-                <h4 className="mb-2 text-sm">Level</h4>
-                <h2 className="font-bold text-base">Senior</h2>
-                </div>
-                <div className="flex-col items-center pt-3">
-                <h4 className="mb-2 text-sm">Application Close Date</h4>
-                <h2 className="font-bold">30th September 2023</h2>
-                </div>
-                </div>
-                </div>
-
-                {/* CARD */}
-                <div className="rounded-lg shadow-md ring-2 ring-outset ring-emerald-900 p-5 w-1/3 text-left">
-                <div className="text-left w-48">
-                <p className="text-sm text-gray-500 mb-1">Department</p>
-                <h2 className="text-xl font-bold mb-1">Role Name</h2>
-                <div className="flex justify-start">
-                {/* <img src={maps_pointer} className="mr-2"></img>*/}
-                Singapore
-                </div>
-
-                <div className="w-64 flex-col justify-between items-center mt-3">
-                <p className="mb-2 text-sm">Skill - Match %</p>
-                {/* <ProgressBar
-                    percentage={parseFloat(role_percentage_match.toFixed(0))}
-                /> */}
-                </div>
-                <div className="flex-col items-center pt-3">
-                <h4 className="mb-2 text-sm">Level</h4>
-                <h2 className="font-bold text-base">Senior</h2>
-                </div>
-                <div className="flex-col items-center pt-3">
-                <h4 className="mb-2 text-sm">Application Close Date</h4>
-                <h2 className="font-bold">30th September 2023</h2>
-                </div>
-                </div>
-                </div>
-            </div>
+            
+            
         </div>
         </>
     )

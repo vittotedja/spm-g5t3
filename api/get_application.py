@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Body
+from fastapi import FastAPI, APIRouter, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -41,9 +41,15 @@ class UpdateApplication(BaseModel):
 
 @app.get("/api/get_application")
 @router.get("/api/get_application")
-async def get_application(application_id: int):
-    application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
-    return application
+async def get_application(application_id: int = None, staff_id: int = None):
+    if application_id:
+        application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
+        return application
+    elif staff_id:
+        application = supabase.table('application').select('*, role(*)').eq('staff_id', staff_id).execute().data
+        return application
+    else:
+        raise HTTPException(status_code=400, detail="Either application_id or staff_id must be provided.")
 
 @app.post("/api/get_application")
 @router.post("/api/get_application")
