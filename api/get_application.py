@@ -1,23 +1,19 @@
 from fastapi import FastAPI, APIRouter, Body
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 import os
-from supabase import create_client, Client
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+from supabase import create_client, Client
 
-# Load environment variables from .env file
+from datetime import datetime
+
 load_dotenv()
-
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-app = FastAPI(swagger_ui_parameters={"displayRequestDuration": True})
-
-origins = [
-    "*"
-]
-
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -25,26 +21,33 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 router = APIRouter()
-
-from datetime import datetime, timezone
 
 class TimestampzConverter(BaseModel):
     rootmodel: datetime
     def __get__(self, obj, type=None):
         return super().__get__(obj, type).isoformat()
 
-class Application(BaseModel):
+class NewApplication(BaseModel):
     application_id: int
     staff_id: int
     role_id: int
     status: str = "Pending"
     statement: str
+    
+class UpdateApplication(BaseModel):
+    application_id: int
+    status: str
 
-@app.post("/api/post_application")
-@router.post("/api/post_application")
-async def post_application(application: Application = Body(...)):
+@app.get("/api/get_application")
+@router.get("/api/get_application")
+async def get_application(application_id: int):
+    application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
+    return application
+
+@app.post("/api/get_application")
+@router.post("/api/get_application")
+async def post_application(application: NewApplication = Body(...)):
     
     try:
         data, error = supabase.table('application').insert([
@@ -62,3 +65,14 @@ async def post_application(application: Application = Body(...)):
     
     except Exception as e:
         return {"success": False, "error": e}
+
+@app.put("/api/get_application")
+@router.put("/api/get_application")
+async def update_application(application: UpdateApplication):
+    update_data = {
+        'status': application.status,
+        'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    update = supabase.from_('application').update(update_data).eq('application_id', application.application_id).execute().data
+    return update

@@ -30,7 +30,7 @@ async def get_staff(email: str = None, staff_id: int = None):
         staff_data = supabase.from_('staff').select("*").eq('email', email).execute().data
         if not staff_data:
             raise HTTPException(status_code=404, detail="Staff not found with the provided email.")
-        return staff_data[0]
+        return staff_data
     elif staff_id:
         if staff_id == 0:
             staff = supabase.from_("staff").select("*").execute().data
@@ -38,6 +38,6 @@ async def get_staff(email: str = None, staff_id: int = None):
         staff_data = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data
         if not staff_data:
             raise HTTPException(status_code=404, detail="Staff not found with the provided staff_id.")
-        return staff_data[0]
+        return staff_data
     else:
         raise HTTPException(status_code=400, detail="Either email or staff_id must be provided.")
