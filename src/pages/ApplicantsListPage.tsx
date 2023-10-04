@@ -4,43 +4,41 @@ import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaLocationDot } from "react-icons/fa6";
 import Button from "../components/Button";
-import { getAsync } from "../utilities/Services";
+import { setInitial } from "../utilities/Services";
+import { useNavigate } from "react-router-dom";
+
+
+interface Role {
+  role_id: number,
+  role_name: string,
+  created_at: string,
+  appl_close_date: string,
+  dept: string,
+  level: string,
+  location: string
+}
+
+
 
 const ApplicantsListPage = () => {
+  const navigate = useNavigate()
   const role_ID = useParams<{ role_ID: string | undefined }>();
-  const [roleData, setRoleData] = useState<any>(null);
-  const [applicantsData, setApplicantsData] = useState<any>(null);
+  const [roleData, setRoleData] = useState<Role>(Object);
+  const roleid = role_ID.role_ID;
+  const [applicantsData, setApplicantsData] = useState<String>(Object);
   const [view, setView] = useState<string>("Pending");
 
-  const roleid = role_ID.role_ID;
-
-  console.log(view);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getAsync(`api/get_role?roleid=${roleid}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setRoleData(data.data.data[0]);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle error (e.g., set an error state)
+  /*useEffect(() => {
+    async function fetchData() {
+        let role = await setInitial(setRoleData,`api/get_role?roleid=${roleid}`)
+        console.log(role);
       }
-    };
 
-    if (roleid) {
-      fetchData();
     }
-
+    fetchData()
     const fetchApplicants = async () => {
       try {
         const response = await getAsync(`api/get_applicants?roleid=${roleid}`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
         const data = await response.json();
         setApplicantsData(data.data);
       } catch (error) {
@@ -52,7 +50,18 @@ const ApplicantsListPage = () => {
     if (roleid) {
       fetchApplicants();
     }
-  }, [roleid]);
+
+    
+  }, [roleid]);*/
+  
+  useEffect(() => {
+    async function fetchData() {
+        setInitial(setRoleData, `api/get_role?roleid=${roleid}`);
+    }
+    fetchData();
+  }, []);
+
+  console.log(roleData.role_id);
 
   if (!applicantsData) {
     return <div>Loading...</div>;
@@ -74,11 +83,11 @@ const ApplicantsListPage = () => {
     }
   }
 
-  const close_date = new Date(roleData.appl_close_date)
+  /*const close_date = new Date(roleData.appl_close_date)
     .toISOString()
     .split("T")[0];
 
-  const create_date = new Date(roleData.created_at).toISOString().split("T")[0];
+  const create_date = new Date(roleData.created_at).toISOString().split("T")[0];*/
 
   const selectShortlist = async () => {
     setView("Shortlisted");
@@ -115,7 +124,7 @@ const ApplicantsListPage = () => {
                     {roleData.role_name}
                   </h2>
                   <p className="text-l text-gray-600 text-left mb-1 whitespace-nowrap">
-                    {create_date}
+                    {"create_date"}
                   </p>
                   <div className="flex items-center">
                     <FaLocationDot className="text-gray-400" />
@@ -144,7 +153,7 @@ const ApplicantsListPage = () => {
                   Application Close Date
                 </h3>
                 <p className="text-l text-emerald-900 mb-4 font-bold italic">
-                  {close_date}
+                  {"close_date"}
                 </p>
               </div>
             </div>
@@ -213,7 +222,7 @@ const ApplicantsListPage = () => {
                     <th className="p-4">Skill Match (%)</th>
                   </tr>
                 </thead>
-                <tbody>
+                {/*<tbody>
                   {(() => {
                     if (applicantsData.length === 0) {
                       return (
@@ -229,16 +238,12 @@ const ApplicantsListPage = () => {
                         const applicant = applicantsData[i];
                         const staff_id = applicant.staff.staff_id;
                         const applicationId = applicant.application_id;
-                        const handleClick = (applicationId: string) => {
-                          // Navigate to the details page with the corresponding staff_id
-                          window.location.href = `/applicant-details/${applicationId}`;
-                        };
                         if (applicant.status === view) {
                           rows.push(
                             <tr
                               key={i}
                               className="border-b hover:bg-gray-100"
-                              onClick={() => handleClick(applicationId)}
+                              onClick={() => navigate(`/applicant-detail/${applicationId}`)}
                             >
                               <td className="p-2">
                                 {applicant.staff.staff_name}
@@ -271,7 +276,7 @@ const ApplicantsListPage = () => {
                       return rows;
                     }
                   })()}
-                </tbody>
+                </tbody>*/}
               </table>
             </div>
           </div>
