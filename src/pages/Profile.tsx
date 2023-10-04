@@ -19,11 +19,11 @@ interface Skill{
     skill_id: number;
     skill_name: string;
     qualified: boolean;
-}
+}[]
 
 interface Application{
     application_id: number
-    status: string
+    status: 'Applied' | 'Shortlisted' | 'Rejected'
     role: {
         role_id: number;
         role_name: string;
@@ -31,7 +31,7 @@ interface Application{
         location: string;
         appl_close_date: string;
     }
-}
+}[]
 
 export default function Profile() {
     const auth = useAuth()
@@ -47,10 +47,9 @@ export default function Profile() {
 
     useEffect(() => {
         async function fetchFirst() {
-            let staff = await setInitial(setStaff, `api/get_staff_id?email=${staff_email}`, false)
-            console.log(staff)
+            let staff = await setInitial(setStaff, `api/get_staff?email=${staff_email}`, false)
             setInitial(setSkills, `api/get_staff_skill?staff_id=${staff.staff_id}`)
-            setInitial(setApplication, `api/get_staff_application?staff_id=${staff.staff_id}`)
+            setInitial(setApplication, `api/get_application?staff_id=${staff.staff_id}`)
         }
         fetchFirst()
     }
@@ -64,7 +63,7 @@ export default function Profile() {
                     <img src={glasswindow_green} width="100px" className="rounded-full"/>
                 </div>
                 <div className="w-2/3 pl-3 text-left">
-                    <p className="font-extrabold text-2xl">{staff.staff_name}</p><br/>
+                    <p className="font-extrabold text-2xl">{staff.staff_name}</p>
                     <p className="font-bold italic text-base">{staff.curr_role}</p>
                     <p className="font-medium italic text-base">{staff.curr_dept}</p>
                     <p className="font-light italic text-base">{staff.location}</p>

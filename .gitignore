@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 #environment variables
-.env.local`
+.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -24,6 +24,9 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
+api/__pycache__/*
+api/__pycache__
+__pycache__/*
 !.vscode/extensions.json
 .idea
 .DS_Store

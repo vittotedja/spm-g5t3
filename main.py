@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api import get_staff, get_role, get_staff_skill, get_role_skill, get_staff_role_skill, get_staff_application, get_staff_role, get_staff_id, get_current_staff_role
+from api import get_applicants, get_application, get_role_skill, get_role, get_skillmatch, get_staff_role_skill, get_staff_role, get_staff_skill, get_staff, get_totalapplications, get_manager_role,get_skill
 
 app = FastAPI()
 app.add_middleware(
@@ -10,13 +10,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(get_staff.router)
-app.include_router(get_role.router)
-app.include_router(get_staff_skill.router)
+app.include_router(get_applicants.router)
+app.include_router(get_application.router)
 app.include_router(get_role_skill.router)
+app.include_router(get_role.router)
+app.include_router(get_skillmatch.router)
 app.include_router(get_staff_role_skill.router)
-# app.include_router(create_role_listing)
-app.include_router(get_staff_application.router)
-app.include_router(get_staff_id.router)
-app.include_router(get_current_staff_role.router)
+app.include_router(get_manager_role.router)
+app.include_router(get_skill.router)
+app.include_router(get_staff_role.router)
+app.include_router(get_staff_skill.router)
+app.include_router(get_staff.router)
+app.include_router(get_totalapplications.router)
