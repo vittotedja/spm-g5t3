@@ -1,41 +1,36 @@
-import ProgressBar from "../components/ProgressBar";
+//import ProgressBar from "../components/ProgressBar";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaLocationDot } from "react-icons/fa6";
 import Button from "../components/Button";
-import { setInitial } from "../utilities/Services";
-import { useNavigate } from "react-router-dom";
-
+import { getAsync, setInitial } from "../utilities/Services";
+//import { useNavigate } from "react-router-dom";
 
 interface Role {
-  role_id: number,
-  role_name: string,
-  created_at: string,
-  appl_close_date: string,
-  dept: string,
-  level: string,
-  location: string
+  role_id: number;
+  role_name: string;
+  created_at: string;
+  appl_close_date: string;
+  dept: string;
+  level: string;
+  location: string;
 }
 
-
-
 const ApplicantsListPage = () => {
-  const navigate = useNavigate()
+  //const navigate = useNavigate();
   const role_ID = useParams<{ role_ID: string | undefined }>();
   const [roleData, setRoleData] = useState<Role>(Object);
   const roleid = role_ID.role_ID;
   const [applicantsData, setApplicantsData] = useState<String>(Object);
   const [view, setView] = useState<string>("Pending");
 
-  /*useEffect(() => {
+  useEffect(() => {
     async function fetchData() {
-        let role = await setInitial(setRoleData,`api/get_role?roleid=${roleid}`)
-        console.log(role);
-      }
-
+      let role = await setInitial(setRoleData, `api/get_role?roleid=${roleid}`);
+      console.log(role);
     }
-    fetchData()
+    fetchData();
     const fetchApplicants = async () => {
       try {
         const response = await getAsync(`api/get_applicants?roleid=${roleid}`);
@@ -50,13 +45,11 @@ const ApplicantsListPage = () => {
     if (roleid) {
       fetchApplicants();
     }
+  }, [roleid]);
 
-    
-  }, [roleid]);*/
-  
   useEffect(() => {
     async function fetchData() {
-        setInitial(setRoleData, `api/get_role?roleid=${roleid}`);
+      setInitial(setRoleData, `api/get_role?roleid=${roleid}`);
     }
     fetchData();
   }, []);

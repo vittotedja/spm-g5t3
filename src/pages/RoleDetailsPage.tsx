@@ -7,7 +7,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 const RoleDetailsPage = () => {
 
   //const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
-  const staffID = 1
+  const staffID = "1"
   console.log("This is staff ID", staffID)
   const role_ID = useParams<{ role_ID: string | undefined }>();
   console.log("This is role id", role_ID.role_ID)
