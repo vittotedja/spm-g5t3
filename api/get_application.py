@@ -1,9 +1,12 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Body
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
+
+from datetime import datetime
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -20,8 +23,56 @@ app.add_middleware(
 )
 router = APIRouter()
 
+class TimestampzConverter(BaseModel):
+    rootmodel: datetime
+    def __get__(self, obj, type=None):
+        return super().__get__(obj, type).isoformat()
+
+class NewApplication(BaseModel):
+    application_id: int
+    staff_id: int
+    role_id: int
+    status: str = "Pending"
+    statement: str
+    
+class UpdateApplication(BaseModel):
+    application_id: int
+    status: str
+
 @app.get("/api/get_application")
 @router.get("/api/get_application")
 async def get_application(application_id: int):
     application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
     return application
+
+@app.post("/api/get_application")
+@router.post("/api/get_application")
+async def post_application(application: NewApplication = Body(...)):
+    
+    try:
+        data, error = supabase.table('application').insert([
+            application.dict()
+        ]).execute()
+
+        print(application.application_id)
+
+        if error:
+            print(error)  # Log the error for debugging
+            return {"success": False, "error": error}
+        else:
+            return {"success": True, "data": data}  # Return the first item in the response
+
+    
+    except Exception as e:
+        return {"success": False, "error": e}
+
+@app.put("/api/get_application")
+@router.put("/api/get_application")
+async def update_application(application: UpdateApplication):
+    update_data = {
+        'status': application.status,
+        'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    update = supabase.from_('application').update(update_data).eq('application_id', application.application_id).execute().data
+    return update

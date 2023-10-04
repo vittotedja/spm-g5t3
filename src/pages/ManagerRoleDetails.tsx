@@ -1,16 +1,29 @@
+// import {useState} from 'react';
+import Button from '../components/Button';
 import PostedRoleTable from '../components/PostedRoleTable';
+import {useNavigate} from 'react-router-dom';
 
 function ManagerRoleDetails() {
+	const isHR = true;
+	// const [isHR, setIsHR] = useState(true);
+	const navigate = useNavigate();
+
 	return (
 		<>
-			<div className="container mx-auto items-center justify-center h-screen w-4/5">
-				<div className="flex flex-row justify-between items-center pt-5 px-3">
-					<h1 className="font-bold text-3xl text-start">
+			<div className="container items-center justify-center w-4/5 h-screen mx-auto">
+				<div className="flex flex-row items-center justify-between px-3 pt-5">
+					<h1 className="text-3xl font-bold text-start">
 						All Posted Role Listings
 					</h1>
-					<button className="rounded-md bg-emerald-600 text-white font-bold p-3 hover:bg-emerald-800">
-						+ Add New Role
-					</button>
+					{isHR && (
+						<Button
+							styleType="green"
+							onClick={() => navigate('/manager/rolelisting')}
+							className="text-black bg-green"
+						>
+							+ Add New Role
+						</Button>
+					)}
 				</div>
 
 				<div className="flex flex-col items-center justify-center w-full">

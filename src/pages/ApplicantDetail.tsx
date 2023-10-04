@@ -34,26 +34,25 @@ export default function ApplicantDetail() {
     const navigate = useNavigate()
     // TODO: get application_id from applicants list page
     const application_id = 1
-    
+
     let [application, setApplication] = useState<Application>(Object);
     let [applicant, setApplicant] = useState<Applicant>(Object);
     let [skill, setSkill] = useState<Skill[]>([]);
-    
     useEffect(() => {
         async function fetchData() {
             let application = await setInitial(setApplication, `api/get_application?application_id=${application_id}`, false)
-            setInitial(setApplicant, `api/get_staff?staff_id=${application.staff_id}`, false)
+            setInitial(setApplicant, `api/get_staff?staff_id=2`, false)
             setInitial(setSkill, `api/get_staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
         }
         fetchData()
     }, [])
-    
-    
+
+
     async function update_application(status: string) {
-        let res = await putAsync('api/update_application', {application_id: application_id, status: status})
+        let res = await putAsync('api/get_application', {application_id: application_id, status: status})
         res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
     }
-    
+
     // TODO: show which role this application is for
     return (
         <>
@@ -75,7 +74,7 @@ export default function ApplicantDetail() {
                     <p className="font-light italic text-base">{applicant.location}</p>
                 </div>
                 <div className="w-4/12 text-right flex justify-end space-x-2">
-                    {application.status === 'Pending'
+                    {application.status === 'Applied'
                         ? <>
                             <Button styleType="green" onClick={() => update_application('Shortlisted')}>Shortlist</Button>
                             <Button styleType="red" onClick={() => update_application('Rejected')}>Reject</Button>
@@ -84,12 +83,12 @@ export default function ApplicantDetail() {
                     }
                 </div>
             </div>
-                        
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills-Match %</p>
                 <ProgressBar percentage={skill.filter((s: any) => s.qualified).length/skill.length*100}/>
             </div>
-        
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
                 {skill[0]
@@ -106,7 +105,7 @@ export default function ApplicantDetail() {
                     </div>
                 }
             </div>
-            
+
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
                 <p className="font-medium text-md text-left">{application.statement}</p>
