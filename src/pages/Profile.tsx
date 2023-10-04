@@ -4,6 +4,8 @@ import glasswindow_green from "../assets/glasswindow_green.png"
 import Badge from "../components/Badge";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import { setInitial } from "../utilities/Services";
+import { useAuth } from "../utilities/Auth";
 
 interface Staff{
     staff_id: number;
@@ -20,26 +22,22 @@ interface Skill{
 }
 
 interface Application{
+    application_id: number
+    status: string
     role: {
         role_id: number;
         role_name: string;
         dept: string;
         location: string;
         appl_close_date: string;
-      }
-      status: string
+    }
 }
 
 export default function Profile() {
-    // TODO: set actual staff ID
-    const staffId = 1
-    let [staff, setStaff] = useState<Staff>({
-        staff_id: 0,
-        staff_name: '',
-        curr_role: '',
-        curr_dept: '',
-        location: '',
-      });
+    const auth = useAuth()
+    const staff_email = auth?.user?.email
+
+    let [staff, setStaff] = useState<Staff>(Object);
     let [skills, setSkills] = useState<Skill[]>([])
     let [application, setApplication] = useState<Application[]>([])
     const navigate = useNavigate();
@@ -48,26 +46,13 @@ export default function Profile() {
       };
 
     useEffect(() => {
-        fetch(`http://localhost:8000/api/get_staff?staff_id=${staffId}`)
-        .then((response) => response.json())
-        .then((data) => {
-            setStaff(data[0])
+        async function fetchFirst() {
+            let staff = await setInitial(setStaff, `api/get_staff_id?email=${staff_email}`, false)
             console.log(staff)
-        })
-
-        fetch(`http://localhost:8000/api/get_staff_skill?staff_id=${staffId}`)
-        .then((response) => response.json())
-        .then((data) => {
-            setSkills(data)
-            console.log(skills)
-        })
-
-        fetch(`http://localhost:8000/api/get_staff_application?staff_id=${staffId}`)
-        .then((response) => response.json())
-        .then((data) => {
-            setApplication(data)
-            console.log(application)
-        })
+            setInitial(setSkills, `api/get_staff_skill?staff_id=${staff.staff_id}`)
+            setInitial(setApplication, `api/get_staff_application?staff_id=${staff.staff_id}`)
+        }
+        fetchFirst()
     }
     , [])
     return (
@@ -91,7 +76,7 @@ export default function Profile() {
                 
 
                     {skills[0]
-                    ?<div className="text-left">{skills.map((sk: {skill_name: string})=> 
+                    ?<div className="text-left">{skills.map((sk)=> 
                         <Badge key={sk.skill_name} styleType="green">
                         {sk.skill_name}
                     </Badge>
@@ -109,8 +94,8 @@ export default function Profile() {
                 {/* NO APPLICATION */}
                 {application[0]
                     ? <div className="flex">
-                    {application.map((appl: {role: {role_id: number, role_name: string, dept: string, location: string, appl_close_date: string}, status: string}) => (
-                        <ApplicationCard application={appl} staff_id={staffId} />
+                    {application.map((appl) => (
+                        <ApplicationCard key={appl.application_id} application={appl} staff_id={staff.staff_id} />
                     ))}
                     </div>
                     : 

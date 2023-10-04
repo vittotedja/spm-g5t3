@@ -4,6 +4,7 @@ import ProgressBar from './ProgressBar';
 import { useState, useEffect } from 'react';
 import formatDate from '../utilities/Utiliities';
 import { useNavigate } from 'react-router-dom';
+import { setInitial } from '../utilities/Services';
 
 interface ApplicationCardProps {
   application: {
@@ -24,13 +25,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, staff_id
   const navigate = useNavigate();
   const roleCardButton = () => {navigate(`/role-listing/${application.role.role_id}`)}
     useEffect(() => {
-      
-      fetch(`http://localhost:8000/api/get_staff_role_skill?staff_id=${staff_id}&role_id=${application.role.role_id}`)
-          .then((res) => res.json())
-          .then((data) => {
-              setSkill(data);
-              console.log(Object.entries(data))
-          });
+      setInitial(setSkill, `api/get_staff_role_skill?staff_id=${staff_id}&role_id=${application.role.role_id}`)
   }, []);
 
 

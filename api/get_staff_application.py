@@ -30,5 +30,5 @@ router = APIRouter()
 @app.get("/api/get_staff_application")
 @router.get("/api/get_staff_application")
 async def get_staff_application(staff_id: int):
-    staff_application = supabase.table('application').select('status, role(*)').eq('staff_id', staff_id).execute().data
+    staff_application = supabase.table('application').select('application_id, status, role(*)').eq('staff_id', staff_id).execute().data
     return staff_application
