@@ -18,8 +18,6 @@ interface Role {
   location: string
 }
 
-
-
 const ApplicantsListPage = () => {
   const navigate = useNavigate()
   const role_ID = useParams<{ role_ID: string | undefined }>();
@@ -56,12 +54,13 @@ const ApplicantsListPage = () => {
   
   useEffect(() => {
     async function fetchData() {
-        setInitial(setRoleData, `api/get_role?roleid=${roleid}`);
+        setInitial(setRoleData, `api/get_role?roleid=${roleid}`, false);
     }
     fetchData();
   }, []);
 
-  console.log(roleData.role_id);
+  console.log(roleData);
+
 
   if (!applicantsData) {
     return <div>Loading...</div>;
