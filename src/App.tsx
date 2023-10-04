@@ -1,4 +1,5 @@
-import "./App.css";
+import './App.css';
+
 import { Route, Routes, useLocation } from "react-router-dom";
 import ManagerRoleDetails from "./pages/ManagerRoleDetails";
 import Profile from "./pages/Profile";
