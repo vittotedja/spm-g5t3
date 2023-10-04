@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Button from "./Button";
 import Badge from "./Badge";
-import { getAsync } from "../utilities/Services";
+import { getAsync, postAsync } from "../utilities/Services";
 
 interface SkillsMapProps {
   staffID: string | undefined;
@@ -44,7 +44,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
       const staffID = 4;
       const roleID = 10;
       const response = await getAsync(
-        `api/totalapplications?staffid=${staffID}&roleid=${roleID}`
+        `api/get_totalapplications?staffid=${staffID}&roleid=${roleID}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,19 +64,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
         const reason = window.prompt("Please enter your reason for applying");
         if (reason !== null && reason !== "") {
           //insert data
-          const applyResponse = await fetch("http://localhost:8000/api/apply", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              application_id: (
-                Math.floor(Math.random() * 100000) + 1
-              ).toString(),
-              staff_id: staffID,
-              role_id: roleID,
-              statement: reason,
-            }),
+          const applyResponse = await postAsync("api/post_application", {
+            application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
+            staff_id: staffID,
+            role_id: roleID,
+            statement: reason,
           });
 
           if (!applyResponse.ok) {

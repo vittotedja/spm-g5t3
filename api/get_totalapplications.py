@@ -30,8 +30,8 @@ router = APIRouter()
 
     
 #get total applications of a staff for validation
-@app.get("/api/totalapplications")
-@router.get("/api/totalapplications")
+@app.get("/api/get_totalapplications")
+@router.get("/api/get_totalapplications")
 
 async def get_totalapplications(staffid: int = None, roleid: int = None):
     if staffid:
