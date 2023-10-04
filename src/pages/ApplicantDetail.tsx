@@ -41,7 +41,7 @@ export default function ApplicantDetail() {
     useEffect(() => {
         async function fetchData() {
             let application = await setInitial(setApplication, `api/get_application?application_id=${application_id}`, false)
-            setInitial(setApplicant, `api/get_staff?staff_id=2`, false)
+            setInitial(setApplicant, `api/get_staff?staff_id=${application.staff_id}`, false)
             setInitial(setSkill, `api/get_staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
         }
         fetchData()
