@@ -55,7 +55,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
         const reason = window.prompt("Please enter your reason for applying");
         if (reason !== null && reason !== "") {
           //insert data
-          const applyResponse = await postAsync("api/post_application", {
+          const applyResponse = await postAsync("api/get_application", {
             application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
             staff_id: staffID,
             role_id: roleID,
