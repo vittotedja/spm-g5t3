@@ -20,16 +20,19 @@ interface Skill{
 }
 
 interface Application{
-    role_id: number;
-    role_name: string;
-    dept: string;
-    location: string;
-    appl_close_date: string;
+    role: {
+        role_id: number;
+        role_name: string;
+        dept: string;
+        location: string;
+        appl_close_date: string;
+      }
+      status: string
 }
 
 export default function Profile() {
     // TODO: set actual staff ID
-    const staffId = 3
+    const staffId = 1
     let [staff, setStaff] = useState<Staff>({
         staff_id: 0,
         staff_name: '',
@@ -106,7 +109,7 @@ export default function Profile() {
                 {/* NO APPLICATION */}
                 {application[0]
                     ? <div className="flex">
-                    {application.map((appl: {role_id: number, role_name: string, dept: string, location: string, appl_close_date: string}) => (
+                    {application.map((appl: {role: {role_id: number, role_name: string, dept: string, location: string, appl_close_date: string}, status: string}) => (
                         <ApplicationCard application={appl} staff_id={staffId} />
                     ))}
                     </div>

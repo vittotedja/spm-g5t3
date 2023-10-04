@@ -4,7 +4,6 @@ import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-import pandas as pd
 # Load environment variables from .env file
 load_dotenv()
 
@@ -31,13 +30,5 @@ router = APIRouter()
 @app.get("/api/get_staff_application")
 @router.get("/api/get_staff_application")
 async def get_staff_application(staff_id: int):
-    staff_application = supabase.from_("application").select("*").eq("staff_id", staff_id).execute().data
-    role_table = supabase.from_("role").select("*").execute().data
-    role_id = []
-    for appl in staff_application:
-        role_id.append(appl["role_id"])
-    role_name = []
-    for role in role_table:
-        if role["role_id"] in role_id:
-            role_name.append(role)
-    return role_name
+    staff_application = supabase.table('application').select('status, role(*)').eq('staff_id', staff_id).execute().data
+    return staff_application
