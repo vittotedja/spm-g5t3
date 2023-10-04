@@ -14,8 +14,9 @@ interface FilterBoxProps {
 
 const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
   const [openFilter, setOpenFilter] = useState<string | null>(null);
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string[]>>({});
-
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string[]>
+  >({});
 
   const toggleFilter = (filterName: string) => {
     if (openFilter === filterName) {
@@ -41,27 +42,40 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
             <img src={openFilter === filter.name ? arrowUp : arrowDown}></img>
           </div>
           {openFilter === filter.name && (
-            <div className="pl-4 py-2">
-              {filter.values.map((value) => (
-                <div key={value}>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      className="bg-transparent border border-2 border-olive-green accent-olive-green rounded w-5 h-5 cursor-pointer outline-none mr-2"
-                      value={value}
-                      onChange={(e) => {
-                        const updatedValues = e.target.checked
-                          ? [...(selectedFilters[filter.name] || []), value]
-                          : (selectedFilters[filter.name] || []).filter((v) => v !== value);
-                        onFilterChange(filter.name, updatedValues);
-                        setSelectedFilters((prev) => ({ ...prev, [filter.name]: updatedValues }));
-                      }}
-                    />
-                    {value}
-                  </label>
+            <>
+              {filter.values.length == 0 && (
+                <div className="text-center text-xs">
+                  No filters available currently
                 </div>
-              ))}
-            </div>
+              )}
+              <div className="pl-4 py-2">
+                {filter.values.length > 0 &&
+                  filter.values.map((value) => (
+                    <div key={value}>
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          className="bg-transparent border border-2 border-olive-green accent-olive-green rounded w-5 h-5 cursor-pointer outline-none mr-2"
+                          value={value}
+                          onChange={(e) => {
+                            const updatedValues = e.target.checked
+                              ? [...(selectedFilters[filter.name] || []), value]
+                              : (selectedFilters[filter.name] || []).filter(
+                                  (v) => v !== value
+                                );
+                            onFilterChange(filter.name, updatedValues);
+                            setSelectedFilters((prev) => ({
+                              ...prev,
+                              [filter.name]: updatedValues,
+                            }));
+                          }}
+                        />
+                        {value}
+                      </label>
+                    </div>
+                  ))}
+              </div>
+            </>
           )}
         </div>
       ))}

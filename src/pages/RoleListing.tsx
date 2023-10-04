@@ -37,36 +37,24 @@ const RoleListing: React.FC = () => {
     Record<string, string[]>
   >({});
 
-  const fetchFilters = async () => {
-    const skillsResponse = await getAsync(`api/get_all_skill`);
-    const skillsData: string[] = await skillsResponse.json();
-    const regionResponse = await getAsync(`api/get_all_region`);
-    const regionData: string[] = await regionResponse.json();
-    const roleNameResponse = await getAsync(`api/get_all_role`);
-    const roleNameData: string[] = await roleNameResponse.json();
-    const departmentResponse = await getAsync(`api/get_all_department`);
-    const departmentData: string[] = await departmentResponse.json();
-    const filters = [
-      { name: "Skills", values: skillsData },
-      { name: "Region", values: regionData },
-      { name: "Role Name", values: roleNameData },
-      { name: "Department", values: departmentData },
-    ];
-    setFilters(filters);
-  };
-
   const fetchFirst = async () => {
     setPage(1); // Reset to the first page
     setRoles([]); // Clear existing roles
     setHasMore(true); // Reset hasMore
     setLoading(true); // Set loading to true
-    await fetchFilters();
     const response = await getAsync(
       `api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
         selectedFilters
       )}`
     );
     const data = await response.json();
+    const filters = [
+      { name: "Skills", values: data.all_skills },
+      { name: "Region", values: data.all_regions },
+      { name: "Role Name", values: data.all_roles },
+      { name: "Department", values: data.all_departments },
+    ];
+    setFilters(filters);
     if (data.data.length === 0) {
       setHasMore(false);
     } else {

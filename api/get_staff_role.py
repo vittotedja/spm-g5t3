@@ -7,6 +7,7 @@ from supabase import create_client, Client
 from datetime import datetime, timezone
 import math
 import json
+import pandas as pd
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -37,19 +38,14 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
         # Fetch all skills, role_skills, and roles in one go
         all_skills = supabase.table("skill").select("*").execute().data
         all_role_skills = supabase.table("role_skill").select("*").execute().data
+        df_skills = pd.DataFrame(all_skills)
+        df_role_skills = pd.DataFrame(all_role_skills)  
 
         # If skill filter is applied
         if 'Skills' in parsed_filters and parsed_filters['Skills']:
             skill_name_filters = parsed_filters['Skills']
-            print(skill_name_filters)
-
-            # Find the skill_id for the given skill_name from the fetched data
-            matching_skill_ids = [skill['skill_id'] for skill in all_skills if skill['skill_name'] in skill_name_filters]
-            print("MATCHING IDS",matching_skill_ids)
-            
-            # Extract role_ids associated with the skill_id from the fetched role_skill data
-            role_ids = [role_skill['role_id'] for role_skill in all_role_skills if role_skill['skill_id'] in matching_skill_ids]
-            print("ROLE IDS",role_ids)
+            matching_skill_ids = df_skills[df_skills['skill_name'].isin(skill_name_filters)]['skill_id'].tolist()
+            role_ids = df_role_skills[df_role_skills['skill_id'].isin(matching_skill_ids)]['role_id'].tolist()
             query = query.in_("role_id", role_ids)
 
         if 'Region' in parsed_filters and parsed_filters['Region']:
@@ -72,28 +68,25 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
 
         # Get all roles and filter out the applied ones
         all_roles_response = query.execute()
-
-        # Separate roles with null appl_close_date and those with a valid date
-        roles_with_date = [role for role in all_roles_response.data or [] if role["appl_close_date"] is not None and datetime.fromisoformat(
-            role["appl_close_date"]) >= today and role["role_id"] not in applied_role_IDs]
-        roles_without_date = [role for role in all_roles_response.data or [
-        ] if role["appl_close_date"] is None and role["role_id"] not in applied_role_IDs]
+        df_roles = pd.DataFrame(all_roles_response.data or [])
+        roles_with_date = df_roles[(df_roles['appl_close_date'].notnull()) & (pd.to_datetime(df_roles['appl_close_date']) >= today) & (~df_roles['role_id'].isin(applied_role_IDs))]
+        roles_without_date = df_roles[(df_roles['appl_close_date'].isnull()) & (~df_roles['role_id'].isin(applied_role_IDs))]
 
         if sort_field == 'appl_close_date':
-            roles_with_date.sort(
-                key=lambda x: x["appl_close_date"], reverse=(order == 'desc'))
-            all_unapplied_roles = roles_with_date + roles_without_date
+            roles_with_date = roles_with_date.sort_values(by='appl_close_date', ascending=(order != 'desc'))
+            all_unapplied_roles = pd.concat([roles_with_date, roles_without_date])
         else:
-            all_unapplied_roles = roles_with_date + roles_without_date
+            all_unapplied_roles = pd.concat([roles_with_date, roles_without_date])
             if sort_field in ['created_at', 'application_date']:
-                all_unapplied_roles.sort(key=lambda x: parse_datetime(x.get(
-                    sort_field, '') or '1900-01-01T00:00:00+00:00') if x.get(sort_field) else datetime.min, reverse=(order == 'desc'))
-            else:  # For 'role_name' and 'dept'
-                all_unapplied_roles.sort(key=lambda x: x.get(
-                    sort_field, ''), reverse=(order == 'desc'))
+                all_unapplied_roles = all_unapplied_roles.sort_values(by=sort_field, ascending=(order != 'desc'))
+            else: 
+                all_unapplied_roles = all_unapplied_roles.sort_values(by=sort_field, ascending=(order != 'desc'))
 
         # Slice the sorted list for pagination
-        unapplied_roles = all_unapplied_roles[offset:offset+limit]
+       # Slice the sorted DataFrame for pagination
+        unapplied_roles_df = all_unapplied_roles.iloc[offset:offset+limit]
+        unapplied_roles = unapplied_roles_df.to_dict('records')
+
 
         # Get staff skills once outside the loop
         staff_skill_response = supabase.table("staff_skill").select(
@@ -112,7 +105,11 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
 
         total_roles = len(all_unapplied_roles)
         total_pages = math.ceil(total_roles / limit)
-
+        all_skills = fetch_all_skill()
+        df = pd.DataFrame(all_unapplied_roles)
+        all_role_names = df['role_name'].drop_duplicates().sort_values().tolist()
+        all_departments = df['dept'].drop_duplicates().sort_values().tolist()
+        all_regions = df['location'].dropna().drop_duplicates().sort_values().tolist()
         return {
             "data": unapplied_roles,
             "pagination": {
@@ -120,7 +117,11 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
                 "total_pages": total_pages,
                 "limit": limit,
                 "total_records": total_roles
-            }
+            },
+            "all_regions": all_regions,
+            "all_roles": all_role_names,
+            "all_skills": all_skills,
+            "all_departments": all_departments
         }
     else:
         result = supabase.table("roles").select().execute()
@@ -141,3 +142,8 @@ def parse_datetime(datetime_str):
 
     raise ValueError(
         f"time data {datetime_str!r} does not match any known formats")
+
+def fetch_all_skill():
+    skills = supabase.from_('skill').select("skill_name").execute().data
+    df = pd.DataFrame(skills)
+    return df['skill_name'].drop_duplicates().sort_values().tolist()
