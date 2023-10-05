@@ -13,17 +13,24 @@ interface FilterBoxProps {
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
-  const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const [openFilters, setOpenFilters] = useState<string[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
 
   const toggleFilter = (filterName: string) => {
-    if (openFilter === filterName) {
-      setOpenFilter(null); // Close the currently open filter
+    if (openFilters.includes(filterName)) {
+      setOpenFilters((prev) => prev.filter((name) => name !== filterName));
     } else {
-      setOpenFilter(filterName); // Open the clicked filter
+      setOpenFilters((prev) => [...prev, filterName]);
     }
+  };
+
+  const clearAllFilters = () => {
+    setSelectedFilters({});
+    filters.forEach((filter) => {
+      onFilterChange(filter.name, []);
+    });
   };
 
   return (
@@ -31,7 +38,12 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
       <div className="bg-olive-green text-white p-2 mb-4 font-bold rounded-t-xl">
         Filter
       </div>
-
+      <div
+        className="text-xs cursor-pointer mr-4 text-right"
+        onClick={clearAllFilters}
+      >
+        Clear All
+      </div>
       {filters.map((filter) => (
         <div key={filter.name}>
           <div
@@ -39,12 +51,14 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
             onClick={() => toggleFilter(filter.name)}
           >
             {filter.name}
-            <img src={openFilter === filter.name ? arrowUp : arrowDown}></img>
+            <img
+              src={openFilters.includes(filter.name) ? arrowUp : arrowDown}
+            ></img>
           </div>
-          {openFilter === filter.name && (
+          {openFilters.includes(filter.name) && (
             <>
-              {filter.values.length == 0 && (
-                <div className="text-center text-xs">
+              {filter.values.length === 0 && (
+                <div className="text-center text-xs mt-2">
                   No filters available currently
                 </div>
               )}
@@ -57,6 +71,9 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
                           type="checkbox"
                           className="bg-transparent border border-2 border-olive-green accent-olive-green rounded w-5 h-5 cursor-pointer outline-none mr-2"
                           value={value}
+                          checked={(
+                            selectedFilters[filter.name] || []
+                          ).includes(value)}
                           onChange={(e) => {
                             const updatedValues = e.target.checked
                               ? [...(selectedFilters[filter.name] || []), value]

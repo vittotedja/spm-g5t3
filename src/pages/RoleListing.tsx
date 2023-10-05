@@ -99,7 +99,7 @@ const RoleListing: React.FC = () => {
 
   const handleOrderChange = (newOrder: string) => {
     setOrder(newOrder);
-  };
+  }; 
 
   const handleFilterChange = (name: string, values: string[]) => {
     setSelectedFilters((prev) => ({ ...prev, [name]: values }));
@@ -107,6 +107,7 @@ const RoleListing: React.FC = () => {
 
   useEffect(() => {
     fetchFirst();
+    console.log(selectedFilters)
   }, [sortField, order, selectedFilters]);
 
   return (

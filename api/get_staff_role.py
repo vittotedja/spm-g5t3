@@ -31,46 +31,56 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
     parsed_filters = json.loads(filters)
     if user_id:
         offset = (page - 1) * limit
-      # Default query to fetch roles and their associated skills
-        query = supabase.table("role").select(
-            "*, role_skill!role_skill_role_id_fkey(skill_id)")
-
-        # Fetch all skills, role_skills, and roles in one go
         all_skills = supabase.table("skill").select("*").execute().data
-        all_role_skills = supabase.table("role_skill").select("*").execute().data
-        df_skills = pd.DataFrame(all_skills)
-        df_role_skills = pd.DataFrame(all_role_skills)  
+        df_skills = pd.DataFrame(all_skills)  
 
-        # If skill filter is applied
+        # Fetch all roles from the database
+        all_roles_response = supabase.table("role").select(
+            "*, role_skill!role_skill_role_id_fkey(skill_id)").execute()
+        df_all_roles = pd.DataFrame(all_roles_response.data or [])
+
+        # Get applied roles for the user
+        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(user_id)).execute()
+        applied_role_IDs = [role["role_id"] for role in applied_roles_response.data or []]
+
+        # Filter out the applied roles
+        all_unapplied_roles_no_filters = df_all_roles[~df_all_roles['role_id'].isin(applied_role_IDs)]
+        unique_skill_ids = set()
+        for skill_list in all_unapplied_roles_no_filters['role_skill']:
+            for skill in skill_list:
+                unique_skill_ids.add(skill['skill_id'])
+        filtered_skills = df_skills[df_skills['skill_id'].isin(unique_skill_ids)]
+        all_skills = filtered_skills['skill_name'].tolist()
+        df = pd.DataFrame(all_unapplied_roles_no_filters)
+        all_role_names = df['role_name'].drop_duplicates().sort_values().tolist()
+        all_departments = df['dept'].drop_duplicates().sort_values().tolist()
+        all_regions = df['location'].dropna().drop_duplicates().sort_values().tolist()
+
+        # Filter roles by skill ID
         if 'Skills' in parsed_filters and parsed_filters['Skills']:
             skill_name_filters = parsed_filters['Skills']
             matching_skill_ids = df_skills[df_skills['skill_name'].isin(skill_name_filters)]['skill_id'].tolist()
-            role_ids = df_role_skills[df_role_skills['skill_id'].isin(matching_skill_ids)]['role_id'].tolist()
-            query = query.in_("role_id", role_ids)
+            df = df[df['role_skill'].apply(lambda x: any(skill['skill_id'] in matching_skill_ids for skill in x))]
 
+        # Filter roles by region
         if 'Region' in parsed_filters and parsed_filters['Region']:
             region_filters = parsed_filters['Region']
-            query = query.in_("location", region_filters)
+            df = df[df['location'].isin(region_filters)]
+
+        # Filter roles by role name
         if 'Role Name' in parsed_filters and parsed_filters['Role Name']:
             role_name_filters = parsed_filters['Role Name']
-            query = query.in_("role_name", role_name_filters)
+            df = df[df['role_name'].isin(role_name_filters)]
+
+        # Filter roles by department
         if 'Department' in parsed_filters and parsed_filters['Department']:
             department_filters = parsed_filters['Department']
-            query = query.in_("dept", department_filters)
+            df = df[df['dept'].isin(department_filters)]
 
-        # Get applied roles
-        applied_roles_response = supabase.table("application").select(
-            "role_id").eq("staff_id", str(user_id)).execute()
-        applied_role_IDs = [role["role_id"]
-                            for role in applied_roles_response.data or []]
 
         today = datetime.utcnow().replace(tzinfo=timezone.utc)
-
-        # Get all roles and filter out the applied ones
-        all_roles_response = query.execute()
-        df_roles = pd.DataFrame(all_roles_response.data or [])
-        roles_with_date = df_roles[(df_roles['appl_close_date'].notnull()) & (pd.to_datetime(df_roles['appl_close_date']) >= today) & (~df_roles['role_id'].isin(applied_role_IDs))]
-        roles_without_date = df_roles[(df_roles['appl_close_date'].isnull()) & (~df_roles['role_id'].isin(applied_role_IDs))]
+        roles_with_date = df[(df['appl_close_date'].notnull()) & (pd.to_datetime(df['appl_close_date'], utc=True) >= today) & (~df['role_id'].isin(applied_role_IDs))]
+        roles_without_date = df[(df['appl_close_date'].isnull()) & (~df['role_id'].isin(applied_role_IDs))]
 
         if sort_field == 'appl_close_date':
             roles_with_date = roles_with_date.sort_values(by='appl_close_date', ascending=(order != 'desc'))
@@ -82,13 +92,9 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
             else: 
                 all_unapplied_roles = all_unapplied_roles.sort_values(by=sort_field, ascending=(order != 'desc'))
 
-        # Slice the sorted list for pagination
-       # Slice the sorted DataFrame for pagination
         unapplied_roles_df = all_unapplied_roles.iloc[offset:offset+limit]
         unapplied_roles = unapplied_roles_df.to_dict('records')
 
-
-        # Get staff skills once outside the loop
         staff_skill_response = supabase.table("staff_skill").select(
             "skill_id").eq("staff_id", str(user_id)).execute()
         staff_skill_ids_set = set(skill['skill_id']
@@ -105,11 +111,7 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
 
         total_roles = len(all_unapplied_roles)
         total_pages = math.ceil(total_roles / limit)
-        all_skills = fetch_all_skill()
-        df = pd.DataFrame(all_unapplied_roles)
-        all_role_names = df['role_name'].drop_duplicates().sort_values().tolist()
-        all_departments = df['dept'].drop_duplicates().sort_values().tolist()
-        all_regions = df['location'].dropna().drop_duplicates().sort_values().tolist()
+        
         return {
             "data": unapplied_roles,
             "pagination": {
