@@ -31,9 +31,9 @@ router = APIRouter()
 
 @app.get("/api/get_applicants")
 @router.get("/api/get_applicants")
-async def get_applicants(roleid: int = None):
-    if roleid:
-        response = supabase.from_("application").select("staff_id", "status","application_id").eq("role_id", str(roleid)).execute()
+async def get_applicants(role_id: int = None):
+    if role_id:
+        response = supabase.from_("application").select("staff_id", "status","application_id").eq("role_id", str(role_id)).execute()
         data = response.data
         
         staffid = [entry["staff_id"] for entry in data]
@@ -42,7 +42,7 @@ async def get_applicants(roleid: int = None):
 
         staffs = []
 
-        roleskillsidsdata = supabase.from_("role_skill").select("skill_id").eq("role_id", str(roleid)).execute()
+        roleskillsidsdata = supabase.from_("role_skill").select("skill_id").eq("role_id", str(role_id)).execute()
         role_skills = roleskillsidsdata.data
         roleskillsids = {role_skills['skill_id'] for role_skills in role_skills}
 

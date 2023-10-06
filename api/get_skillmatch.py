@@ -1,4 +1,3 @@
-import math
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -29,10 +28,10 @@ router = APIRouter()
 
 @app.get("/api/get_skillmatch")
 @router.get("/api/get_skillmatch")
-async def get_skillmatch(roleid: int = None, staffid: int = None):
-    if roleid and staffid:
+async def get_skillmatch(staff_id: int, role_id: int):
+    if role_id and staff_id:
         try:
-            roleskillid_response = supabase.from_("role_skill").select("skill_id").eq("role_id", str(roleid)).execute()
+            roleskillid_response = supabase.from_("role_skill").select("skill_id").eq("role_id", str(role_id)).execute()
             roleskillid = roleskillid_response.data if roleskillid_response.data else []
 
             roleskillid = [entry["skill_id"] for entry in roleskillid]
@@ -45,7 +44,7 @@ async def get_skillmatch(roleid: int = None, staffid: int = None):
                 if skill_data:
                     roleskillname.append(skill_data[0]["skill_name"])
 
-            staffskillid_response = supabase.from_("staff_skill").select("skill_id").eq("staff_id", str(staffid)).execute()
+            staffskillid_response = supabase.from_("staff_skill").select("skill_id").eq("staff_id", str(staff_id)).execute()
             staffskillid = staffskillid_response.data if staffskillid_response.data else []
             staffskillid = [entry["skill_id"] for entry in staffskillid]
 

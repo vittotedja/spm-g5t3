@@ -16,8 +16,8 @@ export const CurrentUser: React.FC = () => {
             if (user?.email) {
                 setLoading(true);
                 try {
-                    setInitial(setCurrentUser, `api/get_staff?email=${user.email}`, false)
-                    // const roleData = await setInitial(setCurrentRole, `api/get_staff?staff_id=${staffData.staff_id}`, false);
+                    setInitial(setCurrentUser, `api/staff?email=${user.email}`, false)
+                    // const roleData = await setInitial(setCurrentRole, `api/staff?staff_id=${staffData.staff_id}`, false);
                     // console.log(staffData.staff_name);
                 } catch (e) {
                     setError('Failed to fetch data');

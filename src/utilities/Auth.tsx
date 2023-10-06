@@ -28,10 +28,9 @@ export function AuthProvider({children}: AuthProviderProps) {
 		// Check active sessions and sets the user
 		async function initializeAuth() {
 			try {
-				const session = (await supabase.auth.getSession()).data.session;
-				console.log(session?.user);
-				setUser(session?.user ?? null);
-				setLoading(false);
+				const session = (await supabase.auth.getSession()).data.session
+				setUser(session?.user ?? null)
+				setLoading(false)
 
 				if (session?.user) {
 					const sessEmail = session.user.email;
@@ -47,7 +46,6 @@ export function AuthProvider({children}: AuthProviderProps) {
 						console.error('Error fetching user role:', error);
 					}
 				}
-				console.log(session);
 				setUser(session?.user ?? null);
 				setLoading(false);
 				// Listen for changes on auth state (logged in, signed out, etc.)

@@ -34,7 +34,7 @@ const RoleCreation: React.FC = () => {
 	];
 
 	async function fetchSkillOptions() {
-		const response = await getAsync('api/get_skill');
+		const response = await getAsync('api/skill');
 		const data = await response.json();
 		const mappedData = data.map((skill: any) => ({
 			value: skill.skill_id,
@@ -44,7 +44,7 @@ const RoleCreation: React.FC = () => {
 	}
 
 	async function fetchManagerOptions() {
-		const response = await getAsync('api/get_staff');
+		const response = await getAsync('api/staff');
 		const data = await response.json();
 		//put staff in mappedData if is_Manager is true
 		const mappedData = data.map(

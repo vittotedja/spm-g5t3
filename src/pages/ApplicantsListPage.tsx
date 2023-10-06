@@ -22,14 +22,14 @@ const ApplicantsListPage = () => {
   const navigate = useNavigate();
   const role_ID = useParams<{ role_ID: string | undefined }>();
   const [roleData, setRoleData] = useState<Role>(Object);
-  const roleid = role_ID.role_ID;
+  const role_id = role_ID.role_ID;
   const [applicantsData, setApplicantsData] = useState<any>(Object);
   const [view, setView] = useState<string>("Applied");
 
   useEffect(() => {
     async function fetchData() {
-        setInitial(setRoleData, `api/get_role?roleid=${roleid}`,false);
-        setInitial(setApplicantsData, `api/get_applicants?roleid=${roleid}`)
+        setInitial(setRoleData, `api/role?role_id=${role_id}`,false);
+        setInitial(setApplicantsData, `api/get_applicants?role_id=${role_id}`)
     }
     fetchData();
   }, []);
@@ -45,7 +45,7 @@ const ApplicantsListPage = () => {
   if (!roleData) {
     return (
       <div className="text-3xl">
-        Error 404 There is no Role with the ID {roleid}
+        Error 404 There is no Role with the ID {role_id}
       </div>
     );
   }
@@ -84,7 +84,7 @@ const ApplicantsListPage = () => {
         <Button
           styleType="green"
           className="mr-10"
-          onClick={() => navigate(`/update-role/${roleid}`)}
+          onClick={() => navigate(`/update-role/${role_id}`)}
         >
           Update Role
         </Button>

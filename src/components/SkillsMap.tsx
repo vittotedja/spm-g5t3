@@ -18,7 +18,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
     async function fetchData() {
       setInitial(
         setskillMatchData,
-        `api/get_skillmatch?roleid=${roleID}&staffid=${staffID}`
+        `api/get_skillmatch?role_id=${roleID}&staff_id=${staffID}`
       );
     }
     fetchData();
@@ -35,7 +35,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
       const staffID = 4;
       const roleID = 10;
       const response = await getAsync(
-        `api/get_totalapplications?staffid=${staffID}&roleid=${roleID}`
+        `api/get_totalapplications?staff_id=${staffID}&role_id=${roleID}`
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -46,16 +46,17 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
         //show have applied modal
         alert("you have already applied for this role");
         setApplyLoading(false);
-      } else if (data.total_applications >= 5) {
-        //show max limit modal
-        alert("More than 5 applications are not allowed!");
-        setApplyLoading(false);
+      // a staff cannot apply to more than 5 roles concurrently, not a role listing can accept only up to 5 applications
+      // } else if (data.total_applications >= 5) {
+      //   //show max limit modal
+      //   alert("More than 5 applications are not allowed!");
+      //   setApplyLoading(false);
       } else {
         //show reason modal
         const reason = window.prompt("Please enter your reason for applying");
         if (reason !== null && reason !== "") {
           //insert data
-          const applyResponse = await postAsync("api/get_application", {
+          const applyResponse = await postAsync("api/application", {
             application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
             staff_id: staffID,
             role_id: roleID,

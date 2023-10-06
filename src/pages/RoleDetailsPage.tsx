@@ -25,7 +25,7 @@ const RoleDetailsPage = () => {
         </button>
       </div>
       <div className="flex flex-col lg:flex-row">
-        <RoleDetails roleid={role_ID.role_ID} />
+        <RoleDetails role_id={role_ID.role_ID} />
         <SkillsMapComponent staffID={staffID} roleID={role_ID.role_ID} />
       </div>
     </div>

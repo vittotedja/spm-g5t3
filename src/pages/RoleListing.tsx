@@ -43,7 +43,7 @@ const RoleListing: React.FC = () => {
     setHasMore(true); // Reset hasMore
     setLoading(true); // Set loading to true
     const response = await getAsync(
-      `api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+      `api/staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
         selectedFilters
       )}`
     );
@@ -69,14 +69,14 @@ const RoleListing: React.FC = () => {
     var response;
     if (page === 1) {
       response = await getAsync(
-        `api/get_staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );
       setPage(2);
     } else {
       response = await getAsync(
-        `api/get_staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );

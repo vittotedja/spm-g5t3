@@ -11,6 +11,7 @@ import { Login } from "./pages/Login";
 import { AuthProvider } from "./utilities/Auth";
 import RoleProtection from "./hocs/withRoleProtection";
 import Navbar from "./components/Navbar";
+import RoleCreation from './pages/RoleCreation';
 
 function App() {
   const location = useLocation();
@@ -27,6 +28,14 @@ function App() {
             element={
               <RoleProtection requiredRole="manager">
                 {(_role) => <ManagerRoleDetails />}
+              </RoleProtection>
+            }
+          />
+          <Route
+            path="/manager/role-listing"
+            element={
+              <RoleProtection requiredRole="manager">
+                {(_role) => <RoleCreation />}
               </RoleProtection>
             }
           />
