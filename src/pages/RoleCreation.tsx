@@ -44,7 +44,7 @@ const RoleCreation: React.FC = () => {
 	}
 
 	async function fetchManagerOptions() {
-		const response = await getAsync('api/get_staff');
+		const response = await getAsync('api/get_staff?staff_id=0');
 		const data = await response.json();
 		//put staff in mappedData if is_Manager is true
 		const mappedData = data.map(
