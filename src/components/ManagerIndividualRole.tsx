@@ -1,26 +1,32 @@
-function ManagerIndividualRole() {
+import formatDate from '../utilities/Utiliities';
+interface ManagerIndividualRoleProps {
+	roleName?: string;
+	roleID?: number;
+	level?: string;
+	country?: string;
+	applicationEndDate?: Date | null;
+	noOfApplicants?: number;
+}
+
+function ManagerIndividualRole({
+	roleName,
+	roleID,
+	level,
+	country,
+	applicationEndDate,
+	noOfApplicants,
+}: ManagerIndividualRoleProps) {
 	return (
 		<tr className="border border-teal-900 border-opacity-20 text-neutral-950">
-			<td className="py-2">
-				Sales Manager
-				{/* TODO: To change with Role Name */}
-			</td>
+			<td className="py-2">{roleName}</td>
+			<td>{roleID}</td>
+			<td>{level ? level : '-'}</td>
+			<td>{country ? country : '-'}</td>
+			<td>{noOfApplicants}</td>
 			<td>
-				01432373
-				{/* TODO: To change with Role Id */}
-			</td>
-			<td>
-				Senior
-				{/* TODO: To change with Role Position */}
-			</td>
-			<td>
-				SG
-				{/* TODO: To change with Role Location */}
-			</td>
-			<td>7{/* TODO: To change with No. Of Applicants */}</td>
-			<td>
-				7th Oct 2023
-				{/* TODO: To change with Role End Date */}
+				{formatDate(
+					applicationEndDate ? new Date(applicationEndDate) : null
+				)}
 			</td>
 		</tr>
 	);

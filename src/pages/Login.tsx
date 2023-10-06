@@ -1,103 +1,116 @@
 // import React from 'react';
-import { createClient } from '@supabase/supabase-js';
+import {createClient} from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
-import { useRef } from 'react'
-import { useAuth } from '../components/Auth';
+import {useRef} from 'react';
+import {useAuth} from '../utilities/Auth';
 // import { useHistory } from 'react-router-dom';
 // import react from '../assets/react.svg';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A'
-const supabase = createClient(supabaseUrl, supabaseKey)
-export {supabase}
-
+const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co';
+const supabaseKey =
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A';
+const supabase = createClient(supabaseUrl, supabaseKey);
+export {supabase};
 
 export function Login() {
-  const emailRef = useRef<HTMLInputElement>(null)
-  const passwordRef = useRef<HTMLInputElement>(null)
-  // const [isFormValid, setIsFormValid] = useState(false)
-  
-  // function handleInputChange() {
-  //   const email = emailRef.current.value;
-  //   const password = passwordRef.current.value;
-  //   if (email.length < 1 && password.length < 1){
-  //     setIsFormValid(true)
-  //   }
-  // }
-  const auth = useAuth();
-  if (!auth) {
-    console.log('auth is null')
-    return <div>Auth Error</div>
-  }
-  const { signInWithPassword } = auth;
-//   const { history } = useHistory()
-  const navigate = useNavigate();
+	const emailRef = useRef<HTMLInputElement>(null);
+	const passwordRef = useRef<HTMLInputElement>(null);
+	// const [isFormValid, setIsFormValid] = useState(false)
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
-    e.preventDefault();
-    console.log((await supabase.auth.getSession()).data.session)
-    // console.log(passwordRef.current?.value)
-    const email = emailRef.current ? emailRef.current.value: '';
-    const password = passwordRef.current? passwordRef.current.value: '';
+	// function handleInputChange() {
+	//   const email = emailRef.current.value;
+	//   const password = passwordRef.current.value;
+	//   if (email.length < 1 && password.length < 1){
+	//     setIsFormValid(true)
+	//   }
+	// }
+	const auth = useAuth();
+	if (!auth) {
+		return <div>Auth Error</div>;
+	}
+	const {signInWithPassword} = auth;
+	//   const { history } = useHistory()
+	const navigate = useNavigate();
 
-    const { error } = await signInWithPassword({ email, password });
+	async function handleSubmit(
+		e: React.FormEvent<HTMLFormElement>
+	): Promise<void> {
+		e.preventDefault();
+		const email = emailRef.current ? emailRef.current.value : '';
+		const password = passwordRef.current ? passwordRef.current.value : '';
 
-    //if(!email.includes('@') && email.length <= 3){
-    //  alert('Please enter a valid email')
-    //}
+		const {error} = await signInWithPassword({email, password});
 
+		//if(!email.includes('@') && email.length <= 3){
+		//  alert('Please enter a valid email')
+		//}
 
-    if (error) {
-      // Check the type of error based on error.message
-      let errorMessage = error.message;
-      
-      if (error.message.includes('credentials')) {
-        errorMessage = 'The credentials you entered is invalid.';
-      }
-      // } else if (error.message.includes('User not found')) {
-      //   errorMessage = 'There is no account asociated with this email.';
-      // }
-      // console.log(error)
-      alert(errorMessage);
-    } else {
-      // console.log((await supabase.auth.getSession()).data.session);
-      alert('Log In Succesful')
-      navigate('/role-listing')
-      }
-    }
+		if (error) {
+			// Check the type of error based on error.message
+			let errorMessage = error.message;
 
-    return (
-      <div className="flex h-screen w-screen rounded-lg p-0">
-        <div className="flex flex-col justify-center items-start w-1/2 bg-emerald-600 text-white p-12">
-          {/* Replace this with your logo */}
-          <div className="text-3xl mb-8">Welcome to</div>
-          <div className="text-6xl font-bold mb-8">GlassWindow</div>
-          <div className="text-3xl mb-8">One stop internal hiring platform</div>
-        </div>
-        
-        <div className="flex flex-col justify-center items-start w-1/2 bg-white p-12">
-        <div className="text-5xl font-bold mb-6">Login</div>
-          <form onSubmit={handleSubmit} className="space-y-4 w-full">
-            <div className='justify-start items-start text-lg font-medium text-gray-600 text-left'>
-              <label htmlFor="signup-email" className="block mb-2"> Email </label>
-              <input id="signup-email" type="email" ref={emailRef} className="p-2 w-full border rounded-md bg-gray-200"/>
-            </div>
+			if (error.message.includes('credentials')) {
+				errorMessage = 'The credentials you entered is invalid.';
+			}
+			// } else if (error.message.includes('User not found')) {
+			//   errorMessage = 'There is no account asociated with this email.';
+			// }
+			alert(errorMessage);
+		} else {
+			alert('Log In Succesful');
+			navigate('/role-listing');
+		}
+	}
 
-            <div className='justify-start items-start text-lg font-medium text-gray-600 text-left'>
-              <label htmlFor="signup-password" className="block mb-2">Password</label>
-              <input id="signup-password" type="password" ref={passwordRef} className="p-2 w-full border rounded-md bg-gray-200"/>
-            </div>
+	return (
+		<div className="flex w-screen h-screen p-0 rounded-lg">
+			<div className="flex flex-col items-start justify-center w-1/2 p-12 text-white bg-emerald-600">
+				{/* Replace this with your logo */}
+				<div className="mb-8 text-3xl">Welcome to</div>
+				<div className="mb-8 text-6xl font-bold">GlassWindow</div>
+				<div className="mb-8 text-3xl">
+					One stop internal hiring platform
+				</div>
+			</div>
 
-            <button 
-              type="submit" 
-              // disabled={!isFormValid}
-              className='font-bold mt-6 bg-emerald-600 text-white p-2 w-1/4 rounded-md hover:bg-emerald-900 focus:outline-none focus:border-emerald-700 focus:ring focus:ring-emerald-900 justify-content-end float-right
-              '>
-              Login
-            </button>
-          </form>
-        </div>
-      </div>
-    );
+			<div className="flex flex-col items-start justify-center w-1/2 p-12 bg-white">
+				<div className="mb-6 text-5xl font-bold">Login</div>
+				<form onSubmit={handleSubmit} className="w-full space-y-4">
+					<div className="items-start justify-start text-lg font-medium text-left text-gray-600">
+						<label htmlFor="signup-email" className="block mb-2">
+							{' '}
+							Email{' '}
+						</label>
+						<input
+							id="signup-email"
+							type="email"
+							ref={emailRef}
+							className="w-full p-2 bg-gray-200 border rounded-md"
+						/>
+					</div>
+
+					<div className="items-start justify-start text-lg font-medium text-left text-gray-600">
+						<label htmlFor="signup-password" className="block mb-2">
+							Password
+						</label>
+						<input
+							id="signup-password"
+							type="password"
+							ref={passwordRef}
+							className="w-full p-2 bg-gray-200 border rounded-md"
+						/>
+					</div>
+
+					<button
+						type="submit"
+						// disabled={!isFormValid}
+						className="float-right w-1/4 p-2 mt-6 font-bold text-white rounded-md bg-emerald-600 hover:bg-emerald-900 focus:outline-none focus:border-emerald-700 focus:ring focus:ring-emerald-900 justify-content-end "
+					>
+						Login
+					</button>
+				</form>
+			</div>
+		</div>
+	);
 }
