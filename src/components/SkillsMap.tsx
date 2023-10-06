@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import ProgressBar from "./ProgressBar";
-import Button from "./Button";
-import Badge from "./Badge";
-import { getAsync, postAsync } from "../utilities/Services";
-import { setInitial } from "../utilities/Services";
+import React, { useEffect, useState } from 'react';
+import ProgressBar from './ProgressBar';
+import Button from './Button';
+import Badge from './Badge';
+import { getAsync, postAsync } from '../utilities/Services';
+import { setInitial } from '../utilities/Services';
 
 interface SkillsMapProps {
   staffID: string | undefined;
@@ -24,11 +24,10 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
     fetchData();
   }, []);
 
-  console.log(skillMatchData);
-
   if (skillMatchData === null) {
     return null;
   }
+
   const handleApply = async () => {
     try {
       setApplyLoading(true);
@@ -43,20 +42,19 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
       const data = await response.json();
 
       if (data.have_applied) {
-        //show have applied modal
-        alert("you have already applied for this role");
+        // show have applied modal
+        alert('you have already applied for this role');
         setApplyLoading(false);
-      // a staff cannot apply to more than 5 roles concurrently, not a role listing can accept only up to 5 applications
-      // } else if (data.total_applications >= 5) {
-      //   //show max limit modal
-      //   alert("More than 5 applications are not allowed!");
-      //   setApplyLoading(false);
+      } else if (data.total_applications >= 5) {
+        // show max limit modal
+        alert('More than 5 applications are not allowed!');
+        setApplyLoading(false);
       } else {
-        //show reason modal
-        const reason = window.prompt("Please enter your reason for applying");
-        if (reason !== null && reason !== "") {
-          //insert data
-          const applyResponse = await postAsync("api/application", {
+        // show reason modal
+        const reason = window.prompt('Please enter your reason for applying');
+        if (reason !== null && reason !== '') {
+          // insert data
+          const applyResponse = await postAsync('api/application', {
             application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
             staff_id: staffID,
             role_id: roleID,
@@ -68,7 +66,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
           }
           const applyData = await applyResponse.json();
           if (applyData) {
-            alert("Application submitted successfully!");
+            alert('Application submitted successfully!');
           }
           setApplyLoading(false);
         }
@@ -80,14 +78,14 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
 
   return (
     <div className="w-full lg:w-1/4">
-      <section className="py-6 px-8 m-2 rounded-lg border border-solid border-gray-200">
+      <section className="px-8 py-6 m-2 border border-gray-200 border-solid rounded-lg">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4 text-left">
+          <h2 className="mb-4 text-3xl font-bold text-left text-gray-800">
             Skills Match
           </h2>
           <ProgressBar percentage={skillMatchData.percentage} />
           <div>
-            <h4 className="text-xl font-bold mb-2 text-left pt-4">
+            <h4 className="pt-4 mb-2 text-xl font-bold text-left">
               Required Skills
             </h4>
             <ul>
@@ -98,17 +96,15 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staffID, roleID }) => {
                       <Badge styleType="green" children={item} />
                     </li>
                   ))}
-                  {skillMatchData.Only_In_Roles.map(
-                    (item: string, index: string) => (
-                      <li
-                        className="flex items-center p-1"
-                        style={{ color: "#AD0626" }}
-                        key={index}
-                      >
-                        <Badge styleType="red" children={item} />
-                      </li>
-                    )
-                  )}
+                  {skillMatchData.Only_In_Roles.map((item: string, index: string) => (
+                    <li
+                      className="flex items-center p-1"
+                      style={{ color: '#AD0626' }}
+                      key={index}
+                    >
+                      <Badge styleType="red" children={item} />
+                    </li>
+                  ))}
                 </>
               )}
             </ul>

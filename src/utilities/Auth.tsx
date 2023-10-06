@@ -23,7 +23,6 @@ export function AuthProvider({children}: AuthProviderProps) {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [userRole, setUserRole] = useState<UserRole>(null);
-	// console.log(children)
 	useEffect(() => {
 		// Check active sessions and sets the user
 		async function initializeAuth() {
@@ -57,7 +56,6 @@ export function AuthProvider({children}: AuthProviderProps) {
 				);
 
 				return () => {
-					// console.log(listener)
 					listener?.subscription.unsubscribe();
 				};
 			} catch (error) {
