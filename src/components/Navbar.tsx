@@ -31,12 +31,22 @@ export const Navbar: React.FC = () => {
               <img src={glasswindow_white} alt="Brand Logo" className="h-12" />
             </div>
 
-            <div className="flex-grow flex justify-center space-x-48">
-              <Link to="/role-listing" className="text-white hover:text-gray-300 transition duration-300">Role Listing</Link>
-              {userRole === 'manager' && 
-                <Link to="/manager" className="text-white hover:text-gray-300 transition duration-300">Manager Page</Link>
-              }
-            </div>
+				<div className="flex justify-center flex-grow space-x-48">
+					<Link
+						to="/role-listing"
+						className="text-white transition duration-300 hover:text-gray-300"
+					>
+						Role Listing
+					</Link>
+					{userRole === 'manager' && (
+						<Link
+							to="/manager"
+							className="text-white transition duration-300 hover:text-gray-300"
+						>
+							Manager Page
+						</Link>
+					)}
+				</div>
 
             <div className="flex-grow-0 flex-shrink-0">
             {showLogoutButton ? (

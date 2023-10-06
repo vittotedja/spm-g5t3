@@ -16,7 +16,6 @@ export default function PostedRoleTable() {
 			'api/get_manager_role?manager_id=' + manager_id
 		);
 		const data = await response.json();
-		console.log(data);
 		setManagerRoles(data);
 	}
 

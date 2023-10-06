@@ -1,39 +1,46 @@
 import React from 'react';
-import { useState } from 'react';
-import Modal from "./Modal.tsx";
+import {useState} from 'react';
+import Modal from './Modal.tsx';
 import Button from './Button.tsx';
 
-interface ModalButtonProps{
-    children?: any 
-    btnTitle: string
-    type: string
-    message?: string
+interface ModalButtonProps {
+	children?: any;
+	btnTitle: string;
+	type: string;
+	message?: string;
 }
 
+const ModalButton: React.FC<ModalButtonProps> = ({
+	children,
+	btnTitle,
+	type,
+	message,
+}) => {
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
+	const openModal = () => {
+		setIsModalOpen(true);
+	};
 
-const ModalButton: React.FC<ModalButtonProps> =({ children, btnTitle, type, message }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+	const closeModal = () => {
+		setIsModalOpen(false);
+	};
 
-    const openModal = () => {
-    setIsModalOpen(true);
-    };
-    
-    const closeModal = () => {
-    setIsModalOpen(false);
-    };
-    
-    return(
-        <div>
-            <Button onClick={openModal} styleType={"green"}>
-                {btnTitle}
-            </Button>
-            <Modal isOpen={isModalOpen} onClose={closeModal} modalType={type} message={message}>
-                {console.log(isModalOpen)}
-                {children}
-            </Modal>
-        </div>
-);
+	return (
+		<div>
+			<Button onClick={openModal} styleType={'green'}>
+				{btnTitle}
+			</Button>
+			<Modal
+				isOpen={isModalOpen}
+				onClose={closeModal}
+				modalType={type}
+				message={message}
+			>
+				{children}
+			</Modal>
+		</div>
+	);
 };
 
 export default ModalButton;

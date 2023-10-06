@@ -25,19 +25,30 @@ from api.get_role import get_role
 
 @app.get("/api/get_staff")
 @router.get("/api/get_staff")
-async def get_staff(email: str = None, staff_id: int = None):
-    if email:
-        staff_data = supabase.from_('staff').select("*").eq('email', email).execute().data
+async def get_staff(email: str | None = None, staff_id: int | None = None):
+    if email and not staff_id:
+        staff_data = (
+            supabase.from_("staff").select("*").eq("email", email).execute().data
+        )
         if not staff_data:
-            raise HTTPException(status_code=404, detail="Staff not found with the provided email.")
+            raise HTTPException(
+                status_code=404, detail="Staff not found with the provided email."
+            )
         return staff_data
-    elif staff_id:
+    elif staff_id >= 0:
         if staff_id == 0:
+            print("staff_id is 0, returning all staff")
             staff = supabase.from_("staff").select("*").execute().data
             return staff
-        staff_data = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data
+        staff_data = (
+            supabase.from_("staff").select("*").eq("staff_id", staff_id).execute().data
+        )
         if not staff_data:
-            raise HTTPException(status_code=404, detail="Staff not found with the provided staff_id.")
+            raise HTTPException(
+                status_code=404, detail="Staff not found with the provided staff_id."
+            )
         return staff_data
     else:
-        raise HTTPException(status_code=400, detail="Either email or staff_id must be provided.")
+        raise HTTPException(
+            status_code=400, detail="Either email or staff_id must be provided."
+        )
