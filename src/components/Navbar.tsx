@@ -1,10 +1,27 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useCallback} from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../utilities/Auth';  // Adjust the path if needed
 import glasswindow_white from '../assets/glasswindow_white.png'
 import  { CurrentUser } from '../components/CurrentUser'
+import { Button2 } from './ui/button';
+
 export const Navbar: React.FC = () => {
-  const { userRole } = useAuth() || {};
+  const { userRole, signOut } = useAuth() || {};
+  const location = useLocation()
+  const navigate = useNavigate()
+  const handleLogout = useCallback(async () => {
+    try {
+      if(signOut) {
+        await signOut?.();
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('Logout Error', error)
+    }
+  }, [signOut, navigate])
+
+  const showLogoutButton = location.pathname === '/profile' && userRole;  // Adjust the path as needed
+
 //   console.log(userRole)
 // console.log('rendering Navbar')
   return (
@@ -22,7 +39,18 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex-grow-0 flex-shrink-0">
-              <CurrentUser />
+            {showLogoutButton ? (
+            <Button2
+              onClick={handleLogout} 
+              variant='destructive'
+              className="bg-red-500 text-white p-2 rounded"
+
+            >
+              Logout
+            </Button2>
+          ) : (
+            <CurrentUser />
+          )}
             </div>
         </div>
     </nav>
