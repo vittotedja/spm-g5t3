@@ -13,7 +13,7 @@ export default function PostedRoleTable() {
 
 	async function fetchData() {
 		const response = await getAsync(
-			'api/get_manager_role?manager_id=' + manager_id
+			'api/manager_role?manager_id=' + manager_id
 		);
 		const data = await response.json();
 		setManagerRoles(data);

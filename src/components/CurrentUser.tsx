@@ -11,23 +11,19 @@ export const CurrentUser: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	// const [currentRole, setCurrentRole] = useState<any>(null);
 
-	useEffect(() => {
-		const fetchStaff = async () => {
-			if (user?.email) {
-				setLoading(true);
-				try {
-					setInitial(
-						setCurrentUser,
-						`api/get_staff?email=${user.email}`,
-						false
-					);
-				} catch (e) {
-					setError('Failed to fetch data');
-				} finally {
-					setLoading(false);
-				}
-			}
-		};
+    useEffect(() => {
+        const fetchStaff = async () => {
+            if (user?.email) {
+                setLoading(true);
+                try {
+                    setInitial(setCurrentUser, `api/staff?email=${user.email}`, false)
+                } catch (e) {
+                    setError('Failed to fetch data');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
 
 		fetchStaff();
 	}, [user?.email]); // Dependency array

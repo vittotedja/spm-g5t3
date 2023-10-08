@@ -3,7 +3,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { setInitial } from "../utilities/Services";
 import formatDate from "../utilities/Utiliities";
 interface RoleDetailsProps {
-  roleid: string | undefined;
+  role_id: string | undefined;
 }
 
 interface Role {
@@ -18,7 +18,7 @@ interface Role {
   responsibility: string;
 }
 
-const RoleDetails: React.FC<RoleDetailsProps> = ({ roleid }) => {
+const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
   const [roleData, setRoleData] = useState<Role>(Object);
   const [loading, setLoading] = useState<any>(null);
 
@@ -26,7 +26,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleid }) => {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-        setInitial(setRoleData, `api/get_role?roleid=${roleid}`,false);
+        setInitial(setRoleData, `api/role?role_id=${role_id}`,false);
     }
     fetchData();
     setLoading(false);
@@ -37,7 +37,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ roleid }) => {
   }
 
   if (roleData == null || roleData == undefined) {
-    return <div>Error 404 There is no Role with the ID {roleid}</div>;
+    return <div>Error 404 There is no Role with the ID {role_id}</div>;
   }
 
 

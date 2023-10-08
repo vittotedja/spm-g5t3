@@ -37,50 +37,50 @@ const RoleListing: React.FC = () => {
 		Record<string, string[]>
 	>({});
 
-	const fetchFirst = async () => {
-		setPage(1); // Reset to the first page
-		setRoles([]); // Clear existing roles
-		setHasMore(true); // Reset hasMore
-		setLoading(true); // Set loading to true
-		const response = await getAsync(
-			`api/get_staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
-				selectedFilters
-			)}`
-		);
-		const data = await response.json();
-		const filters = [
-			{name: 'Skills', values: data.all_skills},
-			{name: 'Region', values: data.all_regions},
-			{name: 'Role Name', values: data.all_roles},
-			{name: 'Department', values: data.all_departments},
-		];
-		setFilters(filters);
-		if (data.data.length === 0) {
-			setHasMore(false);
-		} else {
-			setRoles(data.data);
-		}
-		setLoading(false);
-	};
+  const fetchFirst = async () => {
+    setPage(1); // Reset to the first page
+    setRoles([]); // Clear existing roles
+    setHasMore(true); // Reset hasMore
+    setLoading(true); // Set loading to true
+    const response = await getAsync(
+      `api/staff_role?user_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        selectedFilters
+      )}`
+    );
+    const data = await response.json();
+    const filters = [
+      { name: "Skills", values: data.all_skills },
+      { name: "Region", values: data.all_regions },
+      { name: "Role Name", values: data.all_roles },
+      { name: "Department", values: data.all_departments },
+    ];
+    setFilters(filters);
+    if (data.data.length === 0) {
+      setHasMore(false);
+    } else {
+      setRoles(data.data);
+    }
+    setLoading(false);
+  };
 
-	const fetchMore = async () => {
-		if (!hasMore || loading) return;
-		setLoading(true);
-		var response;
-		if (page === 1) {
-			response = await getAsync(
-				`api/get_staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
-					selectedFilters
-				)}`
-			);
-			setPage(2);
-		} else {
-			response = await getAsync(
-				`api/get_staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
-					selectedFilters
-				)}`
-			);
-		}
+  const fetchMore = async () => {
+    if (!hasMore || loading) return;
+    setLoading(true);
+    var response;
+    if (page === 1) {
+      response = await getAsync(
+        `api/staff_role?user_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+          selectedFilters
+        )}`
+      );
+      setPage(2);
+    } else {
+      response = await getAsync(
+        `api/staff_role?user_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+          selectedFilters
+        )}`
+      );
+    }
 
 		const data = await response.json();
 		if (data.pagination.current_page > data.pagination.total_pages) {

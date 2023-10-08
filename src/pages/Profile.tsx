@@ -47,9 +47,9 @@ export default function Profile() {
 
     useEffect(() => {
         async function fetchFirst() {
-            let staff = await setInitial(setStaff, `api/get_staff?email=${staff_email}`, false)
-            setInitial(setSkills, `api/get_staff_skill?staff_id=${staff.staff_id}`)
-            setInitial(setApplication, `api/get_application?staff_id=${staff.staff_id}`)
+            let staff = await setInitial(setStaff, `api/staff?email=${staff_email}`, false)
+            setInitial(setSkills, `api/staff_skill?staff_id=${staff.staff_id}`)
+            setInitial(setApplication, `api/application?staff_id=${staff.staff_id}`)
         }
         fetchFirst()
     }

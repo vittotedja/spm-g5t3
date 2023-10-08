@@ -25,11 +25,11 @@ app.add_middleware(
 router = APIRouter()
 
 
-@app.get("/api/get_staff_role")
-@router.get("/api/get_staff_role")
-async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc', filters: str = '{}'):
+@app.get("/api/staff_role")
+@router.get("/api/staff_role")
+async def staff_role(staff_id: int = None, page: int = 1, limit: int = 5, sort_field: str = 'created_at', order: str = 'asc', filters: str = '{}'):
     parsed_filters = json.loads(filters)
-    if user_id:
+    if staff_id:
         offset = (page - 1) * limit
         all_skills = supabase.table("skill").select("*").execute().data
         df_skills = pd.DataFrame(all_skills)  
@@ -40,7 +40,7 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
         df_all_roles = pd.DataFrame(all_roles_response.data or [])
 
         # Get applied roles for the user
-        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(user_id)).execute()
+        applied_roles_response = supabase.table("application").select("role_id").eq("staff_id", str(staff_id)).execute()
         applied_role_IDs = [role["role_id"] for role in applied_roles_response.data or []]
 
         # Filter out the applied roles
@@ -96,7 +96,7 @@ async def get_staff_role(user_id: int = None, page: int = 1, limit: int = 5, sor
         unapplied_roles = unapplied_roles_df.to_dict('records')
 
         staff_skill_response = supabase.table("staff_skill").select(
-            "skill_id").eq("staff_id", str(user_id)).execute()
+            "skill_id").eq("staff_id", str(staff_id)).execute()
         staff_skill_ids_set = set(skill['skill_id']
                                   for skill in staff_skill_response.data or [])
 
