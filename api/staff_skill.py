@@ -22,8 +22,15 @@ app.add_middleware(
 )
 router = APIRouter()
 
+
 @app.get("/api/staff_skill")
 @router.get("/api/staff_skill")
 async def staff_skill(staff_id: int):
-    staff_skill = pd.DataFrame.from_dict(supabase.from_('staff_skill').select('skill(*)').eq('staff_id', staff_id).execute().data)['skill']
+    staff_skill = pd.DataFrame.from_dict(
+        supabase.from_("staff_skill")
+        .select("skill(*)")
+        .eq("staff_id", staff_id)
+        .execute()
+        .data
+    )["skill"]
     return staff_skill.to_list()

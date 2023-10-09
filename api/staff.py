@@ -20,21 +20,28 @@ app.add_middleware(
 )
 router = APIRouter()
 
+
 @app.get("/api/staff")
 @router.get("/api/staff")
 async def staff(email: str = None, staff_id: int = None):
     if email:
-        staff = supabase.from_('staff').select("*").eq('email', email).execute().data
+        staff = supabase.from_("staff").select("*").eq("email", email).execute().data
         if not staff:
-            raise HTTPException(status_code=404, detail="Staff not found with the provided email.")
+            raise HTTPException(
+                status_code=404, detail="Staff not found with the provided email."
+            )
         return staff
     elif staff_id:
         if staff_id == 0:
             staff = supabase.from_("staff").select("*").execute().data
             return staff
-        staff = supabase.from_('staff').select("*").eq('staff_id', staff_id).execute().data
+        staff = (
+            supabase.from_("staff").select("*").eq("staff_id", staff_id).execute().data
+        )
         if not staff:
-            raise HTTPException(status_code=404, detail="Staff not found with the provided staff_id.")
+            raise HTTPException(
+                status_code=404, detail="Staff not found with the provided staff_id."
+            )
         return staff
     else:
         staff = supabase.from_("staff").select("*").execute().data

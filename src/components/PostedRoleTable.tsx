@@ -7,13 +7,13 @@ export default function PostedRoleTable() {
 	//TODO: Define the type of roles
 	const [managerRoles, setManagerRoles] = useState<any>([]);
 	//TODO: Get the manager id from the session
-	const manager_id = '1';
+	const manager_id = '140004';
 	// const session = useAuth();
 	// const user = session?.user;
 
 	async function fetchData() {
 		const response = await getAsync(
-			'api/manager_role?manager_id=' + manager_id
+			'api/manager_rolelisting?manager_id=' + manager_id
 		);
 		const data = await response.json();
 		setManagerRoles(data);
@@ -31,23 +31,21 @@ export default function PostedRoleTable() {
 					<tr className="">
 						<th className="py-2">Role Name</th>
 						<th>Role Id</th>
-						<th>Level</th>
-						<th>Country</th>
 						<th>No. of Applicants</th>
 						<th>Application Start Date</th>
+						<th> </th>
+						<th> </th>
 					</tr>
 				</thead>
 				<tbody>
 					{managerRoles.map((role: any) => {
 						return (
 							<ManagerIndividualRole
-								key={role.role.role_id}
+								key={role.role_id}
 								roleName={role.role.role_name}
 								roleID={role.role.role_id}
-								level={role.role.level}
-								country={role.role.location}
 								applicationEndDate={role.role.appl_close_date}
-								noOfApplicants={role.role.no_of_applicants}
+								noOfApplicants={role.application.length}
 							/>
 						);
 					})}
