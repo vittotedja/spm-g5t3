@@ -4,6 +4,7 @@ import PostedRoleTable from '../components/PostedRoleTable';
 import {useNavigate} from 'react-router-dom';
 
 function ManagerRoleDetails() {
+	//TODO: check whether user is HR or not
 	const isHR = true;
 	// const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();

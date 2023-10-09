@@ -11,6 +11,8 @@ from api import (
     get_applicants,
     get_skillmatch,
     manager_rolelisting,
+    listing,
+    listing_manager,
     get_totalapplications,
 )
 
@@ -29,6 +31,8 @@ app.include_router(staff_role_skill.router)
 app.include_router(role.router)
 app.include_router(skill.router)
 app.include_router(application.router)
+app.include_router(listing.router)
+app.include_router(listing_manager.router)
 app.include_router(manager_rolelisting.router)
 
 # use api.staff_role_skill instead

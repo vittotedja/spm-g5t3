@@ -6,7 +6,7 @@ interface ButtonProps {
 	children?: React.ReactNode;
 	loading?: boolean;
 	styleType?: 'normal' | 'red' | 'disabled' | 'green';
-	onClick?: () => void;
+	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Button: FC<ButtonProps> = ({

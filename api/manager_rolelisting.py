@@ -46,22 +46,6 @@ async def manager_rolelisting(manager_id: int):
     return role
 
 
-@app.get("/api/listing")
-@router.get("/api/listing")
-async def listing(manager_id: int = None):
-    if manager_id:
-        listing = (
-            supabase.from_("listing")
-            .select("role_id", "role(*), application(*)")
-            .eq("manager_id", manager_id)
-            .execute()
-            .data
-        )
-        return listing
-    else:
-        listing = supabase.from_("listing").select("*").execute().data
-
-
 # @app.post("/api/listing")
 # @router.post("/api/listing")
 # async def listing(listing: ):

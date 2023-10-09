@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {getAsync} from '../utilities/Services';
+import {getAsync, postAsync} from '../utilities/Services';
 import {
 	Popover,
 	PopoverTrigger,
@@ -13,7 +13,7 @@ import {
 import {Calendar} from '../components/ui/calendar';
 import formatDate from '../utilities/Utiliities';
 import Badge from '../components/Badge';
-import {set} from 'date-fns';
+import {setInitial} from '../utilities/Services';
 
 export type SkillProps = {
 	skill_id: string;
@@ -34,11 +34,11 @@ const RoleCreation: React.FC = () => {
 	//state for selected options
 	const [selectedRole, setSelectedRole] = useState<any>({});
 	const [hrManager, setHrManager] = useState<any>({});
-	const [skillsMap, setSkillsMap] = useState<any>([]);
+	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
 	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
 
-	//fetch API data
+	//fetch data needed from DB
 	async function fetchRoleOptions() {
 		const response = await getAsync('api/role');
 		const data = await response.json();
@@ -49,13 +49,6 @@ const RoleCreation: React.FC = () => {
 		}));
 		setRoleOptions(mappedData);
 	}
-
-	async function fetchSkillOptions() {
-		const response = await getAsync('api/staff_role_skill');
-		const data = await response.json();
-		setSkillOptions(data);
-	}
-
 	async function fetchManagerOptions() {
 		const response = await getAsync('api/staff');
 		const data = await response.json();
@@ -81,19 +74,36 @@ const RoleCreation: React.FC = () => {
 		setSkillsMap(cleanedData);
 	}
 
-	const handleSubmit = (e: any) => {
+	//POST data when submit button is clicked
+	const handleSubmit = async (e: any) => {
 		e.preventDefault();
-		console.log('submit');
-		console.log(date);
-		console.log(selectedRole);
-		console.log(hrManager);
+		const response = await postAsync('api/listing', {
+			role_id: selectedRole.role_id,
+			application_close_date: date,
+		});
+		const data = await response.json();
+		if (data.success) {
+			for (let i = 0; i < hrManager.length; i++) {
+				const response = await postAsync('api/listing_manager', {
+					manager_id: hrManager[i].value,
+					listing_id: data.data.listing_id,
+				});
+				const listingManagerData = await response.json();
+				if (!listingManagerData.success) {
+					alert('Error: ' + listingManagerData.error);
+				}
+			}
+			navigate('/manager');
+		} else {
+			alert('Error: ' + data.error);
+		}
 	};
 
 	useEffect(() => {
 		setSkillOptions([]);
 		setManagerOptions([]);
 		setRoleOptions([]);
-		fetchSkillOptions();
+		setInitial(setSkillOptions, 'api/staff_role_skill');
 		fetchRoleOptions();
 		fetchManagerOptions();
 	}, []);
@@ -231,7 +241,7 @@ const RoleCreation: React.FC = () => {
 										return (
 											<Badge
 												styleType="green"
-												className="text-xs "
+												className="text-xs"
 												key={skill.skill_id}
 											>
 												{skill.skill_name}
@@ -243,13 +253,14 @@ const RoleCreation: React.FC = () => {
 						</div>
 
 						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
-							<button
+							<Button
+								styleType="green"
 								onClick={(e) => {
 									handleSubmit(e);
 								}}
 							>
 								Save
-							</button>
+							</Button>
 						</div>
 					</form>
 				</div>
