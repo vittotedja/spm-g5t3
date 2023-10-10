@@ -34,8 +34,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
   };
 
   return (
-    <div className="mt-14 border w-64 shadow-md h-min pb-8 rounded-xl">
-      <div className="bg-olive-green text-white p-2 mb-4 font-bold rounded-t-xl">
+    <div className="mt-14 border w-72 shadow-md h-min pb-8 rounded-xl">
+      <div className="bg-olive-green text-white p-2 mb-4 font-bold rounded-t-xl text-xl">
         Filter
       </div>
       <div
@@ -65,8 +65,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
               <div className="pl-4 py-2">
                 {filter.values.length > 0 &&
                   filter.values.map((value) => (
-                    <div key={value}>
-                      <label className="flex items-center">
+                    <div key={value} className="my-2 text-left">
+                      <label className="flex items-center text-xs">
                         <input
                           type="checkbox"
                           className="bg-transparent border border-2 border-olive-green accent-olive-green rounded w-5 h-5 cursor-pointer outline-none mr-2"

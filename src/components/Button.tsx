@@ -5,7 +5,7 @@ interface ButtonProps {
 	className?: string;
 	children?: React.ReactNode;
 	loading?: boolean;
-	styleType?: 'normal' | 'red' | 'disabled' | 'green';
+	styleType?: 'normal' | 'red' | 'disabled' | 'green' | 'underline';
 	onClick?: () => void;
 }
 
@@ -30,6 +30,7 @@ const Button: FC<ButtonProps> = ({
 			? 'bg-red text-white'
 			: 'bg-red hover:bg-red-dark text-white',
 		disabled: 'bg-gray-400 cursor-not-allowed',
+		underline: 'bg-transparent hover:bg-transparent text-emerald-900 text-underlined',
 	};
 
 	return (

@@ -12,6 +12,7 @@ import {AuthProvider} from './utilities/Auth';
 import RoleProtection from './hocs/withRoleProtection';
 import Navbar from './components/Navbar';
 import RoleCreation from './pages/RoleCreation';
+import ManagerStaffList from './pages/ManagerStaffLlist';
 
 function App() {
 	const location = useLocation();
@@ -25,19 +26,30 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route
 						path="/manager"
-						element={
-							<RoleProtection requiredRole="manager">
-								{(_role) => <ManagerRoleDetails />}
-							</RoleProtection>
-						}
+						// element={
+						// 	<RoleProtection requiredRole="manager">
+						// 		{(_role) => <ManagerRoleDetails />}
+						// 	</RoleProtection>
+						// }
+						element={<ManagerRoleDetails />}
 					/>
 					<Route
 						path="/manager/rolelisting"
-						element={
-							<RoleProtection requiredRole="manager">
-								{(_role) => <RoleCreation />}
-							</RoleProtection>
-						}
+						// element={
+						// 	<RoleProtection requiredRole="manager">
+						// 		{(_role) => <RoleCreation />}
+						// 	</RoleProtection>
+						// }
+						element={<RoleCreation />}
+					/>
+					<Route
+						path="/manager/stafflist"
+						// element={
+						// 	<RoleProtection requiredRole="manager">
+						// 		{(_role) => <RoleCreation />}
+						// 	</RoleProtection>
+						// }
+						element={<ManagerStaffList />}
 					/>
 					<Route path="/profile" element={<Profile />} />
 					<Route
