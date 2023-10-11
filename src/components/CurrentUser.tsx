@@ -18,7 +18,7 @@ export const CurrentUser: React.FC = () => {
 				try {
 					setInitial(
 						setCurrentUser,
-						`api/get_staff?email=${user.email}`,
+						`api/staff?email=${user.email}`,
 						false
 					);
 				} catch (e) {
@@ -32,7 +32,10 @@ export const CurrentUser: React.FC = () => {
 		fetchStaff();
 	}, [user?.email]); // Dependency array
 
-	const userName = currentUser?.staff_name || user?.email || 'User Name';
+	const userName =
+		currentUser?.staff_fname + ' ' + currentUser?.staff_lname ||
+		user?.email ||
+		'User Name';
 	const currentRole = currentUser?.curr_role;
 	return loading ? (
 		<div className="text-white">Loading...</div>

@@ -25,7 +25,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, staff_id
   const navigate = useNavigate();
   const roleCardButton = () => {navigate(`/role-listing/${application.role.role_id}`)}
     useEffect(() => {
-      setInitial(setSkill, `api/get_staff_role_skill?staff_id=${staff_id}&role_id=${application.role.role_id}`)
+      setInitial(setSkill, `api/staff_role_skill?staff_id=${staff_id}&role_id=${application.role.role_id}`)
   }, []);
 
   const statusColorMap = {

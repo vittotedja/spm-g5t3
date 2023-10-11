@@ -27,9 +27,9 @@ export function AuthProvider({children}: AuthProviderProps) {
 		// Check active sessions and sets the user
 		async function initializeAuth() {
 			try {
-				const session = (await supabase.auth.getSession()).data.session;
-				setUser(session?.user ?? null);
-				setLoading(false);
+				const session = (await supabase.auth.getSession()).data.session
+				setUser(session?.user ?? null)
+				setLoading(false)
 
 				if (session?.user) {
 					const sessEmail = session.user.email;

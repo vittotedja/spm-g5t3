@@ -33,12 +33,12 @@ router = APIRouter()
 @app.get("/api/get_totalapplications")
 @router.get("/api/get_totalapplications")
 
-async def get_totalapplications(staffid: int = None, roleid: int = None):
-    if staffid:
-        response = supabase.from_("application").select("*").eq("staff_id", str(staffid)).eq('status', ['Pending', 'Shortlisted']).execute()
+async def get_totalapplications(staff_id: int = None, role_id: int = None):
+    if staff_id:
+        response = supabase.from_("application").select("*").eq("staff_id", str(staff_id)).eq('status', ['Applied', 'Shortlisted']).execute()
         applications = response.data
         num_applications = len(applications)
-        response2 = supabase.from_("application").select("*").eq("staff_id", str(staffid)).eq('role_id', roleid).execute()
+        response2 = supabase.from_("application").select("*").eq("staff_id", str(staff_id)).eq('role_id', role_id).execute()
         haveapplied = response2.data
 
         if len(haveapplied) > 0:
