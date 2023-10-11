@@ -19,7 +19,11 @@ function ManagerRoleDetails() {
 					{isHR && (
 						<Button
 							styleType="green"
-							onClick={() => navigate('/manager/rolelisting')}
+							onClick={() =>
+								navigate('/manager/rolelisting', {
+									state: {isEdit: false},
+								})
+							}
 							className="text-black bg-green"
 						>
 							+ Add New Role

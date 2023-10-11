@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import {FaArrowLeft} from 'react-icons/fa';
-import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
@@ -23,11 +23,13 @@ export type SkillProps = {
 
 const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	//react-select to make badges animated
 	const animatedComponents = makeAnimated();
 
 	//get data from api
 	const [roles, setRoles] = useState<any>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const [managerOptions, setManagerOptions] = useState<any>([]);
 
@@ -77,6 +79,7 @@ const RoleCreation: React.FC = () => {
 	//POST data when submit button is clicked
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
+		setIsLoading(true);
 		const response = await postAsync('api/listing', {
 			role_id: selectedRole.role_id,
 			application_close_date: date,
@@ -95,6 +98,7 @@ const RoleCreation: React.FC = () => {
 			}
 			navigate('/manager');
 		} else {
+			setIsLoading(false);
 			alert('Error: ' + data.error);
 		}
 	};
@@ -111,7 +115,7 @@ const RoleCreation: React.FC = () => {
 	//disable dates before today
 	const isDateDisabled = (date: Date) => {
 		// Disable dates before today
-		return date < new Date();
+		return date <= new Date();
 	};
 
 	//react-select styles
@@ -147,7 +151,7 @@ const RoleCreation: React.FC = () => {
 					</div>
 					<div className="text-3xl font-bold">
 						{/* TODO: change title based on edit or create */}
-						New Role Listing
+						{location.state.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
 				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
@@ -255,6 +259,7 @@ const RoleCreation: React.FC = () => {
 						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
 							<Button
 								styleType="green"
+								loading={isLoading}
 								onClick={(e) => {
 									handleSubmit(e);
 								}}
