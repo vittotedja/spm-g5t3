@@ -45,7 +45,6 @@ async def staff(email: str = None, staff_id: int = None, name: str = None, isMan
         access_control = supabase.from_('access_control').select("*").execute().data
         df_staff = pd.DataFrame(staff)
         df_staff = df_staff.merge(pd.DataFrame(access_control), left_on="control_access", right_on='access_id')
-        print(df_staff.columns)
         df_staff = df_staff[df_staff['staff_id'] != staff_id]
         filtered_df = df_staff[df_staff['control_access'].isin([2, 3, 4])]
         filtered_df.sort_values(by=['staff_fname', 'staff_lname'], inplace=True)
