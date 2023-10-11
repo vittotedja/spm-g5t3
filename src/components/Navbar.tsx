@@ -23,7 +23,7 @@ export const Navbar: React.FC = () => {
 					>
 						Role Listing
 					</Link>
-					{userRole === 'manager' && (
+					{userRole === 1 || userRole === 2 && (
 						<Link
 							to="/manager"
 							className="text-white transition duration-300 hover:text-gray-300"

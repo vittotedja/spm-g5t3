@@ -3,15 +3,15 @@ import React, {ReactNode, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {supabase} from '../pages/Login'; // Adjust the path to your supabase client
 
-export type UserRole = 'manager' | 'staff' | null;
+export type UserRole = 1 | 2 | 3 | 4 | null;
 
 interface ProtectedProps {
-	requiredRole: UserRole;
+	requiredRoles: UserRole[];
 	children: (role: UserRole) => ReactNode;
 }
 
 export const RoleProtection: React.FC<ProtectedProps> = ({
-	requiredRole,
+	requiredRoles,
 	children,
 }) => {
 	const navigate = useNavigate();
@@ -23,17 +23,18 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 	useEffect(() => {
 		const fetchUserRole = async () => {
 			// const user = supabase.auth.getSession();
-			const sessEmail = (await supabase.auth.getUser()).data.user?.email;
+			const sessEmail = (await supabase.auth.getUser()).data.user?.email?.toLowerCase();
+			console.log(sessEmail)
 			// const getStaff = (await supabase.from('staff').select('*').eq('email', sessEmail).single())
 			if (sessEmail) {
 				const {data, error} = await supabase
 					.from('staff')
 					.select('*')
-					.eq('email', sessEmail)
-					.single();
-
+					.ilike('email', sessEmail)
+				console.log(data)
+				
 				if (data && !error) {
-					setUserRole(data.is_manager ? 'manager' : 'staff');
+					setUserRole(data[0].control_access);
 				}
 			}
 		};
@@ -44,8 +45,8 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 		return <div>Loading...</div>;
 	}
 
-	if (userRole !== requiredRole) {
-		// alert("You don't have the rights to access this page")
+	if (!requiredRoles.includes(userRole)) {
+		alert("You don't have the rights to access this page")
 		navigate('/role-listing');
 		return null;
 	}
