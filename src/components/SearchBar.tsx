@@ -1,3 +1,4 @@
+import { Divide } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 
@@ -17,7 +18,11 @@ interface Staff {
   link?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ results, onSearchChange, placeholder}) => {
+const SearchBar: React.FC<SearchBarProps> = ({
+  results,
+  onSearchChange,
+  placeholder,
+}) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [showResults, setShowResults] = useState<boolean>(true);
@@ -48,7 +53,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ results, onSearchChange, placehol
   }, [results]);
 
   const handleOutsideClick = (e: MouseEvent) => {
-    if (searchInputRef.current && !searchInputRef.current.contains(e.target as Node)) {
+    if (
+      searchInputRef.current &&
+      !searchInputRef.current.contains(e.target as Node)
+    ) {
       setShowResults(false);
     }
   };
@@ -56,13 +64,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ results, onSearchChange, placehol
     setShowResults(true);
   };
 
-
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  },[]);
+  }, []);
 
   return (
     <div className="relative w-72" ref={searchInputRef}>
@@ -76,15 +83,21 @@ const SearchBar: React.FC<SearchBarProps> = ({ results, onSearchChange, placehol
       />
       {showResults && (
         <div className="absolute top-full left-0 w-full mt-2 border border-t-0 rounded-b shadow-lg">
-          {results.map((result) => (
-            <Link
-              key={result?.staff_id}
-              to={`${result?.link}`}
-              className="block p-2 hover:bg-gray-200 bg-white border-black border-b"
-            >
-              {result?.staff_fname} {result?.staff_lname} - {result?.dept}
-            </Link>
-          ))}
+          {results.length > 0 &&
+            results.map((result) => (
+              <Link
+                key={result?.staff_id}
+                to={`${result?.link}`}
+                className="block p-2 hover:bg-gray-200 bg-white border-black border-b"
+              >
+                {result?.staff_fname} {result?.staff_lname} - {result?.dept}
+              </Link>
+            ))}
+          {results.length === 0 && searchTerm.length > 0 && (
+            <div className="block p-2 hover:bg-gray-200 bg-white">
+              No results found
+            </div>
+          )}
         </div>
       )}
     </div>

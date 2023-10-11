@@ -33,7 +33,7 @@ const ManagerStaffList = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const staff_reponse = await getAsync(`api/staff?isManager=${true}`);
+      const staff_reponse = await getAsync(`api/staff?isManager=${true}&staff_id=${1}`);
       const staff_data = await staff_reponse.json();
       setAllStaff(staff_data);
       setPaginatedStaff(staff_data.slice(0, itemsPerPage));
@@ -42,7 +42,7 @@ const ManagerStaffList = () => {
   }, []);
 
   const handleSearchChange = async (name: string) => {
-    const response = await getAsync(`api/staff?name=${name}`);
+    const response = await getAsync(`api/staff?name=${name}&staff_id=${1}`);
     const data = await response.json();
     setSearchResults(data);
   };
