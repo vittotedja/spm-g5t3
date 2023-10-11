@@ -3,7 +3,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { setInitial } from "../utilities/Services";
 import formatDate from "../utilities/Utiliities";
 interface RoleDetailsProps {
-  role_id: string | undefined;
+  role_id: number | undefined;
 }
 
 interface Role {
@@ -22,7 +22,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
   const [roleData, setRoleData] = useState<Role>(Object);
   const [loading, setLoading] = useState<any>(null);
 
-
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
@@ -40,13 +39,11 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
     return <div>Error 404 There is no Role with the ID {role_id}</div>;
   }
 
-
-
   var close_date = formatDate(roleData.appl_close_date ?new Date(roleData.appl_close_date):null)
   
   return (
-    <div className="w-full lg:w-3/4 mb-8 lg:mb-0">
-      <section className="rounded-lg m-2 p-8 min-h-[100%] relative border border-solid border-gray-200">
+    <div className="w-full mb-8 lg:mb-0">
+      <section className="rounded-lg mr-2 p-8 min-h-[600px] relative border border-solid border-gray-200">
         <div className="max-w-4xl mx-auto flex flex-col">
           <div className="flex-grow">
             <div className="flex items-start">
@@ -84,12 +81,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
             </h3>
             <p className="text-xl text-gray-600 mb-8 text-left">
               {roleData.role_desc}
-            </p>
-            <h3 className="text-xl font-bold text-gray-800 mb-2 text-left">
-              Responsibility
-            </h3>
-            <p className="text-xl text-gray-600 mb-8 text-left">
-              {roleData.responsibility}
             </p>
           </div>
         </div>
