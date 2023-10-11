@@ -6,7 +6,7 @@ import {useAuth} from '../utilities/Auth';
 // import { useHistory } from 'react-router-dom';
 // import react from '../assets/react.svg';
 import {useNavigate} from 'react-router-dom';
-import { useCreateAcc } from '../utilities/Create_user';
+// import { useCreateAcc } from '../utilities/Create_user';
 
 
 // const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co';
@@ -20,7 +20,7 @@ const supabase: SupabaseClient = createClient(newUrl, newKey);
 export {supabase};
 
 export function Login() {
-	const createAccForStaff = useCreateAcc();
+	// const createAccForStaff = useCreateAcc();
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 	// const [isFormValid, setIsFormValid] = useState(false)
