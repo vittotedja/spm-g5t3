@@ -31,11 +31,10 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 					.from('staff')
 					.select('*')
 					.ilike('email', sessEmail)
-					.single();
 				console.log(data)
 				
 				if (data && !error) {
-					setUserRole(data.control_access);
+					setUserRole(data[0].control_access);
 				}
 			}
 		};

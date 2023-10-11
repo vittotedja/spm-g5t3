@@ -27,7 +27,7 @@ function App() {
 					<Route
 						path="/manager"
 						element={
-							<RoleProtection requiredRole="manager">
+							<RoleProtection requiredRoles={[2]}>
 								{(_role) => <ManagerRoleDetails />}
 							</RoleProtection>
 						}
@@ -35,7 +35,7 @@ function App() {
 					<Route
 						path="/manager/rolelisting"
 						element={
-							<RoleProtection requiredRole="manager">
+							<RoleProtection requiredRoles={[2]}>
 								{(_role) => <RoleCreation />}
 							</RoleProtection>
 						}
@@ -43,7 +43,7 @@ function App() {
 					<Route
 						path="/manager/stafflist"
 						element={
-							<RoleProtection requiredRole="manager">
+							<RoleProtection requiredRoles={[1, 2]}>
 								{(_role) => <ManagerStaffList />}
 							</RoleProtection>
 						}
