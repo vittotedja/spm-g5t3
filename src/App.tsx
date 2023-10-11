@@ -26,30 +26,27 @@ function App() {
 					<Route path="/login" element={<Login />} />
 					<Route
 						path="/manager"
-						// element={
-						// 	<RoleProtection requiredRole="manager">
-						// 		{(_role) => <ManagerRoleDetails />}
-						// 	</RoleProtection>
-						// }
-						element={<ManagerRoleDetails />}
+						element={
+							<RoleProtection requiredRole="manager">
+								{(_role) => <ManagerRoleDetails />}
+							</RoleProtection>
+						}
 					/>
 					<Route
 						path="/manager/rolelisting"
-						// element={
-						// 	<RoleProtection requiredRole="manager">
-						// 		{(_role) => <RoleCreation />}
-						// 	</RoleProtection>
-						// }
-						element={<RoleCreation />}
+						element={
+							<RoleProtection requiredRole="manager">
+								{(_role) => <RoleCreation />}
+							</RoleProtection>
+						}
 					/>
 					<Route
 						path="/manager/stafflist"
-						// element={
-						// 	<RoleProtection requiredRole="manager">
-						// 		{(_role) => <RoleCreation />}
-						// 	</RoleProtection>
-						// }
-						element={<ManagerStaffList />}
+						element={
+							<RoleProtection requiredRole="manager">
+								{(_role) => <ManagerStaffList />}
+							</RoleProtection>
+						}
 					/>
 					<Route path="/profile" element={<Profile />} />
 					<Route
