@@ -42,9 +42,9 @@ class ApplicationStatus(str, Enum):
 class PostApplication(BaseModel):
     application_id: int
     staff_id: int
-    role_id: int
-    status: ApplicationStatus = "Applied"
-    statement: str
+    listing_id: int
+    application_status: ApplicationStatus = "Applied"
+    application_reason: str
     
 class PutApplication(BaseModel):
     application_id: int
@@ -54,16 +54,16 @@ class PutApplication(BaseModel):
 @router.get("/api/application")
 async def application(application_id: int = None, staff_id: int = None, role_id: int = None):
     if staff_id and role_id:
-        application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('role_id', role_id).execute().data
+        application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
         return application
     elif application_id:
         application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
         return application
     elif staff_id:
-        application = supabase.table('application').select('*, role(*)').eq('staff_id', staff_id).execute().data
+        application = supabase.table('application').select('*, listing(*)').eq('staff_id', staff_id).execute().data
         return application
     elif role_id:
-        application = pd.DataFrame.from_records(supabase.table('application').select('*, staff(*)').eq('role_id', role_id).execute().data)
+        application = pd.DataFrame.from_records(supabase.table('application').select('*, staff(*)').eq('listing_id', role_id).execute().data)
 
         # get match percentage for each application
         match_percentage = [(await staff_role_skill(staff['staff_id'], role_id))['match_percentage'] for staff in application.staff]
