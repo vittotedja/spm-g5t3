@@ -1,18 +1,16 @@
 // import React from 'react';
-import {createClient, SupabaseClient} from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
 import {useRef} from 'react';
 import {useAuth} from '../utilities/Auth';
 // import { useHistory } from 'react-router-dom';
-// import react from '../assets/react.svg';
-import {useNavigate} from 'react-router-dom';
-// import { useCreateAcc } from '../utilities/Create_user';
+import { useNavigate } from 'react-router-dom';
 
-const newUrl = import.meta.env.VITE_SUPABASE_URL
-const newKey = import.meta.env.VITE_SUPABASE_KEY
-const supabase: SupabaseClient = createClient(newUrl, newKey);
+const supabaseUrl:string = import.meta.env.VITE_SUPABASE_URL || ''
+const supabaseKey:string = import.meta.env.VITE_SUPABASE_KEY || ''
+const supabase:SupabaseClient = createClient(supabaseUrl, supabaseKey)
+export {supabase}
 
-export {supabase};
 
 export function Login() {
 	// const createAccForStaff = useCreateAcc();
