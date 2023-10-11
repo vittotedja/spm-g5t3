@@ -11,24 +11,31 @@ export const CurrentUser: React.FC = () => {
 	const [error, setError] = useState<string | null>(null);
 	// const [currentRole, setCurrentRole] = useState<any>(null);
 
-    useEffect(() => {
-        const fetchStaff = async () => {
-            if (user?.email) {
-                setLoading(true);
-                try {
-                    setInitial(setCurrentUser, `api/staff?email=${user.email}`, false)
-                } catch (e) {
-                    setError('Failed to fetch data');
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
+	useEffect(() => {
+		const fetchStaff = async () => {
+			if (user?.email) {
+				setLoading(true);
+				try {
+					setInitial(
+						setCurrentUser,
+						`api/staff?email=${user.email}`,
+						false
+					);
+				} catch (e) {
+					setError('Failed to fetch data');
+				} finally {
+					setLoading(false);
+				}
+			}
+		};
 
 		fetchStaff();
 	}, [user?.email]); // Dependency array
 
-	const userName = currentUser?.staff_name || user?.email || 'User Name';
+	const userName =
+		currentUser?.staff_fname + ' ' + currentUser?.staff_lname ||
+		user?.email ||
+		'User Name';
 	const currentRole = currentUser?.curr_role;
 	return loading ? (
 		<div className="text-white">Loading...</div>

@@ -4,6 +4,7 @@ import PostedRoleTable from '../components/PostedRoleTable';
 import {useNavigate} from 'react-router-dom';
 
 function ManagerRoleDetails() {
+	//TODO: check whether user is HR or not
 	const isHR = true;
 	// const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();
@@ -18,7 +19,11 @@ function ManagerRoleDetails() {
 					{isHR && (
 						<Button
 							styleType="green"
-							onClick={() => navigate('/manager/rolelisting')}
+							onClick={() =>
+								navigate('/manager/rolelisting', {
+									state: {isEdit: false},
+								})
+							}
 							className="text-black bg-green"
 						>
 							+ Add New Role
