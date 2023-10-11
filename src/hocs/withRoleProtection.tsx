@@ -33,7 +33,7 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 					.single();
 
 				if (data && !error) {
-					setUserRole(data.is_manager ? 'manager' : 'staff');
+					setUserRole(data.control_access);
 				}
 			}
 		};
@@ -45,7 +45,7 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 	}
 
 	if (userRole !== requiredRole) {
-		// alert("You don't have the rights to access this page")
+		alert("You don't have the rights to access this page")
 		navigate('/role-listing');
 		return null;
 	}
