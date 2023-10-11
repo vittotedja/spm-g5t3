@@ -13,6 +13,7 @@ export {supabase}
 
 
 export function Login() {
+	// const createAccForStaff = useCreateAcc();
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 	// const [isFormValid, setIsFormValid] = useState(false)
@@ -108,6 +109,13 @@ export function Login() {
 					>
 						Login
 					</button>
+
+					{/* <button
+          				onClick={() => createAccForStaff()}
+          				className="mb-4 p-2 text-white bg-blue-500 rounded-md"
+        				>
+          				Create Accounts for Staff
+        			</button> */}
 				</form>
 			</div>
 		</div>
