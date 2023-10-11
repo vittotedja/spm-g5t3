@@ -8,13 +8,8 @@ import {useAuth} from '../utilities/Auth';
 import {useNavigate} from 'react-router-dom';
 // import { useCreateAcc } from '../utilities/Create_user';
 
-
-// const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co';
-// const supabaseKey =
-// 	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A';
-// const supabase = createClient(supabaseUrl, supabaseKey);
-const newUrl = "https://lhtazigkmlwzrsknbidn.supabase.co/"
-const newKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxodGF6aWdrbWx3enJza25iaWRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTY2MDg4NDgsImV4cCI6MjAxMjE4NDg0OH0.aU_OMGYjNx8oIf7XnfuV4CEyMsRxX3lwt40fRq6MTQM" // Make sure to keep your keys secure and not expose them publicly
+const newUrl = import.meta.env.VITE_SUPABASE_URL
+const newKey = import.meta.env.VITE_SUPABASE_KEY
 const supabase: SupabaseClient = createClient(newUrl, newKey);
 
 export {supabase};
