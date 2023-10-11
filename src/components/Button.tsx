@@ -5,8 +5,8 @@ interface ButtonProps {
 	className?: string;
 	children?: React.ReactNode;
 	loading?: boolean;
-	styleType?: 'normal' | 'red' | 'disabled' | 'green';
-	onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+	styleType?: 'normal' | 'red' | 'disabled' | 'green' | 'underline';
+	onClick?: (event?: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -30,6 +30,8 @@ const Button: FC<ButtonProps> = ({
 			? 'bg-red text-white'
 			: 'bg-red hover:bg-red-dark text-white',
 		disabled: 'bg-gray-400 cursor-not-allowed',
+		underline:
+			'bg-transparent hover:bg-transparent text-emerald-900 text-underlined',
 	};
 
 	return (

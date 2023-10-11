@@ -9,7 +9,6 @@ from api import (
     skill,
     application,
     get_applicants,
-    get_skillmatch,
     manager_rolelisting,
     listing,
     listing_manager,
