@@ -33,7 +33,9 @@ const ManagerStaffList = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const staff_reponse = await getAsync(`api/staff?isManager=${true}&staff_id=${1}`);
+      const staff_reponse = await getAsync(
+        `api/staff?isManager=${true}&staff_id=${1}`
+      );
       const staff_data = await staff_reponse.json();
       setAllStaff(staff_data);
       setPaginatedStaff(staff_data.slice(0, itemsPerPage));
@@ -89,7 +91,9 @@ const ManagerStaffList = () => {
               <tr
                 key={index}
                 className="border-b hover:bg-gray-100"
-                onClick={() => navigate(`/applicantdetail?user_id=${staffMember?.staff_id}`)}
+                onClick={() =>
+                  navigate(`/applicantdetail?user_id=${staffMember?.staff_id}`)
+                }
               >
                 <td className="p-2">
                   {staffMember.staff_fname} {staffMember.staff_lname}
@@ -112,17 +116,15 @@ const ManagerStaffList = () => {
           >
             FIRST
           </Button>
-          {currentPage > 1 && (
-            <Button
-              onClick={() => handlePageChange(currentPage - 1)}
-              styleType={"underline"}
-              className={
-                currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
-              }
-            >
-              PREV
-            </Button>
-          )}
+          <Button
+            onClick={() => handlePageChange(currentPage - 1)}
+            styleType={"underline"}
+            className={
+              currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
+            }
+          >
+            PREVIOUS
+          </Button>
           {getPaginationNumbers().map((number) => (
             <button
               key={number}
@@ -136,22 +138,24 @@ const ManagerStaffList = () => {
               {number}
             </button>
           ))}
-          {currentPage < totalPages && (
-            <Button
-              onClick={() => handlePageChange(currentPage + 1)}
-              styleType={"underline"}
-              className={
-                currentPage === totalPages ? "cursor-not-allowed" : "hover:underline"
-              }
-            >
-              NEXT
-            </Button>
-          )}
+          <Button
+            onClick={() => handlePageChange(currentPage + 1)}
+            styleType={"underline"}
+            className={
+              currentPage === totalPages
+                ? "cursor-not-allowed"
+                : "hover:underline"
+            }
+          >
+            NEXT
+          </Button>
           <Button
             onClick={() => handlePageChange(totalPages)}
             styleType={"underline"}
             className={
-              currentPage === totalPages ? "cursor-not-allowed" : "hover:underline"
+              currentPage === totalPages
+                ? "cursor-not-allowed"
+                : "hover:underline"
             }
           >
             LAST
