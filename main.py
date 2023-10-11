@@ -36,8 +36,6 @@ app.include_router(listing_manager.router)
 app.include_router(manager_rolelisting.router)
 
 # use api.staff_role_skill instead
-app.include_router(get_skillmatch.router)
-
 # use api.application instead
 app.include_router(get_totalapplications.router)
 
