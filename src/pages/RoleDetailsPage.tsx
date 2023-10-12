@@ -21,7 +21,7 @@ const RoleDetailsPage = () => {
   //const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
   //TODO: change staffID to be dynamic
   const auth = useAuth();
-  const param = useParams<{ role_ID: string }>();
+  const param = useParams<{ listing_id: string }>();
   const [applyLoading, setApplyLoading] = useState<any>(null);
   const [haveAppliedModal, setHaveAppliedModal] = useState(false);
   const [maxLimitModal, setMaxLimitModal] = useState(false);
@@ -35,9 +35,9 @@ const RoleDetailsPage = () => {
   let listing_id;
 
   //error handling the id
-  if (param.role_ID) {
-    if (/^\d+$/.test(param.role_ID)) {
-      listing_id = parseInt(param.role_ID);
+  if (param.listing_id) {
+    if (/^\d+$/.test(param.listing_id)) {
+      listing_id = parseInt(param.listing_id);
     } else {
       return <div>Error 404 There is no role Listing Id</div>;
     }

@@ -22,44 +22,43 @@ function App() {
 			<AuthProvider>
 				{location.pathname !== '/login' && <Navbar />}
 				<Routes>
-					<Route path="/" element={<h1>Hello</h1>} />
 					<Route path="/login" element={<Login />} />
 					<Route
 						path="/manager"
 						element={
-							<RoleProtection requiredRoles={[2]}>
+							<RoleProtection requiredRoles={[1, 2, 3, 4]}>
 								{(_role) => <ManagerRoleDetails />}
 							</RoleProtection>
 						}
 					/>
 					<Route
-						path="/manager/rolelisting"
+						path="/manager/role-listing"
 						element={
-							<RoleProtection requiredRoles={[2]}>
+							<RoleProtection requiredRoles={[1, 2, 3, 4]}>
 								{(_role) => <RoleCreation />}
 							</RoleProtection>
 						}
 					/>
 					<Route
-						path="/manager/stafflist"
+						path="/manager/staff-list"
 						element={
-							<RoleProtection requiredRoles={[1, 2]}>
+							<RoleProtection requiredRoles={[1, 2, 3, 4]}>
 								{(_role) => <ManagerStaffList />}
 							</RoleProtection>
 						}
 					/>
 					<Route path="/profile" element={<Profile />} />
 					<Route
-						path="/applicantdetail"
+						path="/applicant-detail/:application_id"
 						element={<ApplicantDetail />}
 					/>
-					<Route path="/role-listing" Component={RoleListing} />
+					<Route path="/" element={<RoleListing />} />
 					<Route
-						path="/role-details/:role_ID"
+						path="/listing-detail/:listing_id"
 						Component={RoleDetailsPage}
 					/>
 					<Route
-						path="/applicants-list/:role_ID"
+						path="/applicants-list/:role_id"
 						Component={ApplicantsListPage}
 					/>
 

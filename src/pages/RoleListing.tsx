@@ -138,7 +138,7 @@ const RoleListing: React.FC = () => {
               <RoleCard
                 key={role.listing_id+"-"+role.role_id}
 				listing_id={role.listing_id}
-                role_ID={role.role_id}
+                role_id={role.role_id}
                 role_name={role.role_name}
                 role_dept={role.dept}
                 role_percentage_match={role.percentage_match}
