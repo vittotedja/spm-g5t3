@@ -29,7 +29,7 @@ const ApplicantsListPage = () => {
   useEffect(() => {
     async function fetchData() {
         setInitial(setRoleData, `api/role?role_id=${role_id}`,false);
-        setInitial(setApplicantsData, `api/get_applicants?role_id=${role_id}`)
+        setInitial(setApplicantsData, `api/application?role_id=${role_id}`)
     }
     fetchData();
   }, []);
