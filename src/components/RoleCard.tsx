@@ -6,7 +6,7 @@ import formatDate from "../utilities/Utiliities";
 
 interface RoleCardProps {
   listing_id: number;
-  role_ID: number;
+  role_id: number;
   role_name: string;
   role_location?: string | null;
   role_deadline?: string | null;
@@ -16,7 +16,6 @@ interface RoleCardProps {
 
 const RoleCard: React.FC<RoleCardProps> = ({
   listing_id,
-  role_ID,
   role_name,
   role_deadline,
   role_location,
@@ -25,7 +24,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
 }) => {
   var role_deadline_string = formatDate(role_deadline ? new Date(role_deadline) : null);
   return (
-    <Link to={`/role-details?role_id=${role_ID}&listing_id=${listing_id}`}>
+    <Link to={`/listing-detail/${listing_id}`}>
       <div className="w-100 border rounded-lg p-6 shadow-md flex justify-between content-center my-6">
         <div className="text-left w-48 items-center my-auto">
           <p className="text-sm text-gray-500 mb-2">{role_dept}</p>
