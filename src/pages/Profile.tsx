@@ -42,7 +42,7 @@ export default function Profile() {
     let [application, setApplication] = useState<Application[]>([])
     const navigate = useNavigate();
     const roleListingButton = () => {
-        navigate('/role-listing');
+        navigate('/');
       };
 
     useEffect(() => {

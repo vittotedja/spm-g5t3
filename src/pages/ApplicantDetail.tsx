@@ -61,7 +61,8 @@ export default function ApplicantDetail() {
     // TODO: show which role this application is for
     return (
         <>
-        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate('/applicants')}>
+        {/* to do: fetch listing id here to navigate manager back to list of applicants for a listing*/}
+        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate(`/applicants-list`)}>
             <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/back.png" alt="back"/>
             <p className="font-medium text-md">Back to Applicants List</p>
         </div>

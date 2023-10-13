@@ -117,7 +117,7 @@ const RoleDetailsPage = () => {
       <div className="flex items-start mb-4 mt-8">
         <button
           className="flex items-center text-emerald-900 hover:underline"
-          onClick={() => navigate(`/role-listing`)}
+          onClick={() => navigate(`/`)}
         >
           <AiOutlineArrowLeft />
           Back to Role Listings

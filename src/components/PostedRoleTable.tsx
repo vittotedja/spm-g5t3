@@ -52,6 +52,7 @@ export default function PostedRoleTable() {
 						return (
 							<ManagerIndividualRole
 								key={listing.listing_id}
+								listing_id={listing.listing_id}
 								roleName={listing.role.role_name}
 								roleID={listing.role_id}
 								applicationEndDate={

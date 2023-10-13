@@ -20,12 +20,12 @@ interface Role {
 
 const ApplicantsListPage = () => {
   const navigate = useNavigate();
-  const role_ID = useParams<{ role_ID: string | undefined }>();
+  const role_ID = useParams<{ role_id: string | undefined }>();
   const [roleData, setRoleData] = useState<Role>(Object);
-  const role_id = role_ID.role_ID;
+  const role_id = role_ID.role_id;
   const [applicantsData, setApplicantsData] = useState<any>(Object);
   const [view, setView] = useState<string>("Applied");
-
+  //TO DO: get listing_id from role listing page
   useEffect(() => {
     async function fetchData() {
         setInitial(setRoleData, `api/role?role_id=${role_id}`,false);
@@ -34,8 +34,6 @@ const ApplicantsListPage = () => {
     fetchData();
   }, []);
 
-  console.log(roleData);
-  console.log(applicantsData)
 
 
 	if (!applicantsData) {
