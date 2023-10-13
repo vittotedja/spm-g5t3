@@ -1,16 +1,15 @@
 // import React from 'react';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import {createClient, SupabaseClient} from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
 import {useRef} from 'react';
 import {useAuth} from '../utilities/Auth';
 // import { useHistory } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-const supabaseUrl:string = import.meta.env.VITE_SUPABASE_URL || ''
-const supabaseKey:string = import.meta.env.VITE_SUPABASE_KEY || ''
-const supabase:SupabaseClient = createClient(supabaseUrl, supabaseKey)
-export {supabase}
-
+const supabaseUrl: string = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseKey: string = import.meta.env.VITE_SUPABASE_KEY || '';
+const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
+export {supabase};
 
 export function Login() {
 	// const createAccForStaff = useCreateAcc();
@@ -87,6 +86,7 @@ export function Login() {
 							type="email"
 							ref={emailRef}
 							className="w-full p-2 bg-gray-200 border rounded-md"
+							data-testid="email"
 						/>
 					</div>
 
@@ -99,12 +99,14 @@ export function Login() {
 							type="password"
 							ref={passwordRef}
 							className="w-full p-2 bg-gray-200 border rounded-md"
+							data-testid="password"
 						/>
 					</div>
 
 					<button
 						type="submit"
 						// disabled={!isFormValid}
+						data-testid="submitBtn"
 						className="float-right w-1/4 p-2 mt-6 font-bold text-white rounded-md bg-emerald-600 hover:bg-emerald-900 focus:outline-none focus:border-emerald-700 focus:ring focus:ring-emerald-900 justify-content-end "
 					>
 						Login
@@ -112,7 +114,7 @@ export function Login() {
 
 					{/* <button
           				onClick={() => createAccForStaff()}
-          				className="mb-4 p-2 text-white bg-blue-500 rounded-md"
+          				className="p-2 mb-4 text-white bg-blue-500 rounded-md"
         				>
           				Create Accounts for Staff
         			</button> */}
