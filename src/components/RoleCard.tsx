@@ -16,7 +16,6 @@ interface RoleCardProps {
 
 const RoleCard: React.FC<RoleCardProps> = ({
   listing_id,
-  role_id: role_ID,
   role_name,
   role_deadline,
   role_location,

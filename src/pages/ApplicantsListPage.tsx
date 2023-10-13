@@ -226,7 +226,7 @@ const ApplicantsListPage = () => {
                                 key={i}
                                 className="border-b hover:bg-gray-100"
                                 onClick={() =>
-                                  navigate(`/applicantdetail/${applicationId}`)
+                                  navigate(`applicant-detail/${applicationId}`)
                                 }
                               >
                                 <td className="p-2">

@@ -57,7 +57,7 @@ function App() {
             }
           />
           <Route
-            path="/applicant-detail/:application_id"
+            path="manager/applicants-list/:listing_id/applicant-detail/:application_id"
             element={
               <RoleProtection requiredRoles={[1, 3, 4]}>
                 {(_role) => <ApplicantDetail />}
