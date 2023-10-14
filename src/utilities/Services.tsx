@@ -1,6 +1,6 @@
 const api_path =
 	window.location.hostname === 'localhost'
-		? 'http://localhost:8000/'
+		? 'http://127.0.0.1:8000/'
 		: window.location.origin + '/';
 
 export async function setInitial(
