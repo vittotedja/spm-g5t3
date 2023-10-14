@@ -8,11 +8,9 @@ from api import (
     role,
     skill,
     application,
-    get_applicants,
     manager_rolelisting,
     listing,
     listing_manager,
-    get_totalapplications,
 )
 
 app = FastAPI()
@@ -33,10 +31,3 @@ app.include_router(application.router)
 app.include_router(listing.router)
 app.include_router(listing_manager.router)
 app.include_router(manager_rolelisting.router)
-
-# use api.staff_role_skill instead
-# use api.application instead
-app.include_router(get_totalapplications.router)
-
-# use api.application instead, and get skill match with api.staff_role_skill
-app.include_router(get_applicants.router)

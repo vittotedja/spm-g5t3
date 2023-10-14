@@ -4,6 +4,7 @@ import { putAsync, setInitial } from "../utilities/Services";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 interface Application {
     application_id: number,
@@ -36,8 +37,11 @@ interface Skill {
 
 export default function ApplicantDetail() {
     const navigate = useNavigate()
+    const param = useParams<{ application_id: string }>();
+
     // TODO: get application_id from applicants list page
-    const application_id = 1
+    const application_id = param.application_id
+
 
     let [application, setApplication] = useState<Application>(Object)
     let [applicant, setApplicant] = useState<Applicant>(Object)
@@ -61,7 +65,8 @@ export default function ApplicantDetail() {
     // TODO: show which role this application is for
     return (
         <>
-        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate('/applicants')}>
+        {/* to do: fetch listing id here to navigate manager back to list of applicants for a listing*/}
+        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate(`/applicants-list/${application_id}`)}>
             <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/back.png" alt="back"/>
             <p className="font-medium text-md">Back to Applicants List</p>
         </div>

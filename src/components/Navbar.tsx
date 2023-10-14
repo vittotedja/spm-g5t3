@@ -55,12 +55,12 @@ export const Navbar: React.FC = () => {
 
 				<div className="flex justify-center flex-grow space-x-48">
 					<Link
-						to="/role-listing"
+						to="/"
 						className="text-white transition duration-300 hover:text-gray-300"
 					>
 						Role Listing
 					</Link>
-					{userRole === 1 || userRole === 2 && (
+					{(userRole === 1 || userRole === 3 || userRole === 4) && (
 						<Link
 							to="/manager"
 							className="text-white transition duration-300 hover:text-gray-300"

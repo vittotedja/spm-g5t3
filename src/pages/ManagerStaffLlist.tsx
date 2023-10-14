@@ -92,7 +92,7 @@ const ManagerStaffList = () => {
                 key={index}
                 className="border-b hover:bg-gray-100"
                 onClick={() =>
-                  navigate(`/applicantdetail?user_id=${staffMember?.staff_id}`)
+                  navigate(`/applicant-detail?user_id=${staffMember?.staff_id}`)
                 }
               >
                 <td className="p-2">

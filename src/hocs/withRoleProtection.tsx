@@ -1,59 +1,62 @@
 // import { useAuth } from '../components/Auth';
-import React, {ReactNode, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {supabase} from '../pages/Login'; // Adjust the path to your supabase client
+import React, { ReactNode, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../pages/Login"; // Adjust the path to your supabase client
 
 export type UserRole = 1 | 2 | 3 | 4 | null;
 
 interface ProtectedProps {
-	requiredRoles: UserRole[];
-	children: (role: UserRole) => ReactNode;
+  requiredRoles: UserRole[];
+  children: (role: UserRole) => ReactNode;
 }
 
 export const RoleProtection: React.FC<ProtectedProps> = ({
-	requiredRoles,
-	children,
+  requiredRoles,
+  children,
 }) => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = useState<UserRole | "loading">("loading");
+  console.log(userRole);
 
-	// const { userRole } = useAuth() || {};
-	const [userRole, setUserRole] = useState<UserRole>(null);
-	// const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const sessEmail = (
+        await supabase.auth.getUser()
+      ).data.user?.email?.toLowerCase();
+      if (sessEmail) {
+        const { data, error } = await supabase
+          .from("staff")
+          .select("*")
+          .ilike("email", sessEmail);
+        if (data && !error) {
+          setUserRole(data[0].control_access);
+        } else {
+          console.error("Error fetching user role:", error);
+          setUserRole(null);
+        }
+      } else {
+        setUserRole(null);
+      }
+    };
 
-	useEffect(() => {
-		const fetchUserRole = async () => {
-			// const user = supabase.auth.getSession();
-			const sessEmail = (await supabase.auth.getUser()).data.user?.email?.toLowerCase();
-			console.log(sessEmail)
-			// const getStaff = (await supabase.from('staff').select('*').eq('email', sessEmail).single())
-			if (sessEmail) {
-				const {data, error} = await supabase
-					.from('staff')
-					.select('*')
-					.ilike('email', sessEmail)
-				console.log(data)
-				
-				if (data && !error) {
-					setUserRole(data[0].control_access);
-				}
-			}
-		};
-		fetchUserRole();
-	}, []);
+    fetchUserRole();
+  }, []);
 
-	if (userRole === null) {
-		return <div>Loading...</div>;
-	}
+  useEffect(() => {
+    if (userRole === "loading") return;
 
-	if (!requiredRoles.includes(userRole)) {
-		alert("You don't have the rights to access this page")
-		navigate('/role-listing');
-		return null;
-	}
+    if (userRole === null) {
+      alert("Please login to access this page");
+      navigate("/login");
+    } else if (!requiredRoles.includes(userRole)) {
+      alert("You dont have access to this page");
+      navigate("/");
+    }
+  }, [userRole]);
 
-	// return <WrappedComponent {...props} />;
-	return <>{children(userRole)}</>;
+  if (userRole === "loading") return null; // or a loading spinner
+
+  return <>{children(userRole)}</>;
 };
-// }
 
 export default RoleProtection;

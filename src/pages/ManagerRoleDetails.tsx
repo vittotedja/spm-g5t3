@@ -20,7 +20,7 @@ function ManagerRoleDetails() {
 						<Button
 							styleType="green"
 							onClick={() =>
-								navigate('/manager/rolelisting', {
+								navigate('/manager/role-listing', {
 									state: {isEdit: false},
 								})
 							}

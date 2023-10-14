@@ -58,7 +58,7 @@ export function Login() {
 			alert(errorMessage);
 		} else {
 			alert('Log In Succesful');
-			navigate('/role-listing');
+			navigate('/');
 		}
 	}
 

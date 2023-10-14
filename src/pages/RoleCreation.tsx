@@ -151,7 +151,7 @@ const RoleCreation: React.FC = () => {
 					</div>
 					<div className="text-3xl font-bold">
 						{/* TODO: change title based on edit or create */}
-						{location.state.isEdit ? 'Edit' : 'New'} Role Listing
+						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
 				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
