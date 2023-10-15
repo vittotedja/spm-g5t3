@@ -81,7 +81,7 @@ const ApplicantsListPage = () => {
       <div className="flex items-center justify-between mb-4">
         <button
           className="flex items-center text-emerald-900 hover:underline"
-          onClick={() => navigate(`/role-listing`)}
+          onClick={() => navigate(`/`)}
         >
           <AiOutlineArrowLeft />
           Back to Role Listings
@@ -96,41 +96,41 @@ const ApplicantsListPage = () => {
       </div>
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg lg:mb-0">
-          <section className="rounded-lg m-2 border border-solid border-gray-200 mb-10 overflow">
-            <div className="max-w-4xl p-8 pl-10 pb-0 flex flex-col lg:flex-row">
+          <section className="m-2 mb-10 border border-gray-200 border-solid rounded-lg overflow">
+            <div className="flex flex-col max-w-4xl p-8 pb-0 pl-10 lg:flex-row">
               <div className="flex flex-col lg:flex-row">
                 <div className="w-full lg:pr-96 lg:mr-60">
-                  <h2 className="text-3xl font-bold text-gray-800 text-left mb-3 whitespace-normal max-h-16">
+                  <h2 className="mb-3 text-3xl font-bold text-left text-gray-800 whitespace-normal max-h-16">
                     {roleName}
                   </h2>
-                  <p className="text-l text-gray-600 text-left mb-1 whitespace-nowrap">
+                  <p className="mb-1 text-left text-gray-600 text-l whitespace-nowrap">
                     {creation_date}
                   </p>
                   <div className="flex items-center">
                     <FaLocationDot className="text-gray-400" />
-                    <p className="text-l text-emerald-900 italic text-left ml-2">
+                    <p className="ml-2 italic text-left text-l text-emerald-900">
                       {listingData.listing_location}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="w-full p-4 mb-3 lg:mb-0">
-                <h3 className="text-xl font-bold text-gray-800 mb-4 text-left">
+                <h3 className="mb-4 text-xl font-bold text-left text-gray-800">
                   No of Applicants
                 </h3>
-                <p className="text-l text-gray-600 text-left">{totalRows}</p>
+                <p className="text-left text-gray-600 text-l">{totalRows}</p>
               </div>
               <div className="w-full p-4">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 text-left">
+                <h3 className="mb-3 text-xl font-bold text-left text-gray-800">
                   Department
                 </h3>
-                <p className="text-l text-gray-600 text-left">{roleDept}</p>
+                <p className="text-left text-gray-600 text-l">{roleDept}</p>
               </div>
               <div className="w-full p-4">
-                <h3 className="text-xl font-bold text-gray-800 mb-3 text-left">
+                <h3 className="mb-3 text-xl font-bold text-left text-gray-800">
                   Application Close Date
                 </h3>
-                <p className="text-l text-emerald-900 mb-4 font-bold italic">
+                <p className="mb-4 italic font-bold text-l text-emerald-900">
                   {close_date}
                 </p>
               </div>

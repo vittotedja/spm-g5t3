@@ -16,11 +16,14 @@ function ManagerIndividualRole({
 	roleID,
 	applicationEndDate,
 	noOfApplicants,
-	listing_id
+	listing_id,
 }: ManagerIndividualRoleProps) {
 	const navigate = useNavigate();
 	return (
-		<tr className="border border-teal-900 border-opacity-20 text-neutral-950" onClick={()=>navigate(`/manager/applicants-list/${listing_id}`)}>
+		<tr
+			className="border border-teal-900 cursor-pointer border-opacity-20 text-neutral-950 hover:bg-slate-100"
+			onClick={() => navigate(`/manager/applicants-list/${listing_id}`)}
+		>
 			<td className="py-2">{roleName ? roleName : 'role name'}</td>
 			<td>{roleID ? roleID : 'role id'}</td>
 			<td>{noOfApplicants ? noOfApplicants : '0'}</td>
