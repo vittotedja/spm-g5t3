@@ -2,10 +2,12 @@
 import Button from '../components/Button';
 import PostedRoleTable from '../components/PostedRoleTable';
 import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../utilities/Auth';
 
 function ManagerRoleDetails() {
 	//TODO: check whether user is HR or not
-	const isHR = true;
+	const {userRole} = useAuth() || {};
+	const isHR = userRole === 4;
 	// const [isHR, setIsHR] = useState(true);
 	const navigate = useNavigate();
 

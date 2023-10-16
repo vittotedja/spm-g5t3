@@ -14,6 +14,7 @@ import {Calendar} from '../components/ui/calendar';
 import formatDate from '../utilities/Utiliities';
 import Badge from '../components/Badge';
 import {setInitial} from '../utilities/Services';
+import {toast} from 'react-hot-toast';
 
 export type SkillProps = {
 	skill_id: string;
@@ -32,9 +33,16 @@ const RoleCreation: React.FC = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const [managerOptions, setManagerOptions] = useState<any>([]);
+	const countryOptions = [
+		{value: 'Singapore', label: 'Singapore'},
+		{value: 'Indonesia', label: 'Indonesia'},
+		{value: 'Malaysia', label: 'Malaysia'},
+		{value: 'Vietnam', label: 'Vietnam'},
+	];
 
 	//state for selected options
 	const [selectedRole, setSelectedRole] = useState<any>({});
+	const [selectedCountry, setSelectedCountry] = useState<any>({});
 	const [hrManager, setHrManager] = useState<any>({});
 	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
 	const [roleOptions, setRoleOptions] = useState<any>([]);
@@ -80,26 +88,34 @@ const RoleCreation: React.FC = () => {
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setIsLoading(true);
-		const response = await postAsync('api/listing', {
-			role_id: selectedRole.role_id,
-			application_close_date: date,
-		});
-		const data = await response.json();
-		if (data.success) {
-			for (let i = 0; i < hrManager.length; i++) {
-				const response = await postAsync('api/listing_manager', {
-					manager_id: hrManager[i].value,
-					listing_id: data.data.listing_id,
-				});
-				const listingManagerData = await response.json();
-				if (!listingManagerData.success) {
-					alert('Error: ' + listingManagerData.error);
+		if (hrManager.length > 0) {
+			const response = await postAsync('api/listing', {
+				role_id: selectedRole.role_id,
+				application_close_date: date,
+				listing_location: selectedCountry.value,
+			});
+			const data = await response.json();
+			if (data.success) {
+				for (let i = 0; i < hrManager.length; i++) {
+					const response = await postAsync('api/listing_manager', {
+						manager_id: hrManager[i].value,
+						listing_id: data.data.listing_id,
+					});
+					const listingManagerData = await response.json();
+					if (!listingManagerData.success) {
+						alert('Error: ' + listingManagerData.error);
+					}
 				}
+				navigate('/manager');
+			} else {
+				setIsLoading(false);
+				toast.error(
+					'Something went wrong, please check the form you are submitting'
+				);
 			}
-			navigate('/manager');
 		} else {
+			toast.error('Please select at least one hiring manager');
 			setIsLoading(false);
-			alert('Error: ' + data.error);
 		}
 	};
 
@@ -115,7 +131,7 @@ const RoleCreation: React.FC = () => {
 	//disable dates before today
 	const isDateDisabled = (date: Date) => {
 		// Disable dates before today
-		return date <= new Date();
+		return date < new Date();
 	};
 
 	//react-select styles
@@ -150,7 +166,6 @@ const RoleCreation: React.FC = () => {
 						<p>Back to Posted Role Listings</p>
 					</div>
 					<div className="text-3xl font-bold">
-						{/* TODO: change title based on edit or create */}
 						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
@@ -208,22 +223,43 @@ const RoleCreation: React.FC = () => {
 								<div className="mt-10">
 									<div className="px-3 sm:col-span-4 text-start">
 										<label
-											htmlFor="level"
+											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
 										>
-											Hiring Managers
+											Location
 										</label>
 										<Select
-											isMulti
-											options={managerOptions}
-											className="mt-2 basic-multi-select"
-											styles={colorStyles}
-											components={animatedComponents}
+											required
+											options={countryOptions}
+											className="mt-2 rounded-md shadow-sm basic-multi-select ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md"
 											onChange={(selectedOption) => {
-												setHrManager(selectedOption);
+												setSelectedCountry(
+													selectedOption
+												);
 											}}
 										/>
 									</div>
+								</div>
+							</div>
+
+							<div className="pb-12 border-b border-gray-900/10 text-start">
+								<div className="px-3 sm:col-span-4 text-start">
+									<label
+										htmlFor="level"
+										className="font-bold leading-6 text-olive-green-dark"
+									>
+										Hiring Managers
+									</label>
+									<Select
+										isMulti
+										options={managerOptions}
+										className="mt-2 basic-multi-select"
+										styles={colorStyles}
+										components={animatedComponents}
+										onChange={(selectedOption) => {
+											setHrManager(selectedOption);
+										}}
+									/>
 								</div>
 							</div>
 

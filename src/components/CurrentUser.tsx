@@ -45,6 +45,7 @@ export const CurrentUser: React.FC = () => {
 		<Link
 			to="/profile"
 			className="flex items-center space-x-2 cursor-pointer hover:underline"
+			data-testid="current-user"
 		>
 			<Avatar name={userName} size="40" round={true} />
 			<div className="text-white">

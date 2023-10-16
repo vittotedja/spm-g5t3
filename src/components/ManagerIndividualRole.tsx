@@ -1,6 +1,8 @@
 import {useNavigate} from 'react-router-dom';
 import {HiPencilSquare, HiTrash} from 'react-icons/hi2';
 import formatDate from '../utilities/Utiliities';
+import {useAuth} from '../utilities/Auth';
+
 interface ManagerIndividualRoleProps {
 	roleName?: string;
 	roleID?: number;
@@ -18,6 +20,9 @@ function ManagerIndividualRole({
 	noOfApplicants,
 	listing_id,
 }: ManagerIndividualRoleProps) {
+	const {userRole} = useAuth() || {};
+	const isHR = userRole === 4;
+
 	const navigate = useNavigate();
 	return (
 		<tr
@@ -33,21 +38,25 @@ function ManagerIndividualRole({
 				)}
 			</td>
 			<td>
-				<p
-					onClick={() =>
-						navigate('/manager/role-listing', {
-							state: {isEdit: true},
-						})
-					}
-					className="cursor-pointer hover:text-green hover:underline"
-				>
-					<HiPencilSquare />
-				</p>
+				{isHR && (
+					<p
+						onClick={() =>
+							navigate('/manager/role-listing', {
+								state: {isEdit: true},
+							})
+						}
+						className="cursor-pointer hover:text-green hover:underline"
+					>
+						<HiPencilSquare />
+					</p>
+				)}
 			</td>
 			<td>
-				<p className="cursor-pointer hover:text-red hover:underline">
-					<HiTrash />
-				</p>
+				{isHR && (
+					<p className="cursor-pointer hover:text-red hover:underline">
+						<HiTrash />
+					</p>
+				)}
 			</td>
 		</tr>
 	);
