@@ -18,7 +18,13 @@ jobs:
               working-directory: ./
             - name: Start FastAPI backend
               run: |
-                  uvicorn main:app --reload
+                  uvicorn main:app
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  VITE_NEWEST_URL: ${{secrets.VITE_NEWEST_URL}}
+                  VITE_NEWEST_KEY: ${{secrets.VITE_NEWEST_KEY}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
               working-directory: ./
 
     cypress-run:
