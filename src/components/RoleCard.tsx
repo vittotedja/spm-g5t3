@@ -27,12 +27,15 @@ const RoleCard: React.FC<RoleCardProps> = ({
 	);
 	return (
 		<Link to={`/listing-detail/${listing_id}`}>
-			<div className="w-100 border rounded-lg p-6 shadow-md flex justify-between content-center my-6">
-				<div className="text-left w-48 items-center my-auto">
-					<p className="text-sm text-gray-500 mb-2">
+			<div
+				className="flex content-center justify-between p-6 my-6 border rounded-lg shadow-md w-100"
+				data-testid="role-card"
+			>
+				<div className="items-center w-48 my-auto text-left">
+					<p className="mb-2 text-sm text-gray-500">
 						{role_department}
 					</p>
-					<h2 className="text-xl font-bold mb-2">{role_name}</h2>
+					<h2 className="mb-2 text-xl font-bold">{role_name}</h2>
 					{listing_location && (
 						<div className="flex justify-start">
 							<img src={maps_pointer} className="mr-2"></img>{' '}
@@ -40,7 +43,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
 						</div>
 					)}
 				</div>
-				<div className="w-64 flex-col justify-between items-center mt-3 my-auto">
+				<div className="flex-col items-center justify-between w-64 my-auto mt-3">
 					<p className="mb-2">Skill - Match %</p>
 					<ProgressBar
 						percentage={parseFloat(

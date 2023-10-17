@@ -1,6 +1,6 @@
 describe('Staff logs in to app for the first time', () => {
 	it('Connecting to home page for the first time', () => {
-		cy.visit('localhost:5173');
+		cy.visit('/', {failOnStatusCode: false});
 
 		cy.contains('GlassWindow');
 

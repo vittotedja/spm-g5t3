@@ -14,7 +14,9 @@ export const CurrentUser: React.FC = () => {
 	const staff_email = user?.email;
 
 	useEffect(() => {
-		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		if (staff_email) {
+			setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		}
 		const fetchStaff = async () => {
 			if (user?.email) {
 				setLoading(true);

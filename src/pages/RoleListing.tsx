@@ -45,7 +45,9 @@ const RoleListing: React.FC = () => {
 	const staff_email = auth?.user?.email;
 
 	useEffect(() => {
-		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		if (staff_email) {
+			setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		}
 	}, [staff_email]);
 
 	const fetchFirst = async () => {
@@ -53,27 +55,29 @@ const RoleListing: React.FC = () => {
 		setRoles([]); // Clear existing roles
 		setHasMore(true); // Reset hasMore
 		setLoading(true); // Set loading to true
-		const response = await getAsync(
-			`api/staff_role?staff_id=${
-				staff?.staff_id
-			}&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
-				selectedFilters
-			)}`
-		);
-		const data = await response.json();
-		const filters = [
-			{name: 'Skills', values: data.all_skills},
-			{name: 'Region', values: data.all_regions},
-			{name: 'Role Name', values: data.all_roles},
-			{name: 'Department', values: data.all_departments},
-		];
-		setFilters(filters);
-		if (data.data.length === 0) {
-			setHasMore(false);
-		} else {
-			setRoles(data.data);
+		if (staff?.staff_id != undefined) {
+			const response = await getAsync(
+				`api/staff_role?staff_id=${
+					staff?.staff_id
+				}&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+					selectedFilters
+				)}`
+			);
+			const data = await response.json();
+			const filters = [
+				{name: 'Skills', values: data.all_skills},
+				{name: 'Region', values: data.all_regions},
+				{name: 'Role Name', values: data.all_roles},
+				{name: 'Department', values: data.all_departments},
+			];
+			setFilters(filters);
+			if (data.data.length === 0) {
+				setHasMore(false);
+			} else {
+				setRoles(data.data);
+			}
+			setLoading(false);
 		}
-		setLoading(false);
 	};
 
 	const fetchMore = async () => {
