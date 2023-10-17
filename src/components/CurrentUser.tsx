@@ -18,12 +18,12 @@ export const CurrentUser: React.FC = () => {
 			setInitial(setStaff, `api/staff?email=${staff_email}`, false);
 		}
 		const fetchStaff = async () => {
-			if (user?.email) {
+			if (staff_email) {
 				setLoading(true);
 				try {
 					setInitial(
 						setCurrentUser,
-						`api/staff?email=${user.email}`,
+						`api/staff?email=${staff_email}`,
 						false
 					);
 				} catch (e) {
