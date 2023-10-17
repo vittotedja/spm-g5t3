@@ -20,16 +20,25 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 
   useEffect(() => {
     const fetchUserRole = async () => {
-      const sessEmail = (
-        await supabase.auth.getUser()
-      ).data.user?.email?.toLowerCase();
+      const user = await supabase.auth.getUser();
+      if (!user) {
+        console.error("User not found");
+        setUserRole(null);
+        return;
+      }
+
+      const sessEmail = user.data.user?.email?.toLowerCase()
+      //   await supabase.auth.getUser()
+      // ).data.user?.email?.toLowerCase();
       if (sessEmail) {
         const { data, error } = await supabase
           .from("staff")
           .select("*")
           .ilike("email", sessEmail);
-        if (data && !error) {
-          setUserRole(data[0].control_access);
+        if (error || !data || data.length === 0) {
+          console.error("Error fetching user role:", error);
+          setUserRole(null);
+          // setUserRole(data[0].control_access);
         } else {
           console.error("Error fetching user role:", error);
           setUserRole(null);
@@ -47,14 +56,14 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 
     if (userRole === null) {
       alert("Please login to access this page");
-      navigate("/login");
+      navigate("/login", {state: {from: location}});
     } else if (!requiredRoles.includes(userRole)) {
       alert("You dont have access to this page");
       navigate("/");
     }
   }, [userRole]);
 
-  if (userRole === "loading") return null; // or a loading spinner
+  if (userRole === "loading") return <div>Loading...</div>;  // Add loading state
 
   return <>{children(userRole)}</>;
 };
