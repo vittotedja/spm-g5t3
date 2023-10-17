@@ -4,11 +4,11 @@ describe('Staff logs in to app for the first time', () => {
 
 		cy.contains('GlassWindow');
 
-		cy.get('[data-testid = email]').type('James.Tong@allinone.com.sg');
-		cy.get('[data-testid = password]').type('James.Tong');
+		cy.get('[data-testid = email]').type('chandra.pandey@allinone.com.sg');
+		cy.get('[data-testid = password]').type('chandra.pandey');
 		cy.get('[data-testid = submitBtn]').click();
 
-		cy.contains('James Tong');
+		cy.contains('Chandra Pandey');
 		// cy.wait(4000);
 		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
 	});

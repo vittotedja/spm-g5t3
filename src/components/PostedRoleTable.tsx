@@ -63,5 +63,9 @@ export default function PostedRoleTable() {
 			</table>
 		);
 	}
-	return <h1>You have no open Roles</h1>;
+	return (
+		<div>
+			<p className="text-xl font-bold">You have no open Role Listing</p>
+		</div>
+	);
 }

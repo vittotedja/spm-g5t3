@@ -14,3 +14,8 @@ jobs:
               with:
                   build: npm run build
                   start: npm run dev
+              env:
+                  # pass GitHub token to detect new build vs re-run build
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  VITE_SUPABASE_URL: ${{secrets.VITE_SUPABASE_URL}}
+                  VITE_SUPABASE_KEY: ${{secrets.VITE_SUPABASE_KEY}}
