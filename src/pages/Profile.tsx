@@ -1,35 +1,46 @@
 import{ useEffect, useState } from "react";
 import ApplicationCard from "../components/ApplicationCard";
-import glasswindow_green from "../assets/glasswindow_green.png"
 import Badge from "../components/Badge";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import { setInitial } from "../utilities/Services";
 import { useAuth } from "../utilities/Auth";
+import Avatar from 'react-avatar';
 
 interface Staff{
-    staff_id: number;
-    staff_name: string;
-    curr_role: string;
-    curr_dept: string;
-    location: string;
+    staff_id: number
+    staff_fname: string
+    staff_lname: string
+    email: string
+    dept: string
+    country: string
+    control_access: number
 }
 
 interface Skill{
-    skill_id: number;
-    skill_name: string;
-    qualified: boolean;
+    skill_id: number
+    skill_name: string
+    skill_desc: string
 }[]
 
 interface Application{
     application_id: number
-    status: 'Applied' | 'Shortlisted' | 'Rejected'
-    role: {
+    applied_at: string
+    withdrawn_at: string
+    staff_id: number
+    application_reason: string
+    application_status: 'Applied' | 'Shortlisted' | 'Rejected'
+    updated_at: string
+    listing_id: number
+    listing: {
+        listing_id: number;
         role_id: number;
-        role_name: string;
-        dept: string;
-        location: string;
-        appl_close_date: string;
+        creation_date: string
+        updated_at: string
+        deleted_at: string
+        updated_from: string
+        listing_location: string;
+        application_close_date: string;
     }
 }[]
 
@@ -48,25 +59,28 @@ export default function Profile() {
     useEffect(() => {
         async function fetchFirst() {
             let staff = await setInitial(setStaff, `api/staff?email=${staff_email}`, false)
-            setInitial(setSkills, `api/staff_skill?staff_id=${staff.staff_id}`)
             setInitial(setApplication, `api/application?staff_id=${staff.staff_id}`)
+            // console.log(application)
+            setInitial(setSkills, `api/staff_skill?staff_id=${staff.staff_id}`)
+            
         }
         fetchFirst()
     }
     , [])
+    const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
     return (
         <>
         {/* <Navbar /> */}
         <div className="container mx-auto px-4 mt-10">
             <div className="container flex">
                 <div className="w-2/12">
-                    <img src={glasswindow_green} width="100px" className="rounded-full"/>
+                    <Avatar name={userName} round={true} />
                 </div>
                 <div className="w-2/3 pl-3 text-left">
-                    <p className="font-extrabold text-2xl">{staff.staff_name}</p>
-                    <p className="font-bold italic text-base">{staff.curr_role}</p>
-                    <p className="font-medium italic text-base">{staff.curr_dept}</p>
-                    <p className="font-light italic text-base">{staff.location}</p>
+                    <p className="font-extrabold text-2xl">{userName}</p>
+                    <p className="font-bold italic text-base">{staff.email}</p>
+                    <p className="font-medium italic text-base">{staff.dept}</p>
+                    <p className="font-light italic text-base">{staff.country}</p>
                 </div>
             </div>
 
@@ -92,9 +106,9 @@ export default function Profile() {
                 
                 {/* NO APPLICATION */}
                 {application[0]
-                    ? <div className="flex">
+                    ? <div className="flex flex-col lg:flex-row">
                     {application.map((appl) => (
-                        <ApplicationCard key={appl.application_id} application={appl} staff_id={staff.staff_id} />
+                        <ApplicationCard key={appl.application_id} application={appl} />
                     ))}
                     </div>
                     : 
