@@ -87,9 +87,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
               <Link
                 key={result?.staff_id}
                 to={`${result?.link}`}
-                className="block p-2 hover:bg-gray-200 bg-white border-black border-b"
+                className="block p-2 hover:bg-gray-200 bg-white border-black border-b text-left"
               >
-                {result?.staff_fname} {result?.staff_lname} - {result?.dept}
+                {result?.staff_fname} {result?.staff_lname} - {result?.dept} - {result?.country}
               </Link>
             ))}
           {results.length === 0 && searchTerm.length > 0 && (

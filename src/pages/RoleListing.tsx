@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import RoleCard from "../components/RoleCard";
-import { getAsync } from "../utilities/Services";
+import { getAsync, setInitial } from "../utilities/Services";
 import FilterBox from "../components/FilterBox";
 import SortComponent from "../components/SortComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
 import confused_guy from "../assets/confused_guy.png";
+import { useAuth } from "../utilities/Auth";
+import Spinner from "../components/Spinner";
 
 interface Role {
   role_name: string;
@@ -15,10 +17,10 @@ interface Role {
   updated_at: string | null;
   deleted_at: string | null;
   application_close_date: string | null;
-  dept: string;
+  role_department: string;
   "deleted?": boolean;
   deleted_At: string | null;
-  country: string | null;
+  listing_location: string | null;
   percentage_match: number;
 }
 interface FilterItem {
@@ -37,6 +39,14 @@ const RoleListing: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
+  const [staff, setStaff] = useState<any>(Object);
+
+  const auth  = useAuth();
+	const staff_email = auth?.user?.email;
+
+	useEffect(() => {
+		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+	}, [staff_email]); 
 
   const fetchFirst = async () => {
     setPage(1); // Reset to the first page
@@ -44,7 +54,7 @@ const RoleListing: React.FC = () => {
     setHasMore(true); // Reset hasMore
     setLoading(true); // Set loading to true
     const response = await getAsync(
-      `api/staff_role?staff_id=1&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+      `api/staff_role?staff_id=${staff?.staff_id}&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
         selectedFilters
       )}`
     );
@@ -70,14 +80,14 @@ const RoleListing: React.FC = () => {
     var response;
     if (page === 1) {
       response = await getAsync(
-        `api/staff_role?staff_id=1&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?staff_id=${staff?.staff_id}&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );
       setPage(2);
     } else {
       response = await getAsync(
-        `api/staff_role?staff_id=1&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?staff_id=${staff?.staff_id}&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );
@@ -107,58 +117,66 @@ const RoleListing: React.FC = () => {
 
   useEffect(() => {
     fetchFirst();
-  }, [sortField, order, selectedFilters]);
+  }, [sortField, order, selectedFilters, staff]);
 
   return (
-    <div className="flex justify-around mt-4">
-      <FilterBox filters={filters} onFilterChange={handleFilterChange} />
-      <div className="flex-col justify-center w-4/6">
-        <h2 className="text-2xl font-bold text-left">Role Listings</h2>
-        <SortComponent
-          options={[
-            { value: "creation_date", name: "Created At" },
-            { value: "role_name", name: "Role Name" },
-            { value: "dept", name: "Department" },
-            {
-              value: "application_close_date",
-              name: "Application Deadline",
-            },
-          ]}
-          onSortFieldChange={handleSortFieldChange}
-          onOrderChange={handleOrderChange}
-        />
-        {roles.length > 0 ? (
-          <InfiniteScroll
-            dataLength={roles.length}
-            next={fetchMore}
-            hasMore={hasMore}
-            loader={<span></span>}
-          >
-            {roles.map((role) => (
-              <RoleCard
-                key={role.listing_id+"-"+role.role_id}
-				listing_id={role.listing_id}
-                role_id={role.role_id}
-                role_name={role.role_name}
-                role_dept={role.dept}
-                role_percentage_match={role.percentage_match}
-                role_deadline={role?.application_close_date}
-                role_location={role?.country}
-              />
-            ))}
-          </InfiniteScroll>
-        ) : (
-          !loading && (
-            <div className="flex flex-col items-center justify-center my-12 text-center">
-              <img src={confused_guy} width={500}></img>
-              <h2 className="text-2xl font-bold">
-                No job openings match the selected filters, please try again.
-              </h2>
-            </div>
-          )
-        )}
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <div>
+          <Spinner />
+        </div>
+      ) : (
+        <div className="flex justify-around mt-4">
+          <FilterBox filters={filters} onFilterChange={handleFilterChange} />
+          <div className="flex-col justify-center w-4/6">
+            <h2 className="text-2xl font-bold text-left">Role Listings</h2>
+            <SortComponent
+              options={[
+                { value: "creation_date", name: "Created At" },
+                { value: "role_name", name: "Role Name" },
+                { value: "dept", name: "Department" },
+                {
+                  value: "application_close_date",
+                  name: "Application Deadline",
+                },
+              ]}
+              onSortFieldChange={handleSortFieldChange}
+              onOrderChange={handleOrderChange}
+            />
+            {roles.length > 0 ? (
+              <InfiniteScroll
+                dataLength={roles.length}
+                next={fetchMore}
+                hasMore={hasMore}
+                loader={<span></span>}
+              >
+                {roles.map((role) => (
+                  <RoleCard
+                    key={role.listing_id}
+                    listing_id={role.listing_id}
+                    role_id={role.role_id}
+                    role_name={role.role_name}
+                    role_department={role.role_department}
+                    listing_location={role.listing_location}
+                    role_percentage_match={role.percentage_match}
+                    role_deadline={role?.application_close_date}
+                  />
+                ))}
+              </InfiniteScroll>
+            ) : (
+              !loading && (
+                <div className="flex flex-col items-center justify-center my-12 text-center">
+                  <img src={confused_guy} width={500} alt="Confused Guy" />
+                  <h2 className="text-2xl font-bold">
+                    No job openings match the selected filters, please try again.
+                  </h2>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
