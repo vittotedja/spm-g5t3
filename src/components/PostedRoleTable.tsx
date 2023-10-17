@@ -6,13 +6,17 @@ import {useAuth} from '../utilities/Auth';
 export default function PostedRoleTable() {
 	const [managerListing, setManagerListing] = useState<any>([]);
 
-	const {userId} = useAuth() || {};
+	const {userId, userRole} = useAuth() || {};
 	const manager_id = userId;
 
 	async function fetchData() {
-		const response = await getAsync(
-			'api/listing_manager?manager_id=' + manager_id
-		);
+		if (userRole === 4) {
+			var response = await getAsync('api/listing');
+		} else {
+			var response = await getAsync(
+				'api/listing_manager?manager_id=' + manager_id
+			);
+		}
 		const data = await response.json();
 		const tempManagerListing: any = [];
 		for (let i = 0; i < data.length; i++) {

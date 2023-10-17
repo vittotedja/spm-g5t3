@@ -39,16 +39,16 @@ function ManagerIndividualRole({
 			</td>
 			<td>
 				{isHR && (
-					<p
-						onClick={() =>
+					<div
+						className="flex justify-center cursor-pointer hover:text-green hover:underline"
+						onClick={() => {
 							navigate('/manager/role-listing', {
 								state: {isEdit: true},
-							})
-						}
-						className="cursor-pointer hover:text-green hover:underline"
+							});
+						}}
 					>
 						<HiPencilSquare />
-					</p>
+					</div>
 				)}
 			</td>
 			<td>

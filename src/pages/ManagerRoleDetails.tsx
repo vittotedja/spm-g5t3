@@ -5,7 +5,6 @@ import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../utilities/Auth';
 
 function ManagerRoleDetails() {
-	//TODO: check whether user is HR or not
 	const {userRole} = useAuth() || {};
 	const isHR = userRole === 4;
 	// const [isHR, setIsHR] = useState(true);
@@ -17,7 +16,6 @@ function ManagerRoleDetails() {
 				<div className="flex flex-row items-center justify-between px-3 pt-5">
 					<h1 className="text-3xl font-bold text-start">
 						All Posted Role Listings
-						{process.env.NODE_ENV}
 					</h1>
 					{isHR && (
 						<Button
