@@ -1,6 +1,11 @@
 import {createClient, SupabaseClient} from '@supabase/supabase-js';
 
-const supabaseUrl: string = import.meta.env.VITE_NEWEST_URL || '';
-const supabaseKey: string = import.meta.env.VITE_NEWEST_KEY || '';
+var supabaseUrl: string = import.meta.env.VITE_NEWEST_URL || '';
+var supabaseKey: string = import.meta.env.VITE_KEY || '';
+if (process.env.NODE_ENV != 'development') {
+	supabaseUrl = process.env.VITE_NEWEST_URL || '';
+	supabaseKey = process.env.VITE_KEY || '';
+}
+
 const supabase: SupabaseClient = createClient(supabaseUrl, supabaseKey);
 export default supabase;
