@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAsync, setInitial } from "../utilities/Services";
 import SearchBar from "../components/SearchBar";
 import Button from "../components/Button";
@@ -17,6 +17,7 @@ interface Staff {
 }
 
 const ManagerStaffList = () => {
+  const param = useParams<{ listing_id: string }>();
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [paginatedStaff, setPaginatedStaff] = useState<Staff[]>([]);
   const [searchResults, setSearchResults] = useState<Staff[]>([]);
@@ -41,17 +42,21 @@ const ManagerStaffList = () => {
   };
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const staff_reponse = await getAsync(
-        `api/staff?isManager=${true}&staff_id=${staff?.staff_id}`
-      );
-      const staff_data = await staff_reponse.json();
-      setAllStaff(staff_data);
-      setLoading(false);
+    if (staff?.staff_id && param?.listing_id) {
+      async function fetchData() {
+        setLoading(true);
+        const staff_reponse = await getAsync(
+          `api/staff?isManager=${true}&staff_id=${staff?.staff_id}&listing_id=${
+            param?.listing_id
+          }`
+        );
+        const staff_data = await staff_reponse.json();
+        setAllStaff(staff_data);
+        setLoading(false);
+      }
+      fetchData();
     }
-    fetchData();
-  }, [staff.staff_id]);
+  }, [staff.staff_id, param?.listing_id]);
 
   useEffect(() => {
     if (allStaff.length > 0) {
@@ -60,7 +65,7 @@ const ManagerStaffList = () => {
   }, [allStaff]);
 
   const handleSearchChange = async (name: string) => {
-    if (name.length > 0){
+    if (name.length > 0) {
       const response = await getAsync(
         `api/staff?name=${name}&staff_id=${staff?.staff_id}`
       );

@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from supabase import create_client, Client
 import pandas as pd
 from fuzzywuzzy import fuzz
+import math
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -25,7 +26,7 @@ router = APIRouter()
 @app.get("/api/staff")
 @router.get("/api/staff")
 async def staff(
-    email: str = None, staff_id: int = None, name: str = None, isManager: bool = None
+    email: str = None, staff_id: int = None, name: str = None, isManager: bool = None, listing_id: int = None
 ):
     if email:
         staff = supabase.from_("staff").select("*").ilike("email", email).execute().data
@@ -58,17 +59,43 @@ async def staff(
         sorted_df = sorted_df[sorted_df["staff_id"] != staff_id]
         sorted_data = sorted_df.to_dict(orient="records")[0:5]
         return sorted_data
-    elif isManager and staff_id:
+    elif isManager and staff_id and listing_id:
+        listing_data = supabase.from_("listing").select("*, role(*)").eq("listing_id", listing_id).execute().data
+        role_id = listing_data[0]["role"]["role_id"]
+        role_skill = supabase.from_("role_skill").select("skill_id").eq("role_id", role_id).execute().data
+        role_skill_set = {item['skill_id'] for item in role_skill}
         staff = supabase.from_("staff").select("*").execute().data
-        access_control = supabase.from_("access_control").select("*").execute().data
-        df_staff = pd.DataFrame(staff)
-        df_staff = df_staff.merge(
-            pd.DataFrame(access_control), left_on="control_access", right_on="access_id"
+        staff_df = pd.DataFrame(staff)
+        skill_df = pd.DataFrame(supabase.from_("staff_skill").select("*").execute().data)
+        staff_skill_df = pd.merge(staff_df, skill_df, how="left", left_on="staff_id", right_on="staff_id")
+        skill_df = pd.DataFrame(supabase.from_("skill").select("*").execute().data)
+        df_merged_filtered = pd.merge(
+            staff_skill_df,
+            skill_df,
+            left_on="skill_id",
+            right_on="skill_id",
         )
-        df_staff = df_staff[df_staff["staff_id"] != staff_id]
-        filtered_df = df_staff[df_staff["control_access"].isin([2, 3, 4])]
-        filtered_df.sort_values(by=["staff_fname", "staff_lname"], inplace=True)
-        return filtered_df.to_dict(orient="records")
+        return (df_merged_filtered.iloc[0])
+        grouped_staff_skill = staff_skill_df.groupby('staff_id').agg({'skill_id': list}).reset_index()
+        merged_df = pd.merge(staff_df, grouped_staff_skill, on='staff_id', how='left')
+        staff_skills = supabase.from_("staff_skill").select("skill_id").eq("staff_id", staff_id).execute().data
+        staff_skill_set = {int(item['skill_id']) for item in staff_skills}
+
+        def calculate_match_percentage(skills):
+            if isinstance(skills, list):
+                skill_set = {int(skill) for skill in skills if not math.isnan(skill)}
+                intersecting_skills = staff_skill_set.intersection(skill_set)
+                return (len(intersecting_skills) / len(skill_set)) * 100 if skill_set else 0
+            return 0
+
+        merged_df['match_percentage'] = merged_df['skill_id'].apply(calculate_match_percentage)
+        applied_staff = supabase.from_("application").select("staff_id").eq("listing_id", listing_id).execute().data
+        applied_staff_df = pd.DataFrame(applied_staff)
+        staff_who_havent_applied_df = merged_df[~merged_df["staff_id"].isin(applied_staff_df["staff_id"])]
+        staff_who_havent_applied_df = staff_who_havent_applied_df[staff_who_havent_applied_df["staff_id"] != staff_id]
+        staff_who_havent_applied_df = staff_who_havent_applied_df[staff_who_havent_applied_df["control_access"].isin([2, 3, 4])]
+        staff_who_havent_applied_df.sort_values(by=["match_percentage"], inplace=True)
+        return staff_who_havent_applied_df.to_dict(orient="records")
     elif staff_id:
         if staff_id == 0:
             staff = supabase.from_("staff").select("*").execute().data
