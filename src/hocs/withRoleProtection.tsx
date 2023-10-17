@@ -1,7 +1,7 @@
 // import { useAuth } from '../components/Auth';
 import React, { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../pages/Login"; // Adjust the path to your supabase client
+import  supabase  from "../utilities/supabase"; // Adjust the path to your supabase client
 
 export type UserRole = 1 | 2 | 3 | 4 | null;
 
