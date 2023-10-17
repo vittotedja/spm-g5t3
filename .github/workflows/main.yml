@@ -18,7 +18,7 @@ jobs:
               working-directory: ./
             - name: Start FastAPI backend
               run: |
-                  uvicorn main:app
+                  uvicorn main:app &
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                   SUPABASE_URL: ${{secrets.SUPABASE_URL}}
