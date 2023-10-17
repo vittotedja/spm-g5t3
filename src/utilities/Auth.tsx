@@ -1,5 +1,5 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
-import {supabase} from '../pages/Login';
+import supabase from '../utilities/supabase';
 import {User} from '@supabase/supabase-js';
 import {UserRole} from '../hocs/withRoleProtection';
 

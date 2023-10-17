@@ -4,7 +4,7 @@ import { useAuth } from '../utilities/Auth';
 import glasswindow_white from '../assets/glasswindow_white.png'
 import { CurrentUser } from '../components/CurrentUser'
 import { Button2 } from './ui/button';
-import { supabase } from '../pages/Login'
+import supabase from '../utilities/supabase'
 
 export const Navbar: React.FC = () => {
   const { userRole, signOut } = useAuth() || {};
