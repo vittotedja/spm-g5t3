@@ -35,9 +35,11 @@ async def staff(
             )
         return staff
     elif name and staff_id:
+        if len(name) == 0:
+            return []
         response = (
             supabase.table("staff")
-            .select("staff_fname, staff_lname, staff_id, dept, control_access")
+            .select("staff_fname, staff_lname, dept, country, control_access, staff_id")
             .execute()
         )
         df = pd.DataFrame(response.data)
@@ -52,6 +54,8 @@ async def staff(
         df["link"] = df["staff_id"].apply(lambda x: f"/applicantdetail?staff_id={x}")
         sorted_df = df.sort_values(by="similarity", ascending=False)
         sorted_df = sorted_df.drop(columns=["similarity"])
+        #drop the row with staff_id = staff_id
+        sorted_df = sorted_df[sorted_df["staff_id"] != staff_id]
         sorted_data = sorted_df.to_dict(orient="records")[0:5]
         return sorted_data
     elif isManager and staff_id:
