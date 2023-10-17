@@ -1,10 +1,11 @@
 // import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
-import {supabase} from '../pages/Login';
+import supabase from '../utilities/supabase';
 // const supabase: SupabaseClient = createClient(newUrl, newKey);
 
 interface Staff {
     email: string;
+    staff_id: number;
     // other fields from your staff table
   }
 
@@ -15,11 +16,9 @@ export const useCreateAcc = () => {
     const fetchStaff = async () => {
       const { data, error } = await supabase
         .from('staff')
-        .select('email');
-
+        .select('*');
       if (error) console.error('Error fetching staff:', error);
       else {
-        console.log(data)
         setStaff(data || []);
       }
     };
@@ -39,6 +38,11 @@ export const useCreateAcc = () => {
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
+                    options: {
+                      data: {
+                        staff_id: member.staff_id
+                      },    
+                    }
                 });
 
                 if (error) {
