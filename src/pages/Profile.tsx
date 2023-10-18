@@ -15,6 +15,12 @@ interface Staff{
     dept: string
     country: string
     control_access: number
+    curr_role: {
+        role_id: number
+        role_name: string
+        role_department: string
+        role_location: string
+    }
 }
 
 interface Skill{
@@ -62,6 +68,7 @@ export default function Profile() {
         setInitial(setSkills, `api/staff_skill?staff_id=${staffId}`)
     }, [])
     const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
+    console.log(staff)
     return (
         <>
         {/* <Navbar /> */}
@@ -72,7 +79,7 @@ export default function Profile() {
                 </div>
                 <div className="sm:text-left">
                     <p className="font-extrabold text-2xl">{userName}</p>
-                    <p className="font-bold italic text-base">{staff.email}</p>
+                    <p className="font-bold italic text-base">{staff.curr_role?.role_name}</p>
                     <p className="font-medium italic text-base">{staff.dept}</p>
                     <p className="font-light italic text-base">{staff.country}</p>
                 </div>
@@ -100,7 +107,7 @@ export default function Profile() {
                 
                 {/* NO APPLICATION */}
                 {application[0]
-                    ? <div className="flex flex-col sm:flex-row">
+                    ? <div className="flex flex-col columns-3 ">
                     {application.map((appl) => (
                         <ApplicationCard key={appl.application_id} application={appl} />
                     ))}
