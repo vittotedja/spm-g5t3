@@ -40,7 +40,6 @@ class ApplicationStatus(str, Enum):
     Withdrawn = "Withdrawn"
 
 class PostApplication(BaseModel):
-    application_id: int
     staff_id: int
     listing_id: int
     application_status: ApplicationStatus = "Applied"
