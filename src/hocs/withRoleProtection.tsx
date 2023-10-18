@@ -1,9 +1,8 @@
-// import { useAuth } from '../components/Auth';
+import { useAuth } from '../utilities/Auth';
 import React, { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import  supabase  from "../utilities/supabase"; // Adjust the path to your supabase client
 
-export type UserRole = 1 | 2 | 3 | 4 | null;
+export type UserRole = 1 | 2 | 3 | 4 | null | "loading";
 
 interface ProtectedProps {
   requiredRoles: UserRole[];
@@ -15,57 +14,33 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
   children,
 }) => {
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState<UserRole | "loading">("loading");
-  console.log(userRole);
-
+  const auth = useAuth();
+  const user = auth?.user;
+  const userRole = auth?.userRole;
+  const staffId = auth?.staffId;
+  console.log(user?.email)
+  // console.log(userRole);
+  console.log(staffId)
   useEffect(() => {
-    const fetchUserRole = async () => {
-      const user = await supabase.auth.getUser();
-      if (!user) {
-        console.error("User not found");
-        setUserRole(null);
-        return;
-      }
+    if (!auth) {
+      console.error("Auth context is not available!");
+      return;
+    }
 
-      const sessEmail = user.data.user?.email?.toLowerCase()
-      //   await supabase.auth.getUser()
-      // ).data.user?.email?.toLowerCase();
-      if (sessEmail) {
-        const { data, error } = await supabase
-          .from("staff")
-          .select("*")
-          .ilike("email", sessEmail);
-        if (error || !data || data.length === 0) {
-          console.error("Error fetching user role:", error);
-          setUserRole(null);
-          // setUserRole(data[0].control_access);
-        } else {
-          console.error("Error fetching user role:", error);
-          setUserRole(null);
-        }
-      } else {
-        setUserRole(null);
-      }
-    };
-
-    fetchUserRole();
-  }, []);
-
-  useEffect(() => {
+    console.log('Current UserRole', userRole)
     if (userRole === "loading") return;
 
-    if (userRole === null) {
+    if (!userRole) {
       alert("Please login to access this page");
       navigate("/login", {state: {from: location}});
     } else if (!requiredRoles.includes(userRole)) {
       alert("You dont have access to this page");
       navigate("/");
     }
-  }, [userRole]);
+  }, [userRole, navigate, requiredRoles]);
 
-  if (userRole === "loading") return <div>Loading...</div>;  // Add loading state
-
-  return <>{children(userRole)}</>;
+  if (!userRole || !user) return <div>Loading...</div>;  // Add loading state
+    return <>{children(userRole)}</>;
 };
 
 export default RoleProtection;

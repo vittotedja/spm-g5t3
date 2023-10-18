@@ -3,8 +3,12 @@ import supabase from '../utilities/supabase';
 import {User} from '@supabase/supabase-js';
 import {UserRole} from '../hocs/withRoleProtection';
 
+interface SignInData {
+	email: string;
+	password: string;
+}
 type AuthContextType = {
-	signInWithPassword: (data: any) => Promise<any>;
+	signInWithPassword: (data: SignInData) => Promise<any>;
 	signOut: () => Promise<any>;
 	user: User | null;
 	userRole: UserRole;
@@ -30,43 +34,45 @@ export function AuthProvider({children}: AuthProviderProps) {
 			async function initializeAuth() {
 				try {
 					const session = (await supabase.auth.getSession()).data.session; // Simplified getting the session
-					setUser(session?.user ?? null);
-					console.log(session)
+					await updateUserInfo(session?.user ?? null);
 
-					if (session?.user) {
-						const sessEmail = session.user.email?.toLowerCase();
-						if (sessEmail) {
+					const { data: listener } = supabase.auth.onAuthStateChange(
+						async (_, session) => {
+							await updateUserInfo(session?.user ?? null);
+						}
+					);
+					return () => {listener?.subscription.unsubscribe()};
+				} catch(error) {
+					console.error('Error initializing authentication:', error)
+				} finally {
+					setLoading(false)
+				};
+			};
+
+			const updateUserInfo = async (user: User | null) => { 
+					setUser(user);
+					// console.log(session)
+					if (user) {
+						const sessEmail = user.email?.toLowerCase();
+						if(sessEmail) {
 							const {data, error} = await supabase
 								.from('staff')
 								.select('*')
 								.ilike('email', sessEmail)
 								.single();
-							console.log(data)
+								// console.log(data)
 							if (data && !error) {
 								setUserRole(data.control_access);
-								setStaffId(data.staff_id)
+								setStaffId(data.staff_id);
 							} else {
 								console.error('Error fetching user role:', error);
 							}
+						} else {
+							setUserRole(null);
+							setStaffId(null);
 						}
 					}
-		
-					const {data: listener} = supabase.auth.onAuthStateChange(
-						async (_, session) => {
-							setUser(session?.user ?? null);
-						}
-					);
-		
-					return () => {
-						listener?.subscription.unsubscribe();
-					};
-				} catch (error) {
-					console.error('Error initializing authentication:', error);
-				} finally {
-					setLoading(false);
-				}
-			}
-		
+				};
 			initializeAuth();
 		}, []);
 	
@@ -78,8 +84,11 @@ export function AuthProvider({children}: AuthProviderProps) {
 
 	const value = {
 		// signUp: (data) => supabase.auth.signUp(data),
-		signInWithPassword: (data: any) =>
-			supabase.auth.signInWithPassword(data),
+		signInWithPassword: async (data: SignInData) => {
+			const {email, password} = data;
+			const response = await supabase.auth.signInWithPassword({email, password});
+			return response
+		},
 		signOut: () => supabase.auth.signOut(),
 		user,
 		userRole,
