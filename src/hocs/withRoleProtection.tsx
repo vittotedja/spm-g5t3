@@ -1,5 +1,5 @@
 import { useAuth } from '../utilities/Auth';
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export type UserRole = 1 | 2 | 3 | 4 | null | "loading";
