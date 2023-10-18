@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RoleCard from "../components/RoleCard";
-import { getAsync, setInitial } from "../utilities/Services";
+import { getAsync } from "../utilities/Services";
 import FilterBox from "../components/FilterBox";
 import SortComponent from "../components/SortComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -30,6 +30,7 @@ interface FilterItem {
 
 const RoleListing: React.FC = () => {
   const [roles, setRoles] = useState<Role[]>([]);
+  const [firstLoading, setFirstLoading] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [sortField, setSortField] = useState("creation_date");
@@ -39,22 +40,16 @@ const RoleListing: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
-  const [staff, setStaff] = useState<any>(Object);
 
-  const auth  = useAuth();
-	const staff_email = auth?.user?.email;
-
-	useEffect(() => {
-		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
-	}, [staff_email]); 
+  const auth = useAuth();
 
   const fetchFirst = async () => {
     setPage(1); // Reset to the first page
     setRoles([]); // Clear existing roles
     setHasMore(true); // Reset hasMore
-    setLoading(true); // Set loading to true
+    setLoading(true)
     const response = await getAsync(
-      `api/staff_role?staff_id=${staff?.staff_id}&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+      `api/staff_role?staff_id=${auth?.staffId}&page=1&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
         selectedFilters
       )}`
     );
@@ -66,12 +61,14 @@ const RoleListing: React.FC = () => {
       { name: "Department", values: data.all_departments },
     ];
     setFilters(filters);
-    if (data.data.length === 0) {
+    if (data.pagination.current_page >= data.pagination.total_pages) {
       setHasMore(false);
     } else {
-      setRoles(data.data);
+      setHasMore(true);
     }
+    setRoles(data.data);
     setLoading(false);
+    setFirstLoading(false);
   };
 
   const fetchMore = async () => {
@@ -80,14 +77,14 @@ const RoleListing: React.FC = () => {
     var response;
     if (page === 1) {
       response = await getAsync(
-        `api/staff_role?staff_id=${staff?.staff_id}&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?staff_id=${auth?.staffId}&page=${2}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );
       setPage(2);
     } else {
       response = await getAsync(
-        `api/staff_role?staff_id=${staff?.staff_id}&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
+        `api/staff_role?staff_id=${auth?.staffId}&page=${page}&limit=5&sort_field=${sortField}&order=${order}&filters=${JSON.stringify(
           selectedFilters
         )}`
       );
@@ -117,17 +114,18 @@ const RoleListing: React.FC = () => {
 
   useEffect(() => {
     fetchFirst();
-  }, [sortField, order, selectedFilters, staff]);
+  }, [sortField, order, selectedFilters]);
+
 
   return (
     <>
-      {loading ? (
+      {firstLoading ? (
         <div>
           <Spinner />
         </div>
       ) : (
         <div className="flex justify-around mt-4">
-          <FilterBox filters={filters} onFilterChange={handleFilterChange} />
+          <FilterBox filters={filters} onFilterChange={handleFilterChange} selectedFilters={selectedFilters} />
           <div className="flex-col justify-center w-4/6">
             <h2 className="text-2xl font-bold text-left">Role Listings</h2>
             <SortComponent
@@ -143,7 +141,7 @@ const RoleListing: React.FC = () => {
               onSortFieldChange={handleSortFieldChange}
               onOrderChange={handleOrderChange}
             />
-            {roles.length > 0 ? (
+            {roles.length > 0 && !loading ? (
               <InfiniteScroll
                 dataLength={roles.length}
                 next={fetchMore}
