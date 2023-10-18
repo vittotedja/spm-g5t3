@@ -199,9 +199,10 @@ async def staff_role(
             ]
         # Fetch listings managed by the current staff
         listing_manager_response = supabase.table("listing_manager").select("*").eq("manager_id", str(staff_id)).execute().data
-        df_current_staff = pd.DataFrame(listing_manager_response)
-        managed_listing_ids = df_current_staff["listing_id"].tolist()
-        all_unapplied_roles = all_unapplied_roles[~all_unapplied_roles["listing_id"].isin(managed_listing_ids)]
+        if len(listing_manager_response) > 0:
+            df_current_staff = pd.DataFrame(listing_manager_response)
+            managed_listing_ids = df_current_staff["listing_id"].tolist()
+            all_unapplied_roles = all_unapplied_roles[~all_unapplied_roles["listing_id"].isin(managed_listing_ids)]
 
         unapplied_roles_df =all_unapplied_roles.iloc[offset: offset + limit]
         unapplied_roles_df = unapplied_roles_df.fillna(value="")
