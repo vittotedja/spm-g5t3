@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import { setInitial } from "../utilities/Services";
 import formatDate from "../utilities/Utiliities";
+import LoadingState from "../components/loadingState";
+
 interface RoleDetailsProps {
   listing_id: number | undefined;
 }
@@ -9,25 +11,19 @@ interface RoleDetailsProps {
 const RoleDetails: React.FC<RoleDetailsProps> = ({ listing_id: listing_id }) => {
   const [roleData, setRoleData] = useState<any>(null);
   const [listingData, setListingData] = useState<any>(null);
-  const [loading, setLoading] = useState<any>(null);
+
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true);
         let listingData = await setInitial(setListingData, `api/listing?listing_id=${listing_id}`,false)
         setInitial(setRoleData, `api/role?role_id=${listingData.role_id}`,false);
     }
     fetchData();
-    setLoading(false);
   }, []);
 
   const vacancy = listingData? listingData.vacancy : null;
   const location = listingData? listingData.listing_location : null;
 
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (roleData == null || roleData == undefined) {
     return <div>Error 404 There is no Listing with the ID {listing_id}</div>;
@@ -35,7 +31,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ listing_id: listing_id }) => 
 
   const close_date = formatDate(listingData.application_close_date ? new Date(listingData.application_close_date):null)
 
-  
   return (
     <div className="w-full mb-8 lg:mb-0">
       <section className="rounded-lg mr-2 p-8 min-h-[600px] relative border border-solid border-gray-200">

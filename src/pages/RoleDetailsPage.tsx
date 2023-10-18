@@ -8,6 +8,7 @@ import Button from "../components/Button";
 import { getAsync, postAsync, setInitial } from "../utilities/Services";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utilities/Auth";
+import LoadingState from "../components/loadingState";
 
 interface Staff {
   staff_id: number;
@@ -52,13 +53,18 @@ const RoleDetailsPage = () => {
   }, []);
 
   const staff_id = staff.staff_id;
+
+  if(!staff_id){
+    return <div><LoadingState/></div>
+  }
+
   const listing_ID = listing_id;
 
   const handleApply = async () => {
     try {
       setApplyLoading(true);
-      console.log(listing_ID)
-      console.log(staff_id)
+      console.log(listing_ID);
+      console.log(staff_id);
       const response = await getAsync(
         `api/application?staff_id=${staff_id}&role_id=${listing_ID}`
       );
@@ -67,11 +73,14 @@ const RoleDetailsPage = () => {
       const data2 = await response2.json();
       let appliedCount = 0;
       console.log(data2);
-      console.log
+      console.log;
 
       for (const application of data2) {
         // Use 'of' instead of 'in'
-        if (application.application_status === "Applied" || application.application_status === "Shortlisted") {
+        if (
+          application.application_status === "Applied" ||
+          application.application_status === "Shortlisted"
+        ) {
           // Use '===' for comparison, and change 'Application' to 'application'
           appliedCount += 1; // Increment applicationCount
         }
@@ -132,24 +141,24 @@ const RoleDetailsPage = () => {
           Back to Role Listings
         </button>
       </div>
-      <div className="flex flex-col lg:flex-row">
-        <div className="lg:w-5/8">
-          <RoleDetails listing_id={listing_id} />
-        </div>
-        <div className="lg:w-3/8 relative">
-          <div className="lg:fixed">
-          <SkillsMapComponent staff_id={staff_id} listing_id={listing_id} />
-          <Button
-            styleType="green"
-            className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
-            onClick={handleApply}
-            loading={applyLoading}
-          >
-            Apply
-          </Button>
+        <div className="flex flex-col lg:flex-row">
+          <div className="lg:w-5/8">
+            <RoleDetails listing_id={listing_id} />
+          </div>
+          <div className="lg:w-3/8 relative">
+            <div className="lg:fixed">
+              <SkillsMapComponent staff_id={staff_id} listing_id={listing_id} />
+              <Button
+                styleType="green"
+                className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
+                onClick={handleApply}
+                loading={applyLoading}
+              >
+                Apply
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
       <Modal
         modalType="fail"
         message="You Have Applied to this Role"
