@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Badge from "./Badge";
-import { getAsync, setInitial } from "../utilities/Services";
+import { setInitial } from "../utilities/Services";
 interface SkillsMapProps {
   staff_id: number | undefined;
   listing_id: number | undefined;
@@ -40,6 +40,8 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
   if (skillMatchData === null) {
     return null;
   }
+
+  console.log(listingData)
 
   const qualifiedSkills: Skill[] = skillMatchData.skill.filter(
     (skill: Skill) => skill.qualified

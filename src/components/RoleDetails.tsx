@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
-import { getAsync, setInitial } from "../utilities/Services";
+import { setInitial } from "../utilities/Services";
 import formatDate from "../utilities/Utiliities";
 interface RoleDetailsProps {
   listing_id: number | undefined;
