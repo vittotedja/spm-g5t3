@@ -2,6 +2,7 @@ import React from 'react';
 import close from '../assets/close.png';
 import Button from './Button';
 import { useState } from 'react';
+import { FcCheckmark, FcHighPriority, FcQuestions } from "react-icons/fc";
 
 
 interface ModalProps{
@@ -61,7 +62,7 @@ const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, mod
             ) : modalType === 'success' ? (
                 <div>
                     <div className="flex items-center justify-center">
-                      <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/success.png?t=2023-09-30T09%3A20%3A08.550Z" width={150}/>
+                      <FcCheckmark size={200} />
                     </div>
                     <p className="text-green text-4xl font-extrabold mb-4">Successful</p>
                     <div className="text-xl font-bold pl-4 pr-4">{message}</div>
@@ -69,7 +70,7 @@ const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, mod
             ) : modalType === 'fail' ? (
                 <div className="text-center">
                     <div className="flex items-center justify-center mb-8 mt-6">
-                      <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/fail.png?t=2023-09-30T09%3A39%3A44.126Z" width={100}/>
+                      <FcHighPriority size={200} />
                     </div>
                     <p className="text-red text-4xl font-extrabold mb-4">Failed</p>
                     <div className="text-xl font-bold pl-4 pr-4">{message}</div>
@@ -77,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, mod
             ) : modalType === 'confirmation' ? (
                 <div>
                     <div className="flex items-center justify-center mb-8">
-                      <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/warning.png?t=2023-09-30T09%3A39%3A59.701Z" width={120}/>
+                      <FcQuestions size={200} />
                     </div>
                     <div className="text-xl font-bold pl-4 pr-4">{message}</div>
                     <div className="flex justify-center items-center mt-6">
