@@ -70,12 +70,40 @@ async def staff(
         filtered_df.sort_values(by=["staff_fname", "staff_lname"], inplace=True)
         return filtered_df.to_dict(orient="records")
     elif staff_id:
+        # get all staff if staff_id = 0
         if staff_id == 0:
             staff = supabase.from_("staff").select("*").execute().data
             return staff
-        staff = (
-            supabase.from_("staff").select("*").eq("staff_id", staff_id).execute().data
+        
+        # get staff with staff_id
+        staff = supabase.from_("staff").select("*").eq("staff_id", staff_id).execute().data
+
+        # get current role of staff if any from application table
+        role = (
+            supabase
+            .from_("application")
+            .select("*, listing(listing_id, listing_location, role(role_id, role_name, role_department))")
+            .eq('staff_id', staff_id)
+            .eq('application_status', 'Accepted')
+            .order('updated_at', desc = True)
+            .limit(1)
+            .execute().data
         )
+        # case if staff has no role
+        if not role:
+            staff[0]['curr_role'] = {
+                'role_id': None,
+                'role_name': 'No role assigned',
+                'role_department': 'Not in any department',
+                'role_location': None
+            }
+            return staff
+
+        # insert role data into staff dict if staff has role
+        staff[0]['curr_role'] = role[0]['listing']['role']
+        staff[0]['curr_role']['role_location'] = role[0]['listing']['listing_location']
+
+        # raise error if staff not found
         if not staff:
             raise HTTPException(
                 status_code=404, detail="Staff not found with the provided staff_id."
