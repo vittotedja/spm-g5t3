@@ -26,6 +26,7 @@ const ManagerStaffList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [staff, setStaff] = useState<any>(Object);
   const [loading, setLoading] = useState<boolean>(false);
+  const [listing, setListing] = useState<any>(Object);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(allStaff.length / itemsPerPage);
   const auth = useAuth();
@@ -33,6 +34,11 @@ const ManagerStaffList = () => {
 
   useEffect(() => {
     setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+    setInitial(
+      setListing,
+      `api/listing?listing_id=${param?.listing_id}`,
+      false
+    );
   }, [staff_email]);
   const navigate = useNavigate();
 
@@ -69,7 +75,7 @@ const ManagerStaffList = () => {
   const handleSearchChange = async (name: string) => {
     if (name.length > 0) {
       const response = await getAsync(
-        `api/staff?name=${name}&staff_id=${staff?.staff_id}`
+        `api/staff?name=${name}&staff_id=${staff?.staff_id}&listing_id=${param?.listing_id}`
       );
       const data = await response.json();
       setSearchResults(data);
@@ -98,6 +104,9 @@ const ManagerStaffList = () => {
       {!loading ? (
         <>
           <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-left">
+              Head hunting for {listing?.role?.role_name}
+            </h2>
             <SearchBar
               results={searchResults}
               onSearchChange={handleSearchChange}
@@ -133,7 +142,9 @@ const ManagerStaffList = () => {
                     <td className="p-4">{staffMember.staff_id}</td>
                     <td className="p-4">{staffMember.email}</td>
                     <td className="p-4">{staffMember.dept}</td>
-                    <td className="p-4"><ProgressBar percentage={staffMember?.match_percentage}/></td>
+                    <td className="p-4">
+                      <ProgressBar percentage={staffMember?.match_percentage} />
+                    </td>
                     <td className="p-4">{staffMember.country}</td>
                   </tr>
                 ))}
