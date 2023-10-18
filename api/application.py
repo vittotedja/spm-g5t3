@@ -35,7 +35,7 @@ class TimestampzConverter(BaseModel):
 
 class ApplicationStatus(str, Enum):
     Applied = "Applied"
-    Approved = "Approved"
+    Shortlisted = "Shortlisted"
     Rejected = "Rejected"
     Withdrawn = "Withdrawn"
 
@@ -48,7 +48,7 @@ class PostApplication(BaseModel):
     
 class PutApplication(BaseModel):
     application_id: int
-    status: ApplicationStatus
+    application_status: ApplicationStatus
 
 @app.get("/api/application")
 @router.get("/api/application")
@@ -57,7 +57,10 @@ async def application(application_id: int = None, staff_id: int = None, role_id:
         application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
         return application
     elif application_id:
-        application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
+        application = supabase.from_('application').select(
+            "*",
+            "listing(*, role(*))",
+        ).eq('application_id', application_id).execute().data
         return application
     elif staff_id:
         application = supabase.table('application').select('*, listing(*)').eq('staff_id', staff_id).execute().data
@@ -98,7 +101,7 @@ async def application(application: PostApplication = Body(...)):
 @router.put("/api/application")
 async def application(application: PutApplication):
     update_data = {
-        'status': application.status,
+        'application_status': application.application_status,
         'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     }
 
