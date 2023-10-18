@@ -8,6 +8,7 @@ type AuthContextType = {
 	signOut: () => Promise<any>;
 	user: User | null;
 	userRole: UserRole;
+	staffId: number | null;
 };
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -23,12 +24,15 @@ export function AuthProvider({children}: AuthProviderProps) {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [userRole, setUserRole] = useState<UserRole>(null);
+	const [staffId, setStaffId] = useState<number | null>(null);
+
 	useEffect(() => {
 			async function initializeAuth() {
 				try {
 					const session = (await supabase.auth.getSession()).data.session; // Simplified getting the session
 					setUser(session?.user ?? null);
 					console.log(session)
+
 					if (session?.user) {
 						const sessEmail = session.user.email?.toLowerCase();
 						if (sessEmail) {
@@ -40,6 +44,7 @@ export function AuthProvider({children}: AuthProviderProps) {
 							console.log(data)
 							if (data && !error) {
 								setUserRole(data.control_access);
+								setStaffId(data.staff_id)
 							} else {
 								console.error('Error fetching user role:', error);
 							}
@@ -67,8 +72,10 @@ export function AuthProvider({children}: AuthProviderProps) {
 	
 	useEffect(() => {
 		console.log(userRole)
-	}, [userRole])
+		console.log(staffId)
+	}, [userRole, staffId])
 	// Will be passed down to Signup, Login and Dashboard components
+
 	const value = {
 		// signUp: (data) => supabase.auth.signUp(data),
 		signInWithPassword: (data: any) =>
@@ -76,6 +83,7 @@ export function AuthProvider({children}: AuthProviderProps) {
 		signOut: () => supabase.auth.signOut(),
 		user,
 		userRole,
+		staffId,
 	};
 
 	return (
