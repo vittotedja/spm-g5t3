@@ -3,7 +3,3 @@ uvicorn==0.23.2
 python-dotenv==1.0.0
 supabase==1.0.4
 pandas==2.0.1
-fuzzywuzzy==0.18.0
-Levenshtein==0.22.0
-python-Levenshtein==0.22.0
-rapidfuzz==3.4.0

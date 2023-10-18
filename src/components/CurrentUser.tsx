@@ -10,18 +10,15 @@ export const CurrentUser: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	// const [currentRole, setCurrentRole] = useState<any>(null);
-	const [staff, setStaff] = useState<any>(Object);
-	const staff_email = user?.email;
 
 	useEffect(() => {
-		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
 		const fetchStaff = async () => {
 			if (user?.email) {
 				setLoading(true);
 				try {
 					setInitial(
 						setCurrentUser,
-						`api/staff?email=${user.email}`,
+						`api/get_staff?email=${user.email}`,
 						false
 					);
 				} catch (e) {
@@ -35,7 +32,7 @@ export const CurrentUser: React.FC = () => {
 		fetchStaff();
 	}, [user?.email]); // Dependency array
 
-	const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
+	const userName = currentUser?.staff_name || user?.email || 'User Name';
 	const currentRole = currentUser?.curr_role;
 	return loading ? (
 		<div className="text-white">Loading...</div>

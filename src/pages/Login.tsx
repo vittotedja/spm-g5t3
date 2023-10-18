@@ -1,21 +1,19 @@
 // import React from 'react';
-// import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import {createClient} from '@supabase/supabase-js';
 // import { Auth } from '@supabase/auth-ui-react';
-// import { supabase } from '../utilities/supabase';
 import {useRef} from 'react';
 import {useAuth} from '../utilities/Auth';
-// import { useCreateAcc } from '../utilities/Create_user';
 // import { useHistory } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+// import react from '../assets/react.svg';
+import {useNavigate} from 'react-router-dom';
 
-// const supabaseUrl:string = import.meta.env.VITE_NEWEST_URL || ''
-// const supabaseKey:string = import.meta.env.VITE_NEWEST_KEY || ''
-// const supabase:SupabaseClient = createClient(supabaseUrl, supabaseKey)
-// export {supabase}
-
+const supabaseUrl = 'https://wbsagjngbxrrzfktkvtt.supabase.co';
+const supabaseKey =
+	'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indic2Fnam5nYnhycnpma3RrdnR0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTQ2NjU0MjcsImV4cCI6MjAxMDI0MTQyN30.X_EkPcpKarJkJk3FYExVrPE3Y73CvOzkP6Yhp0oyC0A';
+const supabase = createClient(supabaseUrl, supabaseKey);
+export {supabase};
 
 export function Login() {
-	// const createAccForStaff = useCreateAcc();
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 	// const [isFormValid, setIsFormValid] = useState(false)
@@ -61,7 +59,7 @@ export function Login() {
 			alert(errorMessage);
 		} else {
 			alert('Log In Succesful');
-			navigate('/');
+			navigate('/role-listing');
 		}
 	}
 
@@ -111,13 +109,6 @@ export function Login() {
 					>
 						Login
 					</button>
-{/* 
-					<button
-          				onClick={() => createAccForStaff()}
-          				className="mb-4 p-2 text-white bg-blue-500 rounded-md"
-        				>
-          				Create Accounts for Staff
-        			</button> */}
 				</form>
 			</div>
 		</div>

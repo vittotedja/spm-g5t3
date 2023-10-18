@@ -1,18 +1,13 @@
 import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
-import supabase from '../utilities/supabase';
+import {supabase} from '../pages/Login';
 import {User} from '@supabase/supabase-js';
 import {UserRole} from '../hocs/withRoleProtection';
 
-interface SignInData {
-	email: string;
-	password: string;
-}
 type AuthContextType = {
-	signInWithPassword: (data: SignInData) => Promise<any>;
+	signInWithPassword: (data: any) => Promise<any>;
 	signOut: () => Promise<any>;
 	user: User | null;
 	userRole: UserRole;
-	staffId: number | null;
 };
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -28,71 +23,57 @@ export function AuthProvider({children}: AuthProviderProps) {
 	const [user, setUser] = useState<User | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [userRole, setUserRole] = useState<UserRole>(null);
-	const [staffId, setStaffId] = useState<number | null>(null);
-
 	useEffect(() => {
-			async function initializeAuth() {
-				try {
-					const session = (await supabase.auth.getSession()).data.session; // Simplified getting the session
-					await updateUserInfo(session?.user ?? null);
+		// Check active sessions and sets the user
+		async function initializeAuth() {
+			try {
+				const session = (await supabase.auth.getSession()).data.session;
+				setUser(session?.user ?? null);
+				setLoading(false);
 
-					const { data: listener } = supabase.auth.onAuthStateChange(
-						async (_, session) => {
-							await updateUserInfo(session?.user ?? null);
-						}
-					);
-					return () => {listener?.subscription.unsubscribe()};
-				} catch(error) {
-					console.error('Error initializing authentication:', error)
-				} finally {
-					setLoading(false)
-				};
-			};
+				if (session?.user) {
+					const sessEmail = session.user.email;
+					const {data, error} = await supabase
+						.from('staff')
+						.select('*')
+						.eq('email', sessEmail)
+						.single();
 
-			const updateUserInfo = async (user: User | null) => { 
-					setUser(user);
-					// console.log(session)
-					if (user) {
-						const sessEmail = user.email?.toLowerCase();
-						if(sessEmail) {
-							const {data, error} = await supabase
-								.from('staff')
-								.select('*')
-								.ilike('email', sessEmail)
-								.single();
-								// console.log(data)
-							if (data && !error) {
-								setUserRole(data.control_access);
-								setStaffId(data.staff_id);
-							} else {
-								console.error('Error fetching user role:', error);
-							}
-						} else {
-							setUserRole(null);
-							setStaffId(null);
-						}
+					if (data && !error) {
+						setUserRole(data.is_manager ? 'manager' : 'staff');
+					} else {
+						console.error('Error fetching user role:', error);
 					}
-				};
-			initializeAuth();
-		}, []);
-	
-	useEffect(() => {
-		console.log(userRole)
-		console.log(staffId)
-	}, [userRole, staffId])
-	// Will be passed down to Signup, Login and Dashboard components
+				}
+				setUser(session?.user ?? null);
+				setLoading(false);
+				// Listen for changes on auth state (logged in, signed out, etc.)
+				const {data: listener} = supabase.auth.onAuthStateChange(
+					async (_, session) => {
+						setUser(session?.user ?? null);
+						setLoading(false);
+					}
+				);
 
+				return () => {
+					listener?.subscription.unsubscribe();
+				};
+			} catch (error) {
+				console.error('Error initializing authentication:', error);
+				setLoading(false);
+			}
+		}
+		initializeAuth();
+	}, []);
+
+	// Will be passed down to Signup, Login and Dashboard components
 	const value = {
 		// signUp: (data) => supabase.auth.signUp(data),
-		signInWithPassword: async (data: SignInData) => {
-			const {email, password} = data;
-			const response = await supabase.auth.signInWithPassword({email, password});
-			return response
-		},
+		signInWithPassword: (data: any) =>
+			supabase.auth.signInWithPassword(data),
 		signOut: () => supabase.auth.signOut(),
 		user,
 		userRole,
-		staffId,
 	};
 
 	return (

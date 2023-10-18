@@ -1,17 +1,12 @@
 from fastapi import FastAPI, APIRouter, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from enum import Enum
 
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
 from datetime import datetime
-
-import pandas as pd
-
-from api.staff_role_skill import staff_role_skill
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -33,49 +28,32 @@ class TimestampzConverter(BaseModel):
     def __get__(self, obj, type=None):
         return super().__get__(obj, type).isoformat()
 
-class ApplicationStatus(str, Enum):
-    Applied = "Applied"
-    Approved = "Approved"
-    Rejected = "Rejected"
-    Withdrawn = "Withdrawn"
-
-class PostApplication(BaseModel):
+class NewApplication(BaseModel):
     application_id: int
     staff_id: int
-    listing_id: int
-    application_status: ApplicationStatus = "Applied"
-    application_reason: str
+    role_id: int
+    status: str = "Pending"
+    statement: str
     
-class PutApplication(BaseModel):
+class UpdateApplication(BaseModel):
     application_id: int
-    status: ApplicationStatus
+    status: str
 
-@app.get("/api/application")
-@router.get("/api/application")
-async def application(application_id: int = None, staff_id: int = None, role_id: int = None):
-    if staff_id and role_id:
-        application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
-        return application
-    elif application_id:
+@app.get("/api/get_application")
+@router.get("/api/get_application")
+async def get_application(application_id: int = None, staff_id: int = None):
+    if application_id:
         application = supabase.from_('application').select("*").eq('application_id', application_id).execute().data
         return application
     elif staff_id:
-        application = supabase.table('application').select('*, listing(*)').eq('staff_id', staff_id).execute().data
+        application = supabase.table('application').select('*, role(*)').eq('staff_id', staff_id).execute().data
         return application
-    elif role_id:
-        application = pd.DataFrame.from_records(supabase.table('application').select('*, staff(*)').eq('listing_id', role_id).execute().data)
-
-        # get match percentage for each application
-        match_percentage = [(await staff_role_skill(staff['staff_id'], role_id))['match_percentage'] for staff in application.staff]
-        application['match_percentage'] = match_percentage
-
-        return application.to_dict('records')
     else:
-        raise HTTPException(status_code=400, detail="Either application_id, staff_id, or role_id must be provided.")
+        raise HTTPException(status_code=400, detail="Either application_id or staff_id must be provided.")
 
-@app.post("/api/application")
-@router.post("/api/application")
-async def application(application: PostApplication = Body(...)):
+@app.post("/api/get_application")
+@router.post("/api/get_application")
+async def post_application(application: NewApplication = Body(...)):
     
     try:
         data, error = supabase.table('application').insert([
@@ -94,9 +72,9 @@ async def application(application: PostApplication = Body(...)):
     except Exception as e:
         return {"success": False, "error": e}
 
-@app.put("/api/application")
-@router.put("/api/application")
-async def application(application: PutApplication):
+@app.put("/api/get_application")
+@router.put("/api/get_application")
+async def update_application(application: UpdateApplication):
     update_data = {
         'status': application.status,
         'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")

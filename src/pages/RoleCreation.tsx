@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
 import {FaArrowLeft} from 'react-icons/fa';
+import {useNavigate} from 'react-router-dom';
 import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {getAsync, postAsync} from '../utilities/Services';
+import {getAsync} from '../utilities/Services';
 import {
 	Popover,
 	PopoverTrigger,
@@ -12,8 +12,6 @@ import {
 } from '../components/ui/popover';
 import {Calendar} from '../components/ui/calendar';
 import formatDate from '../utilities/Utiliities';
-import Badge from '../components/Badge';
-import {setInitial} from '../utilities/Services';
 
 export type SkillProps = {
 	skill_id: string;
@@ -23,102 +21,55 @@ export type SkillProps = {
 
 const RoleCreation: React.FC = () => {
 	const navigate = useNavigate();
-	const location = useLocation();
-	//react-select to make badges animated
 	const animatedComponents = makeAnimated();
-
-	//get data from api
-	const [roles, setRoles] = useState<any>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const [managerOptions, setManagerOptions] = useState<any>([]);
-
-	//state for selected options
-	const [selectedRole, setSelectedRole] = useState<any>({});
-	const [hrManager, setHrManager] = useState<any>({});
-	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
-	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
+	const countryOptions = [
+		{value: 'sg', label: 'Singapore'},
+		{value: 'my', label: 'Malaysia'},
+		{value: 'id', label: 'Indonesia'},
+		{value: 'vn', label: 'Vietnam'},
+		{value: 'hk', label: 'Hong Kong'},
+	];
 
-	//fetch data needed from DB
-	async function fetchRoleOptions() {
-		const response = await getAsync('api/role');
+	async function fetchSkillOptions() {
+		const response = await getAsync('api/get_skill');
 		const data = await response.json();
-		setRoles(data);
-		const mappedData = data.map((role: any) => ({
-			value: role.role_id,
-			label: role.role_name,
+		const mappedData = data.map((skill: any) => ({
+			value: skill.skill_id,
+			label: skill.skill_name,
 		}));
-		setRoleOptions(mappedData);
+		setSkillOptions(mappedData);
 	}
+
 	async function fetchManagerOptions() {
-		const response = await getAsync('api/staff');
+		const response = await getAsync('api/get_staff?staff_id=0');
 		const data = await response.json();
+		//put staff in mappedData if is_Manager is true
 		const mappedData = data.map(
 			(staff: any) =>
-				staff.control_access == 3 && {
+				staff.is_manager && {
 					value: staff.staff_id,
-					label: `${staff.staff_fname} ${staff.staff_lname}`,
+					label: staff.staff_name,
 				}
 		);
 		const cleanedData = mappedData.filter((data: any) => data !== false);
 		setManagerOptions(cleanedData);
 	}
 
-	//handle change for react-select
-	function handleChange(selectedOption: any) {
-		setSelectedRole(
-			roles.find((role: any) => role.role_id === selectedOption?.value)
-		);
-		const cleanedData = skillOptions.filter(
-			(data: any) => data.role_id == selectedOption?.value
-		);
-		setSkillsMap(cleanedData);
-	}
-
-	//POST data when submit button is clicked
-	const handleSubmit = async (e: any) => {
-		e.preventDefault();
-		setIsLoading(true);
-		const response = await postAsync('api/listing', {
-			role_id: selectedRole.role_id,
-			application_close_date: date,
-		});
-		const data = await response.json();
-		if (data.success) {
-			for (let i = 0; i < hrManager.length; i++) {
-				const response = await postAsync('api/listing_manager', {
-					manager_id: hrManager[i].value,
-					listing_id: data.data.listing_id,
-				});
-				const listingManagerData = await response.json();
-				if (!listingManagerData.success) {
-					alert('Error: ' + listingManagerData.error);
-				}
-			}
-			navigate('/manager');
-		} else {
-			setIsLoading(false);
-			alert('Error: ' + data.error);
-		}
-	};
-
 	useEffect(() => {
 		setSkillOptions([]);
 		setManagerOptions([]);
-		setRoleOptions([]);
-		setInitial(setSkillOptions, 'api/staff_role_skill');
-		fetchRoleOptions();
+		fetchSkillOptions();
 		fetchManagerOptions();
 	}, []);
 
-	//disable dates before today
 	const isDateDisabled = (date: Date) => {
 		// Disable dates before today
-		return date <= new Date();
+		return date < new Date();
 	};
 
-	//react-select styles
 	const colorStyles = {
 		control: (styles: any) => ({
 			...styles,
@@ -151,7 +102,7 @@ const RoleCreation: React.FC = () => {
 					</div>
 					<div className="text-3xl font-bold">
 						{/* TODO: change title based on edit or create */}
-						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
+						New Role Listing
 					</div>
 				</div>
 				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
@@ -166,13 +117,36 @@ const RoleCreation: React.FC = () => {
 										>
 											Role Name
 										</label>
-										<Select
-											options={roleOptions}
-											className="mt-2 rounded-md shadow-sm basic-multi-select ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md"
-											onChange={(selectedOption) => {
-												handleChange(selectedOption);
-											}}
-										/>
+										<div className="mt-2">
+											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md">
+												<input
+													type="text"
+													id="rolename"
+													className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
+													placeholder="Role Name"
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div className="mt-10">
+									<div className="px-3 sm:col-span-4 text-start">
+										<label
+											htmlFor="level"
+											className="font-bold leading-6 text-olive-green-dark"
+										>
+											Level
+										</label>
+										<div className="mt-2">
+											<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md">
+												<input
+													type="text"
+													id="level"
+													className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
+													placeholder="Senior"
+												/>
+											</div>
+										</div>
 									</div>
 								</div>
 								<div className="mt-10">
@@ -181,9 +155,66 @@ const RoleCreation: React.FC = () => {
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
 										>
+											Country
+										</label>
+										<Select
+											options={countryOptions}
+											className="mt-2 basic-multi-select"
+										/>
+									</div>
+								</div>
+							</div>
+
+							<div className="pb-12 border-b border-gray-900/10 text-start">
+								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
+									Role Description
+								</h2>
+								<div className="px-3 mt-2">
+									<textarea
+										id="role_desc"
+										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus-within:ring-emerald-600"
+									/>
+								</div>
+							</div>
+
+							<div className="pb-12 border-b border-gray-900/10 text-start">
+								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
+									Role Responsibilities
+								</h2>
+								<div className="px-3 mt-2">
+									<textarea
+										id="role_resp"
+										className="block w-full rounded-md border-0 py-1.5 pl-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus-within:ring-emerald-600"
+									/>
+								</div>
+							</div>
+
+							<div className="pb-12 border-b border-gray-900/10 text-start">
+								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
+									Skills
+								</h2>
+								<Select
+									isMulti
+									options={skillOptions}
+									className="mx-3 mt-2 basic-multi-select"
+									components={animatedComponents}
+									styles={colorStyles}
+								/>
+								<span className="hidden pl-4 mt-2 text-xs italic text-gray-600 sm:block">
+									Type the skill name to search for the skill.
+									You can add multiple skills.
+								</span>
+							</div>
+							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-2">
+								<div className="mt-10">
+									<div className="px-3 sm:col-span-4 text-start">
+										<label
+											htmlFor="rolename"
+											className="font-bold leading-6 text-olive-green-dark"
+										>
 											Application Close Date
 										</label>
-										<div className="w-full py-1 mt-2 align-middle border rounded-md">
+										<div className="w-full py-1 mt-2 align-middle border rounded-md sm:w-2/3">
 											<Popover>
 												<PopoverTrigger className="justify-center w-full align-middle">
 													{date
@@ -219,53 +250,14 @@ const RoleCreation: React.FC = () => {
 											className="mt-2 basic-multi-select"
 											styles={colorStyles}
 											components={animatedComponents}
-											onChange={(selectedOption) => {
-												setHrManager(selectedOption);
-											}}
 										/>
 									</div>
 								</div>
 							</div>
-
-							<div className="pb-12 border-b border-gray-900/10 text-start">
-								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
-									Role Description
-								</h2>
-								<div className="px-3 mx-2 mt-2 text-justify">
-									{selectedRole?.role_desc}
-								</div>
-							</div>
-
-							<div className="pb-12 border-b border-gray-900/10 text-start">
-								<h2 className="pl-4 text-base font-semibold leading-7 text-olive-green-dark">
-									Skills
-								</h2>
-								<div className="justify-center mx-3 align-middle">
-									{skillsMap.map((skill: any) => {
-										return (
-											<Badge
-												styleType="green"
-												className="text-xs"
-												key={skill.skill_id}
-											>
-												{skill.skill_name}
-											</Badge>
-										);
-									})}
-								</div>
-							</div>
 						</div>
 
-						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
-							<Button
-								styleType="green"
-								loading={isLoading}
-								onClick={(e) => {
-									handleSubmit(e);
-								}}
-							>
-								Save
-							</Button>
+						<div className="flex items-center justify-end p-4 mt-6 text-small gap-x-6">
+							<Button styleType="green">Save</Button>
 						</div>
 					</form>
 				</div>
@@ -275,3 +267,27 @@ const RoleCreation: React.FC = () => {
 };
 
 export default RoleCreation;
+
+{
+	/* 
+    <div className="sm:col-span-3">
+        <label
+            htmlFor="country"
+            className="block text-sm font-medium leading-6 text-gray-900"
+        >
+            Country
+        </label>
+        <div className="mt-2">
+            <select
+                id="country"
+                name="country"
+                autoComplete="country-name"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+            >
+                <option>United States</option>
+                <option>Canada</option>
+                <option>Mexico</option>
+            </select>
+        </div>
+    </div> */
+}

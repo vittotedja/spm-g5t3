@@ -4,7 +4,6 @@ import { putAsync, setInitial } from "../utilities/Services";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
 
 interface Application {
     application_id: number,
@@ -24,10 +23,6 @@ interface Applicant {
     location: string
 }
 
-interface StaffRoleSkill {
-    match_percentage: number,
-    skill: Skill[]
-}
 interface Skill {
     skill_id: number,
     skill_name: string,
@@ -37,36 +32,32 @@ interface Skill {
 
 export default function ApplicantDetail() {
     const navigate = useNavigate()
-    const param = useParams<{ application_id: string }>();
-
     // TODO: get application_id from applicants list page
-    const application_id = param.application_id
+    const application_id = 1
 
-
-    let [application, setApplication] = useState<Application>(Object)
-    let [applicant, setApplicant] = useState<Applicant>(Object)
-    let [staffRoleSkill, setStaffRoleSkill] = useState<StaffRoleSkill>(Object)
-
+    let [application, setApplication] = useState<Application>(Object);
+    let [applicant, setApplicant] = useState<Applicant>(Object);
+    let [skill, setSkill] = useState<Skill[]>([]);
     useEffect(() => {
         async function fetchData() {
-            let application = await setInitial(setApplication, `api/application?application_id=${application_id}`, false)
-            setInitial(setApplicant, `api/staff?staff_id=${application.staff_id}`, false)
-            setInitial(setStaffRoleSkill, `api/staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
+            let application = await setInitial(setApplication, `api/get_application?application_id=${application_id}`, false)
+            setInitial(setApplicant, `api/get_staff?staff_id=${application.staff_id}`, false)
+            setInitial(setSkill, `api/get_staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
         }
         fetchData()
     }, [])
 
 
     async function update_application(status: string) {
-        let res = await putAsync('api/application', {application_id: application_id, status: status})
+        let res = await putAsync('api/get_application', {application_id: application_id, status: status})
         res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
     }
 
     // TODO: show which role this application is for
     return (
         <>
-        {/* to do: fetch listing id here to navigate manager back to list of applicants for a listing*/}
-        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate(`/applicants-list/${application_id}`)}>
+        {/* <Navbar /> */}
+        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate('/applicants')}>
             <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/back.png" alt="back"/>
             <p className="font-medium text-md">Back to Applicants List</p>
         </div>
@@ -95,18 +86,24 @@ export default function ApplicantDetail() {
 
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills-Match %</p>
-                <ProgressBar percentage={staffRoleSkill.match_percentage}/>
+                <ProgressBar percentage={skill.filter((s: any) => s.qualified).length/skill.length*100}/>
             </div>
 
             <div className="container mt-8">
                 <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
-                <div className="text-left">
-                    {staffRoleSkill.skill && staffRoleSkill.skill.map((sk) => 
-                        <Badge key={sk.skill_name} styleType={sk.qualified ? "green" : "red"}>
-                            {sk.skill_name}
-                        </Badge>
-                    )}
-                </div>
+                {skill[0]
+                    ? <div className="text-left">
+                        {skill.map((sk) => 
+                            <Badge key={sk.skill_name} styleType={sk.qualified ? "green" : "red"}>
+                                {sk.skill_name}
+                            </Badge>
+                        )}
+                        </div>
+                    : <div className="mb-8">
+                        <p className="text-emerald-900 font-medium text-xl mb-2">Your skills have not been recorded in the system.</p>
+                        <p className="text-emerald-900 font-medium text-md mb-2">Please contact the HR staff at hr@all-in-one.com.</p>
+                    </div>
+                }
             </div>
 
             <div className="container mt-8">

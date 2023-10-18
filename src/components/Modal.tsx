@@ -10,10 +10,9 @@ interface ModalProps{
     onClose: () => void
     modalType: string
     message?: string
-    onSubmit?:(reason: string)  => void
 }
 
-const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, modalType, message }) => {
+const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, modalType, message }) => {
   let [charLength, setCharLength] = useState(0)
   const [text, setText] = useState('');
   const maxWords = 500; // Change this to your desired word limit
@@ -54,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, mod
                         <p> Character count: {charLength} </p>
                       </div>
                       <div className='w-1/2 flex items-end justify-end'>
-                        <Button styleType={"green"} onClick={() => onSubmit && onSubmit(text)} >Submit</Button>
+                        <Button styleType={"green"}>Submit</Button>
                       </div>
                     </div>
                 </div>
@@ -81,8 +80,8 @@ const Modal: React.FC<ModalProps> = ({  children, isOpen, onClose, onSubmit, mod
                     </div>
                     <div className="text-xl font-bold pl-4 pr-4">{message}</div>
                     <div className="flex justify-center items-center mt-6">
-                      <Button className="mr-6" styleType={"red"} onClick={onClose}>No</Button>
-                      <Button styleType={"green"} onClick={() => onSubmit && onSubmit("")}>Yes</Button>
+                      <Button className="mr-6" styleType={"red"}>No</Button>
+                      <Button styleType={"green"}>Yes</Button>
                     </div>
                 </div>
             ) : (
