@@ -45,8 +45,8 @@ interface Application{
 }[]
 
 export default function Profile() {
-    const auth = useAuth()
-    const staff_email = auth?.user?.email
+    const auth = useAuth();
+    const staffId = auth?.staffId;
 
     let [staff, setStaff] = useState<Staff>(Object);
     let [skills, setSkills] = useState<Skill[]>([])
@@ -57,26 +57,20 @@ export default function Profile() {
       };
 
     useEffect(() => {
-        async function fetchFirst() {
-            let staff = await setInitial(setStaff, `api/staff?email=${staff_email}`, false)
-            setInitial(setApplication, `api/application?staff_id=${staff.staff_id}`)
-            // console.log(application)
-            setInitial(setSkills, `api/staff_skill?staff_id=${staff.staff_id}`)
-            
-        }
-        fetchFirst()
-    }
-    , [])
+        setInitial(setStaff, `api/staff?staff_id=${staffId}`, false)
+        setInitial(setApplication, `api/application?staff_id=${staffId}`)
+        setInitial(setSkills, `api/staff_skill?staff_id=${staffId}`)
+    }, [])
     const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
     return (
         <>
         {/* <Navbar /> */}
         <div className="container mx-auto px-4 mt-10">
-            <div className="container flex">
-                <div className="w-2/12">
+            <div className="container sm:flex sm:space-x-6">
+                <div className="sm:text-left pb-2">
                     <Avatar name={userName} round={true} />
                 </div>
-                <div className="w-2/3 pl-3 text-left">
+                <div className="sm:text-left">
                     <p className="font-extrabold text-2xl">{userName}</p>
                     <p className="font-bold italic text-base">{staff.email}</p>
                     <p className="font-medium italic text-base">{staff.dept}</p>
@@ -106,7 +100,7 @@ export default function Profile() {
                 
                 {/* NO APPLICATION */}
                 {application[0]
-                    ? <div className="flex flex-col lg:flex-row">
+                    ? <div className="flex flex-col sm:flex-row">
                     {application.map((appl) => (
                         <ApplicationCard key={appl.application_id} application={appl} />
                     ))}

@@ -46,11 +46,10 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
     Shortlisted: "text-green",
     Rejected: "text-red"
   }
-
-  console.log(role.role_department)
+  
   return (
     <>
-      <div className="rounded-lg shadow-md ring-2 ring-outset ring-emerald-900/20 p-5 lg:w-1/3 md:w-1/2 mb-4 mr-4 text-left" onClick={roleCardButton}>
+      <div className="rounded-lg shadow-md ring-2 ring-outset ring-emerald-900/20 p-5 lg:w-1/3 md:w-1/2 sm:w-full mb-4 mr-4  text-left" onClick={roleCardButton}>
         <div className="text-left">
           <div className="flex">
             <p className="w-1/2 text-sm text-gray-500 mb-1">{role.role_department}</p>
