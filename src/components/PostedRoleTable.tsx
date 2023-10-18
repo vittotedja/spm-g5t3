@@ -6,8 +6,8 @@ import {useAuth} from '../utilities/Auth';
 export default function PostedRoleTable() {
 	const [managerListing, setManagerListing] = useState<any>([]);
 
-	const {userId, userRole} = useAuth() || {};
-	const manager_id = userId;
+	const {staffId, userRole} = useAuth() || {};
+	const manager_id = staffId;
 
 	async function fetchData() {
 		if (userRole === 4) {

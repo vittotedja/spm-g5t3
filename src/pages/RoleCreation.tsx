@@ -38,6 +38,7 @@ const RoleCreation: React.FC = () => {
 		{value: 'Indonesia', label: 'Indonesia'},
 		{value: 'Malaysia', label: 'Malaysia'},
 		{value: 'Vietnam', label: 'Vietnam'},
+		{value: 'Hong Kong', label: 'Hong Kong'},
 	];
 
 	//state for selected options
