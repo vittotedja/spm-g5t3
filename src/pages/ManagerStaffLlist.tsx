@@ -4,6 +4,7 @@ import { getAsync, setInitial } from "../utilities/Services";
 import SearchBar from "../components/SearchBar";
 import Button from "../components/Button";
 import { useAuth } from "../utilities/Auth";
+import ProgressBar from "../components/ProgressBar";
 
 interface Staff {
   staff_id: number;
@@ -14,6 +15,7 @@ interface Staff {
   email: string;
   control_access: number;
   link?: string;
+  match_percentage: number;
 }
 
 const ManagerStaffList = () => {
@@ -110,6 +112,7 @@ const ManagerStaffList = () => {
                   <th className="p-3">Staff ID</th>
                   <th className="p-3">Email</th>
                   <th className="p-3">Department</th>
+                  <th className="p-3">Skill Match</th>
                   <th className="p-3">Country</th>
                 </tr>
               </thead>
@@ -130,6 +133,7 @@ const ManagerStaffList = () => {
                     <td className="p-4">{staffMember.staff_id}</td>
                     <td className="p-4">{staffMember.email}</td>
                     <td className="p-4">{staffMember.dept}</td>
+                    <td className="p-4"><ProgressBar percentage={staffMember?.match_percentage}/></td>
                     <td className="p-4">{staffMember.country}</td>
                   </tr>
                 ))}
