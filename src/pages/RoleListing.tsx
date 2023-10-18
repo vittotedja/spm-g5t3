@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import RoleCard from "../components/RoleCard";
-import { getAsync, setInitial } from "../utilities/Services";
+import { getAsync } from "../utilities/Services";
 import FilterBox from "../components/FilterBox";
 import SortComponent from "../components/SortComponent";
 import InfiniteScroll from "react-infinite-scroll-component";
