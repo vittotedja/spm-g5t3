@@ -1,58 +1,46 @@
-// import { useAuth } from '../components/Auth';
-import React, {ReactNode, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {supabase} from '../pages/Login'; // Adjust the path to your supabase client
+import { useAuth } from '../utilities/Auth';
+import React, { ReactNode, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export type UserRole = 'manager' | 'staff' | null;
+export type UserRole = 1 | 2 | 3 | 4 | null | "loading";
 
 interface ProtectedProps {
-	requiredRole: UserRole;
-	children: (role: UserRole) => ReactNode;
+  requiredRoles: UserRole[];
+  children: (role: UserRole) => ReactNode;
 }
 
 export const RoleProtection: React.FC<ProtectedProps> = ({
-	requiredRole,
-	children,
+  requiredRoles,
+  children,
 }) => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const user = auth?.user;
+  const userRole = auth?.userRole;
+  const staffId = auth?.staffId;
+  console.log(user?.email)
+  // console.log(userRole);
+  console.log(staffId)
+  useEffect(() => {
+    if (!auth) {
+      console.error("Auth context is not available!");
+      return;
+    }
 
-	// const { userRole } = useAuth() || {};
-	const [userRole, setUserRole] = useState<UserRole>(null);
-	// const [error, setError] = useState<string | null>(null);
+    console.log('Current UserRole', userRole)
+    if (userRole === "loading") return;
 
-	useEffect(() => {
-		const fetchUserRole = async () => {
-			// const user = supabase.auth.getSession();
-			const sessEmail = (await supabase.auth.getUser()).data.user?.email;
-			// const getStaff = (await supabase.from('staff').select('*').eq('email', sessEmail).single())
-			if (sessEmail) {
-				const {data, error} = await supabase
-					.from('staff')
-					.select('*')
-					.eq('email', sessEmail)
-					.single();
+    if (!userRole) {
+      alert("Please login to access this page");
+      navigate("/login", {state: {from: location}});
+    } else if (!requiredRoles.includes(userRole)) {
+      alert("You dont have access to this page");
+      navigate("/");
+    }
+  }, [userRole, navigate, requiredRoles]);
 
-				if (data && !error) {
-					setUserRole(data.is_manager ? 'manager' : 'staff');
-				}
-			}
-		};
-		fetchUserRole();
-	}, []);
-
-	if (userRole === null) {
-		return <div>Loading...</div>;
-	}
-
-	if (userRole !== requiredRole) {
-		// alert("You don't have the rights to access this page")
-		navigate('/role-listing');
-		return null;
-	}
-
-	// return <WrappedComponent {...props} />;
-	return <>{children(userRole)}</>;
+  if (!userRole || !user) return <div>Loading...</div>;  // Add loading state
+    return <>{children(userRole)}</>;
 };
-// }
 
 export default RoleProtection;

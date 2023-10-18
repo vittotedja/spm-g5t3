@@ -4,7 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
-from api.get_role import get_role
+from pydantic import BaseModel
+from datetime import datetime
+
 
 import pandas as pd
 
@@ -24,24 +26,26 @@ app.add_middleware(
 router = APIRouter()
 
 
-@app.get("/api/get_manager_role")
-@router.get("/api/get_manager_role")
-async def get_manager_role(manager_id: int):
-    roles = (
-        supabase.from_("role_manager")
-        .select("role_id", "role(*)")
+class PostListing(BaseModel):
+    listing_id: int
+    role_id: int
+    manager_id: int
+    creation_date: datetime
+
+
+@app.get("/api/manager_rolelisting")
+@router.get("/api/manager_rolelisting")
+async def manager_rolelisting(manager_id: int):
+    role = (
+        supabase.from_("listing")
+        .select("role_id", "role(*), application(*)")
         .eq("manager_id", manager_id)
         .execute()
         .data
     )
+    return role
 
-    for role in roles:
-        no_of_applicant = (
-            supabase.from_("application")
-            .select("*")
-            .eq("role_id", role["role_id"])
-            .execute()
-            .data
-        )
-        role["role"]["no_of_applicants"] = len(no_of_applicant)
-    return roles
+
+# @app.post("/api/listing")
+# @router.post("/api/listing")
+# async def listing(listing: ):
