@@ -5,23 +5,37 @@ import Badge from "../components/Badge";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { AiOutlineArrowLeft } from "react-icons/ai"
+import Avatar from "react-avatar";
 
 interface Application {
     application_id: number,
     staff_id: number,
     role_id: number,
-    status: string,
+    application_status: string,
     statement: string,
     created_at: string,
     updated_at: string,
+    withdrawn_at: string,
+    listing: {
+        role: {
+            role_id: number,
+            role_name: string
+        }
+    }
 }
 
 interface Applicant {
     staff_id: number,
-    staff_name: string,
-    curr_role: string,
-    curr_dept: string,
-    location: string
+    staff_fname: string,
+    staff_lname: string,
+    email: string,
+    curr_role: {
+        role_id: number,
+        role_name: string,
+        role_department: string,
+        role_location: string
+    }
 }
 
 interface StaffRoleSkill {
@@ -37,83 +51,88 @@ interface Skill {
 
 export default function ApplicantDetail() {
     const navigate = useNavigate()
-    const param = useParams<{ application_id: string }>();
+    const param = useParams<{ listing_id: string, application_id: string }>();
 
-    // TODO: get application_id from applicants list page
     const application_id = param.application_id
+    const listing_id = param.listing_id
 
-
-    let [application, setApplication] = useState<Application>(Object)
-    let [applicant, setApplicant] = useState<Applicant>(Object)
+    let [application, setApplication] = useState<Application>({} as Application)
+    let [applicant, setApplicant] = useState<Applicant>({} as Applicant)
     let [staffRoleSkill, setStaffRoleSkill] = useState<StaffRoleSkill>(Object)
+    let [loading, setLoading] = useState(true)
 
     useEffect(() => {
         async function fetchData() {
             let application = await setInitial(setApplication, `api/application?application_id=${application_id}`, false)
-            setInitial(setApplicant, `api/staff?staff_id=${application.staff_id}`, false)
-            setInitial(setStaffRoleSkill, `api/staff_role_skill?staff_id=${application.staff_id}&role_id=${application.role_id}`)
+            await setInitial(setApplicant, `api/staff?staff_id=${application.staff_id}`, false)
+            setInitial(setStaffRoleSkill, `api/staff_role_skill?staff_id=${application.staff_id}&role_id=${application.listing.role.role_id}`)
+            setLoading(false)
         }
         fetchData()
+        
     }, [])
 
-
     async function update_application(status: string) {
-        let res = await putAsync('api/application', {application_id: application_id, status: status})
-        res.ok ? setApplication({...application, status: status}) : alert('Error updating application status')
+        let res = await putAsync('api/application', {application_id: application_id, application_status: status})
+        res.ok ? setApplication({...application, application_status: status}) : alert('Error updating application status')
     }
 
     // TODO: show which role this application is for
     return (
         <>
-        {/* to do: fetch listing id here to navigate manager back to list of applicants for a listing*/}
-        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate(`/applicants-list/${application_id}`)}>
-            <img src="https://wbsagjngbxrrzfktkvtt.supabase.co/storage/v1/object/public/assets/back.png" alt="back"/>
+        <div className="container mx-auto px-4 mt-10 text-left w-4/5 flex h-6 space-x-2 cursor-pointer" onClick={() => navigate(`/manager/applicants-list/${listing_id}`)}>
+            <AiOutlineArrowLeft className="text-2xl"/>
             <p className="font-medium text-md">Back to Applicants List</p>
         </div>
+        {loading ? (
+            <p>Loading...</p>
+        ) : (
+            <div className="container mx-auto px-4 mt-10 w-4/5">
+                <div className="container md:flex space-y-6">
+                    <div className="container flex md:w-9/12 space-x-6 p-0">
+                        <div className="text-left">
+                            <Avatar name={`${applicant.staff_fname} ${applicant.staff_lname}`} size="100" round={true} />
+                        </div>
+                        <div className="text-left">
+                            <p className="font-extrabold text-2xl">{applicant.staff_fname + ' ' + applicant.staff_lname}</p>
+                            <p className="font-bold italic text-base">{applicant.curr_role.role_name}</p>
+                            <p className="font-medium italic text-base">{applicant.curr_role.role_department}</p>
+                            <p className="font-light italic text-base">{applicant.curr_role.role_location}</p>
+                        </div>
+                    </div>
+                    <div className="w-3/12 text-right flex md:justify-end space-x-2">
+                        {application.application_status === 'Applied'
+                            ? <>
+                                <Button styleType="green" onClick={() => update_application('Shortlisted')}>Shortlist</Button>
+                                <Button styleType="red" onClick={() => update_application('Rejected')}>Reject</Button>
+                            </>
+                            : <Badge styleType={['Shortlisted', 'Accepted'].includes(application.application_status) ? "green" : "red"}>{application.application_status}</Badge>
+                        }
+                    </div>
+                </div>
 
-        <div className="container mx-auto px-4 mt-10 w-4/5">
-            <div className="container flex">
-                <div className="w-2/12">
-                    <img src='https://images.crunchbase.com/image/upload/c_thumb,h_170,w_170,f_auto,g_faces,z_0.7,b_white,q_auto:eco,dpr_1/n8xvrnw7kozyb84yjtpu' alt={applicant.staff_name} width="100px" className="rounded-full"/>
+                <div className="container mt-8">
+                    <p className='font-extrabold text-left text-2xl mb-3'>Skills-Match %</p>
+                    <ProgressBar percentage={staffRoleSkill.match_percentage}/>
                 </div>
-                <div className="w-6/12 pl-3 text-left">
-                    <p className="font-extrabold text-2xl">{applicant.staff_name}</p>
-                    <p className="font-bold italic text-base">{applicant.curr_role}</p>
-                    <p className="font-medium italic text-base">{applicant.curr_dept}</p>
-                    <p className="font-light italic text-base">{applicant.location}</p>
+
+                <div className="container mt-8">
+                    <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
+                    <div className="text-left">
+                        {staffRoleSkill.skill && staffRoleSkill.skill.map((sk) => 
+                            <Badge key={sk.skill_name} styleType={sk.qualified ? "green" : "red"}>
+                                {sk.skill_name}
+                            </Badge>
+                        )}
+                    </div>
                 </div>
-                <div className="w-4/12 text-right flex justify-end space-x-2">
-                    {application.status === 'Applied'
-                        ? <>
-                            <Button styleType="green" onClick={() => update_application('Shortlisted')}>Shortlist</Button>
-                            <Button styleType="red" onClick={() => update_application('Rejected')}>Reject</Button>
-                          </>
-                        : <Badge styleType={application.status === 'Shortlisted' ? "green" : "red"}>{application.status}</Badge>
-                    }
-                </div>
+
+                <div className="container mt-8">
+                    <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
+                    <p className="font-medium text-md text-left">{application.statement}</p>
+                </div>        
             </div>
-
-            <div className="container mt-8">
-                <p className='font-extrabold text-left text-2xl mb-3'>Skills-Match %</p>
-                <ProgressBar percentage={staffRoleSkill.match_percentage}/>
-            </div>
-
-            <div className="container mt-8">
-                <p className='font-extrabold text-left text-2xl mb-3'>Skills</p>
-                <div className="text-left">
-                    {staffRoleSkill.skill && staffRoleSkill.skill.map((sk) => 
-                        <Badge key={sk.skill_name} styleType={sk.qualified ? "green" : "red"}>
-                            {sk.skill_name}
-                        </Badge>
-                    )}
-                </div>
-            </div>
-
-            <div className="container mt-8">
-                <p className='font-extrabold text-left text-2xl mb-3'>Reason for Applying</p>
-                <p className="font-medium text-md text-left">{application.statement}</p>
-            </div>        
-        </div>
+        )}
         </>
     );
 }

@@ -42,6 +42,9 @@ async def listing(listing_id: int = None):
                 "listing_id",
                 "application_close_date",
                 "role_id",
+                "vacancy",
+                "listing_location",
+                "creation_date",
                 "role(*), application(*)",
             )
             .eq("listing_id", listing_id)
