@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {FaLocationDot} from 'react-icons/fa6';
 import {setInitial} from '../utilities/Services';
 import formatDate from '../utilities/Utiliities';
+
 interface RoleDetailsProps {
 	listing_id: number | undefined;
 }
@@ -9,11 +10,9 @@ interface RoleDetailsProps {
 const RoleDetails: React.FC<RoleDetailsProps> = ({listing_id: listing_id}) => {
 	const [roleData, setRoleData] = useState<any>(null);
 	const [listingData, setListingData] = useState<any>(null);
-	const [loading, setLoading] = useState<any>(null);
 
 	useEffect(() => {
 		async function fetchData() {
-			setLoading(true);
 			let listingData = await setInitial(
 				setListingData,
 				`api/listing?listing_id=${listing_id}`,
@@ -26,20 +25,13 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({listing_id: listing_id}) => {
 			);
 		}
 		fetchData();
-		setLoading(false);
 	}, []);
 
 	const vacancy = listingData ? listingData.vacancy : null;
 	const location = listingData ? listingData.listing_location : null;
 
-	if (loading) {
-		return <div>Loading...</div>;
-	}
-
 	if (roleData == null || roleData == undefined) {
-		return (
-			<div>Error 404 There is no Listing with the ID {listing_id}</div>
-		);
+		return <div></div>;
 	}
 
 	const close_date = formatDate(
@@ -68,10 +60,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({listing_id: listing_id}) => {
 								</h2>
 							</div>
 						</div>
-						<h2
-							className="mb-4 text-3xl font-bold text-left text-gray-800"
-							data-testid="role-details-name"
-						>
+						<h2 className="mb-4 text-3xl font-bold text-left text-gray-800">
 							{roleData.role_name}
 						</h2>
 						<div className="flex items-center mb-4">
