@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import Badge from "./Badge";
 import { setInitial } from "../utilities/Services";
+import LoadingState from "./loadingState";
 interface SkillsMapProps {
   staff_id: number | undefined;
   listing_id: number | undefined;
@@ -20,6 +21,8 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
 }) => {
   const [skillMatchData, setskillMatchData] = useState<any>(null);
   const [listingData, setListingData] = useState<any>(null);
+  const [role_id, setRoleId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
@@ -28,32 +31,40 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
         `api/listing?listing_id=${listing_id}`,
         false
       );
-      const role_id = listingData ? listingData.role_id : null;
-      setInitial(
-        setskillMatchData,
-        `api/staff_role_skill?staff_id=${staff_id}&role_id=${role_id}`
-      );
+      if (listingData) {
+        const roleId = listingData ? listingData.role_id : null;
+        setRoleId(roleId);
+        if (roleId !== null) {
+          setInitial(
+            setskillMatchData,
+            `api/staff_role_skill?staff_id=${staff_id}&role_id=${roleId}`
+          );
+        }
+      }
+      setLoading(false);
     }
-    fetchData();
-  }, []);
 
-  if (skillMatchData === null) {
+    fetchData();
+  }, [staff_id, listing_id]);
+
+  if (skillMatchData === null || role_id === null || listingData === null) {
     return null;
   }
 
-  console.log(listingData)
-
-  const qualifiedSkills: Skill[] = skillMatchData.skill.filter(
+  const qualifiedSkills: Skill[] = skillMatchData?.skill.filter(
     (skill: Skill) => skill.qualified
   );
 
-  const unqualifiedSkills: Skill[] = skillMatchData.skill.filter(
+  const unqualifiedSkills: Skill[] = skillMatchData?.skill.filter(
     (skill: Skill) => !skill.qualified
   );
 
   return (
     <div className="min-w-[400px] max-h-[500px] overflow-y-auto border border-gray-200 border-solid rounded-lg">
       <section className="px-8 py-6">
+      {loading ? (
+          <LoadingState />
+        ) : (
         <div className="max-w-4xl mx-auto">
           <h2 className="mb-4 text-3xl font-bold text-left text-gray-800">
             Skills Match
@@ -89,6 +100,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
             </ul>
           </div>
         </div>
+        )}
       </section>
     </div>
   );

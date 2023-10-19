@@ -32,7 +32,9 @@ const RoleDetailsPage = () => {
   const [reason, setReason] = useState<string>("");
   const [staff, setStaff] = useState<Staff>(Object);
   const staff_email = auth?.user?.email;
+  const [listingData, setListingData] = useState<any>(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   let listing_id;
 
   //error handling the id
@@ -40,7 +42,8 @@ const RoleDetailsPage = () => {
     if (/^\d+$/.test(param.listing_id)) {
       listing_id = parseInt(param.listing_id);
     } else {
-      return <div>Error 404 There is no role Listing Id</div>;
+      return <div>Error 404: Invalid Listing Id</div>
+
     }
   }
 
@@ -48,17 +51,23 @@ const RoleDetailsPage = () => {
   useEffect(() => {
     async function fetchFirst() {
       setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+      setLoading(false);
+
     }
     fetchFirst();
   }, []);
 
   const staff_id = staff.staff_id;
 
-  if(!staff_id){
-    return <div><LoadingState/></div>
-  }
-
   const listing_ID = listing_id;
+
+  useEffect(() => {
+    async function fetchSecond() {
+      setInitial(setListingData, `api/listing?listing_id=${listing_ID}`, false)
+      setLoading(false);
+    }
+    fetchSecond();
+  }, []);
 
   const handleApply = async () => {
     try {
@@ -130,6 +139,10 @@ const RoleDetailsPage = () => {
     return null; // or a loading indicator
   }
 
+  if(loading){
+    return <LoadingState/> 
+  }
+
   return (
     <div className="container">
       <div className="flex items-start mb-4 mt-8">
@@ -141,6 +154,9 @@ const RoleDetailsPage = () => {
           Back to Role Listings
         </button>
       </div>
+      {!listingData ? (
+          <LoadingState/>
+        ) : (
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-5/8">
             <RoleDetails listing_id={listing_id} />
@@ -159,6 +175,7 @@ const RoleDetailsPage = () => {
             </div>
           </div>
         </div>
+        )}
       <Modal
         modalType="fail"
         message="You Have Applied to this Role"
