@@ -1,6 +1,7 @@
 import {useAuth} from '../utilities/Auth';
 import React, {ReactNode, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
+import {toast} from 'react-hot-toast';
 
 export type UserRole = 1 | 2 | 3 | 4 | null | 'loading';
 
@@ -31,10 +32,10 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 		if (userRole === 'loading') return;
 
 		if (!userRole) {
-			// alert("Please login to access this page");
+			toast.error('Please login to access this page');
 			navigate('/login');
 		} else if (!requiredRoles.includes(userRole)) {
-			alert('You dont have access to this page');
+			toast.error('You dont have access to this page');
 			navigate('/');
 		}
 	}, [userRole, navigate, requiredRoles]);
