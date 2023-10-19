@@ -66,7 +66,8 @@ async def application(application_id: int = None, staff_id: int = None, role_id:
         return application
     elif role_id:
         application = pd.DataFrame.from_records(supabase.table('application').select('*, staff(*)').eq('listing_id', role_id).execute().data)
-
+        role = supabase.table('listing').select('role_id').eq('listing_id', role_id).execute().data
+        role_id = role[0]['role_id']
         # get match percentage for each application
         match_percentage = [(await staff_role_skill(staff['staff_id'], role_id))['match_percentage'] for staff in application.staff]
         application['match_percentage'] = match_percentage
