@@ -35,7 +35,12 @@ const RoleCard: React.FC<RoleCardProps> = ({
 					<p className="mb-2 text-sm text-gray-500">
 						{role_department}
 					</p>
-					<h2 className="mb-2 text-xl font-bold">{role_name}</h2>
+					<h2
+						className="mb-2 text-xl font-bold"
+						data-testid="role-name"
+					>
+						{role_name}
+					</h2>
 					{listing_location && (
 						<div className="flex justify-start">
 							<img src={maps_pointer} className="mr-2"></img>{' '}

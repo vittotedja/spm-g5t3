@@ -1,30 +1,28 @@
-describe('Staff logs in to app for the first time', () => {
-	it('Connecting to home page for the first time', () => {
+describe('Staff who has not applied to any roles', () => {
+	it('Logging in and viewing Role Details', () => {
 		cy.visit('/', {failOnStatusCode: false});
 
 		cy.contains('GlassWindow');
 
-		cy.get('[data-testid = email]').type('chandra.pandey@allinone.com.sg');
-		cy.get('[data-testid = password]').type('chandra.pandey');
+		cy.get('[data-testid = email]').type('logan.tan@allinone.com.sg');
+		cy.get('[data-testid = password]').type('logan.tan');
 		cy.get('[data-testid = submitBtn]').click();
 
-		cy.contains('Chandra Pandey');
-		// cy.wait(4000);
+		cy.contains('Logan Tan');
+		let clickedRoleName = '';
+		cy.get('[data-testid = role-name]', {timeout: 10000})
+			.first()
+			.then(($roleName) => {
+				clickedRoleName = $roleName.text();
+			});
+
 		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
+		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+			($roleDetailsName) => {
+				expect($roleDetailsName.text()).to.eq(clickedRoleName);
+			}
+		);
 	});
+
+	it('Applying to a role', () => {});
 });
-
-// describe('Staff logs in to app for the first time', () => {
-// 	it('Connecting to home page for the first time', () => {
-// 		cy.visit('localhost:5173/login');
-
-// 		cy.contains('GlassWindow');
-
-// 		cy.get('[data-testid = email]').type('Oliver.Tan@allinone.com.sg');
-// 		cy.get('[data-testid = password]').type('Oliver.Tan');
-// 		cy.get('[data-testid = submitBtn]').click();
-
-// 		cy.url().should('include', '/role-listing');
-// 		cy.contains('Oliver Tan');
-// 	});
-// });
