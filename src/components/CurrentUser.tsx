@@ -14,14 +14,16 @@ export const CurrentUser: React.FC = () => {
 	const staff_email = user?.email;
 
 	useEffect(() => {
-		setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		if (staff_email) {
+			setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+		}
 		const fetchStaff = async () => {
-			if (user?.email) {
+			if (staff_email) {
 				setLoading(true);
 				try {
 					setInitial(
 						setCurrentUser,
-						`api/staff?email=${user.email}`,
+						`api/staff?email=${staff_email}`,
 						false
 					);
 				} catch (e) {
@@ -45,6 +47,7 @@ export const CurrentUser: React.FC = () => {
 		<Link
 			to="/profile"
 			className="flex items-center space-x-2 cursor-pointer hover:underline"
+			data-testid="current-user"
 		>
 			<Avatar name={userName} size="40" round={true} />
 			<div className="text-white">

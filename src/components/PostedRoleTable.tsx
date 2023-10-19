@@ -1,20 +1,22 @@
 import {useEffect, useState} from 'react';
 import ManagerIndividualRole from './ManagerIndividualRole';
 import {getAsync} from '../utilities/Services';
-import { useAuth } from '../utilities/Auth';
-// import {useAuth} from '../components/Auth';
+import {useAuth} from '../utilities/Auth';
 
 export default function PostedRoleTable() {
-	//TODO: Define the type of roles
 	const [managerListing, setManagerListing] = useState<any>([]);
 
-	const auth = useAuth()
-	const manager_id = auth?.staffId
+	const {staffId, userRole} = useAuth() || {};
+	const manager_id = staffId;
 
 	async function fetchData() {
-		const response = await getAsync(
-			'api/listing_manager?manager_id=' + manager_id
-		);
+		if (userRole === 4) {
+			var response = await getAsync('api/listing');
+		} else {
+			var response = await getAsync(
+				'api/listing_manager?manager_id=' + manager_id
+			);
+		}
 		const data = await response.json();
 		const tempManagerListing: any = [];
 		for (let i = 0; i < data.length; i++) {
@@ -65,5 +67,9 @@ export default function PostedRoleTable() {
 			</table>
 		);
 	}
-	return <h1>You have no open Roles</h1>;
+	return (
+		<div>
+			<p className="text-xl font-bold">You have no open Role Listing</p>
+		</div>
+	);
 }

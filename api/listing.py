@@ -28,6 +28,7 @@ router = APIRouter()
 
 class PostListing(BaseModel):
     role_id: int
+    listing_location: str
     creation_date: datetime = None
     application_close_date: datetime
 
