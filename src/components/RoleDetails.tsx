@@ -60,7 +60,10 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({listing_id: listing_id}) => {
 								</h2>
 							</div>
 						</div>
-						<h2 className="mb-4 text-3xl font-bold text-left text-gray-800">
+						<h2
+							className="mb-4 text-3xl font-bold text-left text-gray-800"
+							data-testid="role-details-name"
+						>
 							{roleData.role_name}
 						</h2>
 						<div className="flex items-center mb-4">
