@@ -155,7 +155,7 @@ const RoleDetailsPage = () => {
       </button>
       </div>
       {!listingData ? (
-          <LoadingState/>
+          <div>Error 404: Invalid Listing Id</div>
         ) : (
         <div className="flex flex-col lg:flex-row">
           <div className="lg:w-5/8">
