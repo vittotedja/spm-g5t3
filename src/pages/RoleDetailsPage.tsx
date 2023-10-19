@@ -6,7 +6,7 @@ import {useState, useEffect} from 'react';
 import Modal from '../components/Modal';
 import Button from '../components/Button';
 import {getAsync, postAsync, setInitial} from '../utilities/Services';
-import {useLocation} from 'react-router-dom';
+// import {useLocation} from 'react-router-dom';
 import {useAuth} from '../utilities/Auth';
 import LoadingState from '../components/loadingState';
 
@@ -33,7 +33,6 @@ const RoleDetailsPage = () => {
 	const [staff, setStaff] = useState<Staff>(Object);
 	const [listingData, setListingData] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
-	const location = useLocation();
 	const staff_email = auth?.user?.email;
 	let listing_id;
 
