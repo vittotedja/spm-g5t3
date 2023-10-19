@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
 import { getAsync, postAsync, setInitial } from "../utilities/Services";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../utilities/Auth";
 import LoadingState from "../components/loadingState";
 
@@ -31,11 +31,13 @@ const RoleDetailsPage = () => {
   const [successModal, setSuccessModal] = useState(false);
   const [reason, setReason] = useState<string>("");
   const [staff, setStaff] = useState<Staff>(Object);
-  const staff_email = auth?.user?.email;
   const [listingData, setListingData] = useState<any>(null);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const staff_email = auth?.user?.email;
   let listing_id;
+
 
   //error handling the id
   if (param.listing_id) {
@@ -43,7 +45,6 @@ const RoleDetailsPage = () => {
       listing_id = parseInt(param.listing_id);
     } else {
       return <div>Error 404: Invalid Listing Id</div>
-
     }
   }
 
@@ -51,14 +52,11 @@ const RoleDetailsPage = () => {
   useEffect(() => {
     async function fetchFirst() {
       setInitial(setStaff, `api/staff?email=${staff_email}`, false);
-      setLoading(false);
-
     }
     fetchFirst();
   }, []);
 
   const staff_id = staff.staff_id;
-
   const listing_ID = listing_id;
 
   useEffect(() => {
@@ -83,7 +81,6 @@ const RoleDetailsPage = () => {
       let appliedCount = 0;
       console.log(data2);
       console.log;
-
       for (const application of data2) {
         // Use 'of' instead of 'in'
         if (
@@ -143,16 +140,19 @@ const RoleDetailsPage = () => {
     return <LoadingState/> 
   }
 
+
+  console.log(location.pathname)
+
   return (
     <div className="container">
       <div className="flex items-start mb-4 mt-8">
-        <button
-          className="flex items-center text-emerald-900 hover:underline"
-          onClick={() => navigate(`/`)}
-        >
-          <AiOutlineArrowLeft />
-          Back to Role Listings
-        </button>
+      <button
+        className="flex items-center text-emerald-900 hover:underline"
+        onClick={() => window.history.back()}
+      >
+        <AiOutlineArrowLeft />
+        {'Back to Previous Page'}
+      </button>
       </div>
       {!listingData ? (
           <LoadingState/>
