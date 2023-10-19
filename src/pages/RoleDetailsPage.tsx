@@ -19,8 +19,6 @@ interface Staff {
 }
 
 const RoleDetailsPage = () => {
-	//const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
-	//TODO: change staffID to be dynamic
 	const auth = useAuth();
 	const param = useParams<{listing_id: string}>();
 	const [applyLoading, setApplyLoading] = useState<any>(null);

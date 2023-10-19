@@ -103,6 +103,7 @@ export default function ApplicantDetail() {
 				onClick={() =>
 					navigate(`/manager/applicants-list/${listing_id}`)
 				}
+				data-testid="back-to-applicants-list"
 			>
 				<AiOutlineArrowLeft className="text-2xl" />
 				<p className="font-medium text-md">Back to Applicants List</p>
@@ -121,7 +122,10 @@ export default function ApplicantDetail() {
 								/>
 							</div>
 							<div className="text-left">
-								<p className="text-2xl font-extrabold">
+								<p
+									className="text-2xl font-extrabold"
+									data-testid="applicant-details-name"
+								>
 									{applicant.staff_fname +
 										' ' +
 										applicant.staff_lname}
@@ -142,6 +146,7 @@ export default function ApplicantDetail() {
 								<>
 									<Button
 										styleType="green"
+										id="shortlist-button"
 										onClick={() =>
 											update_application('Shortlisted')
 										}
@@ -150,6 +155,7 @@ export default function ApplicantDetail() {
 									</Button>
 									<Button
 										styleType="red"
+										id="reject-button"
 										onClick={() =>
 											update_application('Rejected')
 										}

@@ -27,9 +27,12 @@ function ManagerIndividualRole({
 	return (
 		<tr
 			className="border border-teal-900 cursor-pointer border-opacity-20 text-neutral-950 hover:bg-slate-100"
+			data-testid="manager-individual-role"
 			onClick={() => navigate(`/manager/applicants-list/${listing_id}`)}
 		>
-			<td className="py-2">{roleName ? roleName : 'role name'}</td>
+			<td className="py-2" data-testid="rolename-manager">
+				{roleName ? roleName : 'role name'}
+			</td>
 			<td>{roleID ? roleID : 'role id'}</td>
 			<td>{noOfApplicants ? noOfApplicants : '0'}</td>
 			<td>

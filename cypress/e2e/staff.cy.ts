@@ -1,5 +1,5 @@
 describe('Staff workflow', () => {
-	it('Logging in and viewing Role Details', () => {
+	it('should allow staff to view open role listings', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
 		cy.contains('GlassWindow');
@@ -29,9 +29,10 @@ describe('Staff workflow', () => {
 
 		//No job applications
 		cy.contains('Go to Role Listing');
+		cy.get('[data-testid=logout-button]').click();
 	});
 
-	it('Applying for a role', () => {
+	it('should allow staff to be able to apply for roles', () => {
 		cy.visit('/', {failOnStatusCode: false});
 
 		cy.contains('GlassWindow');
