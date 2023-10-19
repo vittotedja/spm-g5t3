@@ -31,8 +31,8 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 		if (userRole === 'loading') return;
 
 		if (!userRole) {
-			alert('Please login to access this page');
-			navigate('/login', {state: {from: location}});
+			// alert("Please login to access this page");
+			navigate('/login');
 		} else if (!requiredRoles.includes(userRole)) {
 			alert('You dont have access to this page');
 			navigate('/');

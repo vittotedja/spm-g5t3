@@ -4,7 +4,7 @@ import Badge from "./Badge";
 import { setInitial } from "../utilities/Services";
 interface SkillsMapProps {
   staff_id: number | undefined;
-  role_id: number | undefined;
+  listing_id: number | undefined;
 }
 
 interface Skill {
@@ -14,12 +14,21 @@ interface Skill {
   qualified: boolean;
 }
 
-const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staff_id, role_id }) => {
+const SkillsMapComponent: React.FC<SkillsMapProps> = ({
+  staff_id,
+  listing_id,
+}) => {
   const [skillMatchData, setskillMatchData] = useState<any>(null);
-
+  const [listingData, setListingData] = useState<any>(null);
 
   useEffect(() => {
     async function fetchData() {
+      let listingData = await setInitial(
+        setListingData,
+        `api/listing?listing_id=${listing_id}`,
+        false
+      );
+      const role_id = listingData ? listingData.role_id : null;
       setInitial(
         setskillMatchData,
         `api/staff_role_skill?staff_id=${staff_id}&role_id=${role_id}`
@@ -28,11 +37,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staff_id, role_id }) => 
     fetchData();
   }, []);
 
-  console.log(skillMatchData);
-
   if (skillMatchData === null) {
     return null;
   }
+
+  console.log(listingData)
 
   const qualifiedSkills: Skill[] = skillMatchData.skill.filter(
     (skill: Skill) => skill.qualified
@@ -43,7 +52,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staff_id, role_id }) => 
   );
 
   return (
-    <div className="min-w-[400px] max-h-[600px] overflow-y-auto border border-gray-200 border-solid rounded-lg">
+    <div className="min-w-[400px] max-h-[500px] overflow-y-auto border border-gray-200 border-solid rounded-lg">
       <section className="px-8 py-6">
         <div className="max-w-4xl mx-auto">
           <h2 className="mb-4 text-3xl font-bold text-left text-gray-800">
@@ -59,12 +68,20 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staff_id, role_id }) => 
                 <>
                   {qualifiedSkills.map((skill) => (
                     <li key={skill.skill_id} className="flex items-center">
-                      <Badge styleType="green" children={skill.skill_name} />
+                      <Badge
+                        styleType="green"
+                        className="text-xs"
+                        children={skill.skill_name}
+                      />
                     </li>
                   ))}
                   {unqualifiedSkills.map((skill) => (
                     <li key={skill.skill_id} className="flex items-center">
-                      <Badge styleType="red" children={skill.skill_name} />
+                      <Badge
+                        styleType="red"
+                        className="text-xs"
+                        children={skill.skill_name}
+                      />
                     </li>
                   ))}
                 </>
@@ -73,11 +90,8 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({ staff_id, role_id }) => 
           </div>
         </div>
       </section>
-      
     </div>
-    
   );
 };
-
 
 export default SkillsMapComponent;

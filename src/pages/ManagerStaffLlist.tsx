@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getAsync, setInitial } from "../utilities/Services";
 import SearchBar from "../components/SearchBar";
 import Button from "../components/Button";
 import { useAuth } from "../utilities/Auth";
+import ProgressBar from "../components/ProgressBar";
 
 interface Staff {
   staff_id: number;
@@ -14,15 +15,18 @@ interface Staff {
   email: string;
   control_access: number;
   link?: string;
+  match_percentage: number;
 }
 
 const ManagerStaffList = () => {
+  const param = useParams<{ listing_id: string }>();
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [paginatedStaff, setPaginatedStaff] = useState<Staff[]>([]);
   const [searchResults, setSearchResults] = useState<Staff[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [staff, setStaff] = useState<any>(Object);
   const [loading, setLoading] = useState<boolean>(false);
+  const [listing, setListing] = useState<any>(Object);
   const itemsPerPage = 10;
   const totalPages = Math.ceil(allStaff.length / itemsPerPage);
   const auth = useAuth();
@@ -30,6 +34,11 @@ const ManagerStaffList = () => {
 
   useEffect(() => {
     setInitial(setStaff, `api/staff?email=${staff_email}`, false);
+    setInitial(
+      setListing,
+      `api/listing?listing_id=${param?.listing_id}`,
+      false
+    );
   }, [staff_email]);
   const navigate = useNavigate();
 
@@ -41,17 +50,21 @@ const ManagerStaffList = () => {
   };
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      const staff_reponse = await getAsync(
-        `api/staff?isManager=${true}&staff_id=${staff?.staff_id}`
-      );
-      const staff_data = await staff_reponse.json();
-      setAllStaff(staff_data);
-      setLoading(false);
+    if (staff?.staff_id && param?.listing_id) {
+      async function fetchData() {
+        setLoading(true);
+        const staff_reponse = await getAsync(
+          `api/staff?isManager=${true}&staff_id=${staff?.staff_id}&listing_id=${
+            param?.listing_id
+          }`
+        );
+        const staff_data = await staff_reponse.json();
+        setAllStaff(staff_data);
+        setLoading(false);
+      }
+      fetchData();
     }
-    fetchData();
-  }, [staff.staff_id]);
+  }, [staff.staff_id, param?.listing_id]);
 
   useEffect(() => {
     if (allStaff.length > 0) {
@@ -60,9 +73,9 @@ const ManagerStaffList = () => {
   }, [allStaff]);
 
   const handleSearchChange = async (name: string) => {
-    if (name.length > 0){
+    if (name.length > 0) {
       const response = await getAsync(
-        `api/staff?name=${name}&staff_id=${staff?.staff_id}`
+        `api/staff?name=${name}&staff_id=${staff?.staff_id}&listing_id=${param?.listing_id}`
       );
       const data = await response.json();
       setSearchResults(data);
@@ -91,6 +104,9 @@ const ManagerStaffList = () => {
       {!loading ? (
         <>
           <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-left">
+              Head hunting for {listing?.role?.role_name}
+            </h2>
             <SearchBar
               results={searchResults}
               onSearchChange={handleSearchChange}
@@ -105,6 +121,7 @@ const ManagerStaffList = () => {
                   <th className="p-3">Staff ID</th>
                   <th className="p-3">Email</th>
                   <th className="p-3">Department</th>
+                  <th className="p-3">Skill Match</th>
                   <th className="p-3">Country</th>
                 </tr>
               </thead>
@@ -125,6 +142,9 @@ const ManagerStaffList = () => {
                     <td className="p-4">{staffMember.staff_id}</td>
                     <td className="p-4">{staffMember.email}</td>
                     <td className="p-4">{staffMember.dept}</td>
+                    <td className="p-4">
+                      <ProgressBar percentage={staffMember?.match_percentage} />
+                    </td>
                     <td className="p-4">{staffMember.country}</td>
                   </tr>
                 ))}

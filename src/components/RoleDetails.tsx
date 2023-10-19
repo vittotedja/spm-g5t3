@@ -3,43 +3,38 @@ import { FaLocationDot } from "react-icons/fa6";
 import { setInitial } from "../utilities/Services";
 import formatDate from "../utilities/Utiliities";
 interface RoleDetailsProps {
-  role_id: number | undefined;
+  listing_id: number | undefined;
 }
 
-interface Role {
-  role_id: number;
-  role_name: string;
-  created_at: Date;
-  appl_close_date: Date;
-  dept: string;
-  level: string;
-  location: string;
-  role_desc: string;
-  responsibility: string;
-}
-
-const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
-  const [roleData, setRoleData] = useState<Role>(Object);
+const RoleDetails: React.FC<RoleDetailsProps> = ({ listing_id: listing_id }) => {
+  const [roleData, setRoleData] = useState<any>(null);
+  const [listingData, setListingData] = useState<any>(null);
   const [loading, setLoading] = useState<any>(null);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-        setInitial(setRoleData, `api/role?role_id=${role_id}`,false);
+        let listingData = await setInitial(setListingData, `api/listing?listing_id=${listing_id}`,false)
+        setInitial(setRoleData, `api/role?role_id=${listingData.role_id}`,false);
     }
     fetchData();
     setLoading(false);
   }, []);
+
+  const vacancy = listingData? listingData.vacancy : null;
+  const location = listingData? listingData.listing_location : null;
+
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   if (roleData == null || roleData == undefined) {
-    return <div>Error 404 There is no Role with the ID {role_id}</div>;
+    return <div>Error 404 There is no Listing with the ID {listing_id}</div>;
   }
 
-  var close_date = formatDate(roleData.appl_close_date ?new Date(roleData.appl_close_date):null)
+  const close_date = formatDate(listingData.application_close_date ? new Date(listingData.application_close_date):null)
+
   
   return (
     <div className="w-full mb-8 lg:mb-0">
@@ -49,7 +44,7 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
             <div className="flex items-start">
               <div className="flex-grow">
                 <h2 className="text-xl text-gray-600 mb-2 text-left">
-                  {roleData.dept}
+                  {roleData.role_department}
                 </h2>
               </div>
               <div className="text-right ml-4">
@@ -67,13 +62,13 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ role_id: role_id }) => {
             <div className="flex items-center mb-4">
               <FaLocationDot className="text-gray-400 mr-2" />
               <p className="text-l text-emerald-900 italic text-left">
-                {roleData.location}
+                {location}
               </p>
             </div>
             <div className="flex items-center mb-4">
-              <p className="text-l text-gray-800 text-left mr-6">Level</p>
+              <p className="text-l text-gray-800 text-left mr-6">Vacancy</p>
               <p className="text-l text-gray-800 italic text-left">
-                {roleData.level}
+                {vacancy}
               </p>
             </div>
             <h3 className="text-xl font-bold text-gray-800 mb-2 text-left">

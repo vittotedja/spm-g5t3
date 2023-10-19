@@ -10,13 +10,15 @@ interface FilterItem {
 interface FilterBoxProps {
   filters: FilterItem[];
   onFilterChange: (name: string, value: string[]) => void;
+  selectedFilters: Record<string, string[]>;
 }
 
-const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
+const FilterBox: React.FC<FilterBoxProps> = ({
+  filters,
+  onFilterChange,
+  selectedFilters,
+}) => {
   const [openFilters, setOpenFilters] = useState<string[]>([]);
-  const [selectedFilters, setSelectedFilters] = useState<
-    Record<string, string[]>
-  >({});
 
   const toggleFilter = (filterName: string) => {
     if (openFilters.includes(filterName)) {
@@ -27,7 +29,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
   };
 
   const clearAllFilters = () => {
-    setSelectedFilters({});
     filters.forEach((filter) => {
       onFilterChange(filter.name, []);
     });
@@ -81,10 +82,6 @@ const FilterBox: React.FC<FilterBoxProps> = ({ filters, onFilterChange }) => {
                                   (v) => v !== value
                                 );
                             onFilterChange(filter.name, updatedValues);
-                            setSelectedFilters((prev) => ({
-                              ...prev,
-                              [filter.name]: updatedValues,
-                            }));
                           }}
                         />
                         {value}

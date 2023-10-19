@@ -81,13 +81,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
         className="w-full p-2 border rounded"
       />
       {showResults && (
-        <div className="absolute top-full left-0 w-full mt-2 border border-t-0 rounded-b shadow-lg">
+        <div className="absolute top-full left-0 w-full mt-2 border border-t-0 rounded-b shadow-lg z-50">
           {results.length > 0 &&
             results.map((result) => (
               <Link
                 key={result?.staff_id}
                 to={`${result?.link}`}
-                className="block p-2 hover:bg-gray-200 bg-white border-black border-b text-left"
+                className="block p-2 hover:bg-gray-200 bg-white border-gray-400 border-b text-left"
               >
                 {result?.staff_fname} {result?.staff_lname} - {result?.dept} - {result?.country}
               </Link>

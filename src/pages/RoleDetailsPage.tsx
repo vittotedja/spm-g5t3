@@ -9,7 +9,7 @@ import { getAsync, postAsync, setInitial } from "../utilities/Services";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../utilities/Auth";
 
-interface Staff{
+interface Staff {
   staff_id: number;
   staff_name: string;
   curr_role: string;
@@ -46,11 +46,10 @@ const RoleDetailsPage = () => {
   //fetch staff_id
   useEffect(() => {
     async function fetchFirst() {
-      setInitial(setStaff, `api/staff?email=${staff_email}`,false);
+      setInitial(setStaff, `api/staff?email=${staff_email}`, false);
     }
     fetchFirst();
   }, []);
-
 
   const staff_id = staff.staff_id;
   const listing_ID = listing_id;
@@ -58,19 +57,31 @@ const RoleDetailsPage = () => {
   const handleApply = async () => {
     try {
       setApplyLoading(true);
+      console.log(listing_ID)
+      console.log(staff_id)
       const response = await getAsync(
         `api/application?staff_id=${staff_id}&role_id=${listing_ID}`
       );
       const data = await response.json();
       const response2 = await getAsync(`api/application?staff_id=${staff_id}`);
       const data2 = await response2.json();
+      let appliedCount = 0;
+      console.log(data2);
+      console.log
+
+      for (const application of data2) {
+        // Use 'of' instead of 'in'
+        if (application.application_status === "Applied" || application.application_status === "Shortlisted") {
+          // Use '===' for comparison, and change 'Application' to 'application'
+          appliedCount += 1; // Increment applicationCount
+        }
+      }
       //check if user has applied to this role
-      console.log(data.length);
       if (data.length > 0) {
         // show have applied modal
         setHaveAppliedModal(true);
-        //check if user has reached max limit
-      } else if (data2.length >= 5) {
+        //check if user applied has reached max limit
+      } else if (appliedCount >= 5) {
         // show max limit modal
         setMaxLimitModal(true);
       } else {
@@ -94,14 +105,12 @@ const RoleDetailsPage = () => {
   //handle confirm, and insert to db
   const handleConfirm = async () => {
     const applyResponse = await postAsync("api/application", {
-      application_id: (Math.floor(Math.random() * 100000) + 1).toString(),
       staff_id: staff_id,
       listing_id: listing_ID,
       application_status: "Applied",
       application_reason: reason,
     });
     const applyData = await applyResponse.json();
-    console.log(applyData);
     if (applyData) {
       setConfirmModal(false);
       setSuccessModal(true);
@@ -111,7 +120,7 @@ const RoleDetailsPage = () => {
   if (!staff_id) {
     return null; // or a loading indicator
   }
-  
+
   return (
     <div className="container">
       <div className="flex items-start mb-4 mt-8">
@@ -125,10 +134,11 @@ const RoleDetailsPage = () => {
       </div>
       <div className="flex flex-col lg:flex-row">
         <div className="lg:w-5/8">
-          <RoleDetails role_id={listing_id} />
+          <RoleDetails listing_id={listing_id} />
         </div>
-        <div className="lg:w-4/8">
-          <SkillsMapComponent staff_id={staff_id} role_id={listing_id} />
+        <div className="lg:w-3/8 relative">
+          <div className="lg:fixed">
+          <SkillsMapComponent staff_id={staff_id} listing_id={listing_id} />
           <Button
             styleType="green"
             className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
@@ -137,6 +147,7 @@ const RoleDetailsPage = () => {
           >
             Apply
           </Button>
+          </div>
         </div>
       </div>
       <Modal
