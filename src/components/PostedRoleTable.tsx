@@ -2,7 +2,6 @@ import {useEffect, useState} from 'react';
 import ManagerIndividualRole from './ManagerIndividualRole';
 import {getAsync} from '../utilities/Services';
 import {useAuth} from '../utilities/Auth';
-import formatDate from '../utilities/Utiliities';
 
 export default function PostedRoleTable() {
 	const [managerListing, setManagerListing] = useState<any>([]);
