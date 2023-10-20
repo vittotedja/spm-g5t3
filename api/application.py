@@ -28,10 +28,13 @@ app.add_middleware(
 )
 router = APIRouter()
 
+
 class TimestampzConverter(BaseModel):
     rootmodel: datetime
+
     def __get__(self, obj, type=None):
         return super().__get__(obj, type).isoformat()
+
 
 class ApplicationStatus(str, Enum):
     Applied = "Applied"
@@ -39,51 +42,96 @@ class ApplicationStatus(str, Enum):
     Rejected = "Rejected"
     Withdrawn = "Withdrawn"
 
+
 class PostApplication(BaseModel):
     staff_id: int
     listing_id: int
     application_status: ApplicationStatus = "Applied"
     application_reason: str
-    
+
+
 class PutApplication(BaseModel):
     application_id: int
     application_status: ApplicationStatus
 
+
 @app.get("/api/application")
 @router.get("/api/application")
-async def application(application_id: int = None, staff_id: int = None, role_id: int = None):
+async def application(
+    application_id: int = None, staff_id: int = None, role_id: int = None
+):
     if staff_id and role_id:
-        application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
+        application = (
+            supabase.from_("application")
+            .select("*")
+            .eq("staff_id", staff_id)
+            .eq("listing_id", role_id)
+            .execute()
+            .data
+        )
         return application
     elif application_id:
-        application = supabase.from_('application').select(
-            "*",
-            "listing(*, role(*))",
-        ).eq('application_id', application_id).execute().data
+        application = (
+            supabase.from_("application")
+            .select(
+                "*",
+                "listing(*, role(*))",
+            )
+            .eq("application_id", application_id)
+            .execute()
+            .data
+        )
         return application
     elif staff_id:
-        application = supabase.table('application').select('*, listing(*)').eq('staff_id', staff_id).execute().data
+        application = (
+            supabase.table("application")
+            .select("*, listing(*)")
+            .eq("staff_id", staff_id)
+            .execute()
+            .data
+        )
         return application
     elif role_id:
-        application = pd.DataFrame.from_records(supabase.table('application').select('*, staff(*)').eq('listing_id', role_id).execute().data)
-        role = supabase.table('listing').select('role_id').eq('listing_id', role_id).execute().data
-        role_id = role[0]['role_id']
+        response = (
+            supabase.table("application")
+            .select("*, staff  (*)")
+            .eq("listing_id", role_id)
+            .execute()
+            .data
+        )
+        if len(response) == 0:
+            return {}
+        application = pd.DataFrame.from_records(response)
+        role = (
+            supabase.table("listing")
+            .select("role_id")
+            .eq("listing_id", role_id)
+            .execute()
+            .data
+        )
+        role_id = role[0]["role_id"]
         # get match percentage for each application
-        match_percentage = [(await staff_role_skill(staff['staff_id'], role_id))['match_percentage'] for staff in application.staff]
-        application['match_percentage'] = match_percentage
+        match_percentage = [
+            (await staff_role_skill(staff["staff_id"], role_id))["match_percentage"]
+            for staff in application.staff
+        ]
+        application["match_percentage"] = match_percentage
 
-        return application.to_dict('records')
+        return application.to_dict("records")
     else:
-        raise HTTPException(status_code=400, detail="Either application_id, staff_id, or role_id must be provided.")
+        raise HTTPException(
+            status_code=400,
+            detail="Either application_id, staff_id, or role_id must be provided.",
+        )
+
 
 @app.post("/api/application")
 @router.post("/api/application")
 async def application(application: PostApplication = Body(...)):
-    
     try:
-        data, error = supabase.table('application').insert([
-            application.dict()
-        ]).execute()
+        data, error = (
+            supabase.table("application").insert([application.dict()]).execute()
+        )
 
         print(application.application_id)
 
@@ -91,19 +139,28 @@ async def application(application: PostApplication = Body(...)):
             print(error)  # Log the error for debugging
             return {"success": False, "error": error}
         else:
-            return {"success": True, "data": data}  # Return the first item in the response
+            return {
+                "success": True,
+                "data": data,
+            }  # Return the first item in the response
 
-    
     except Exception as e:
         return {"success": False, "error": e}
+
 
 @app.put("/api/application")
 @router.put("/api/application")
 async def application(application: PutApplication):
     update_data = {
-        'application_status': application.application_status,
-        'updated_at': datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+        "application_status": application.application_status,
+        "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
     }
 
-    update = supabase.from_('application').update(update_data).eq('application_id', application.application_id).execute().data
+    update = (
+        supabase.from_("application")
+        .update(update_data)
+        .eq("application_id", application.application_id)
+        .execute()
+        .data
+    )
     return update
