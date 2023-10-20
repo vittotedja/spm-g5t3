@@ -11,6 +11,8 @@ interface ManagerIndividualRoleProps {
 	applicationEndDate?: Date | null;
 	noOfApplicants?: number;
 	listing_id?: number;
+	isDisabled?: boolean;
+	vacancy?: number;
 }
 
 function ManagerIndividualRole({
@@ -19,6 +21,8 @@ function ManagerIndividualRole({
 	applicationEndDate,
 	noOfApplicants,
 	listing_id,
+	isDisabled,
+	vacancy,
 }: ManagerIndividualRoleProps) {
 	const {userRole} = useAuth() || {};
 	const isHR = userRole === 4;
@@ -26,21 +30,31 @@ function ManagerIndividualRole({
 	const navigate = useNavigate();
 	return (
 		<tr
-			className="border border-teal-900 cursor-pointer border-opacity-20 text-neutral-950 hover:bg-slate-100"
+			className={`border border-teal-900 border-opacity-20 text-neutral-950 cursor-pointer ${
+				isDisabled
+					? 'text-slate-500 bg-slate-200'
+					: ' hover:bg-slate-100'
+			}`}
 			onClick={() => navigate(`/manager/applicants-list/${listing_id}`)}
 		>
 			<td className="py-2">{roleName ? roleName : 'role name'}</td>
 			<td>{roleID ? roleID : 'role id'}</td>
 			<td>{noOfApplicants ? noOfApplicants : '0'}</td>
+			<td>{vacancy ? vacancy : '0'}</td>
 			<td>
 				{formatDate(
 					applicationEndDate ? new Date(applicationEndDate) : null
 				)}
 			</td>
-			<td>
-				{isHR && (
+			<td
+				colSpan={isHR && !isDisabled ? 1 : 2}
+				className="justify-center align-middle"
+			>
+				{isHR && !isDisabled ? (
 					<div
-						className="flex justify-center cursor-pointer hover:text-green hover:underline"
+						className={
+							'mx-auto cursor-pointer hover:text-green hover:underline'
+						}
 						onClick={() => {
 							navigate('/manager/role-listing', {
 								state: {isEdit: true},
@@ -49,15 +63,21 @@ function ManagerIndividualRole({
 					>
 						<HiPencilSquare />
 					</div>
+				) : (
+					<div className="text-center text-red">CLOSED</div>
 				)}
 			</td>
-			<td>
-				{isHR && (
-					<p className="cursor-pointer hover:text-red hover:underline">
-						<HiTrash />
-					</p>
-				)}
-			</td>
+			{isHR && !isDisabled && (
+				<td className="justify-center align-middle">
+					<div
+						className={
+							'mx-auto cursor-pointer hover:text-red hover:underline d-flex justify-center align-middle'
+						}
+					>
+						<HiTrash className="h-full" />
+					</div>
+				</td>
+			)}
 		</tr>
 	);
 }
