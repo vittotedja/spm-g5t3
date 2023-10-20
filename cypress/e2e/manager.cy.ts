@@ -34,7 +34,13 @@ describe('Manager workflow', () => {
 			.then(($roleName) => {
 				clickedApplicantsName = $roleName.text();
 			});
-		cy.get('[data-testid=applicant-row]').first().click();
+		cy.get('[data-testid=applicant-row]').then(($applicantRows) => {
+			if ($applicantRows.length > 0) {
+				cy.get('[data-testid=applicants-name]').click();
+			} else {
+				cy.contains('No Applied Applicants Yet');
+			}
+		});
 		//check for any more details of the applicant here
 
 		cy.get('[data-testid=applicant-details-name]').should(
@@ -61,5 +67,7 @@ describe('Manager workflow', () => {
 				cy.contains('No Applied Applicants Yet');
 			}
 		});
+
+		//check for shortlisted applicants
 	});
 });

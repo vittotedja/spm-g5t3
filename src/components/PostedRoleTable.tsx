@@ -43,7 +43,7 @@ export default function PostedRoleTable() {
 						<th className="py-2">Role Name</th>
 						<th>Role Id</th>
 						<th>No. of Applicants</th>
-						<th>Application Start Date</th>
+						<th>Application Close Date</th>
 						<th> </th>
 						<th> </th>
 					</tr>
