@@ -11,12 +11,14 @@ interface FilterBoxProps {
   filters: FilterItem[];
   onFilterChange: (name: string, value: string[]) => void;
   selectedFilters: Record<string, string[]>;
+  className?: string;
 }
 
 const FilterBox: React.FC<FilterBoxProps> = ({
   filters,
   onFilterChange,
   selectedFilters,
+  className
 }) => {
   const [openFilters, setOpenFilters] = useState<string[]>([]);
 
@@ -35,8 +37,8 @@ const FilterBox: React.FC<FilterBoxProps> = ({
   };
 
   return (
-    <div className="mt-14 border w-72 shadow-md h-min pb-8 rounded-xl">
-      <div className="bg-olive-green text-white p-2 mb-4 font-bold rounded-t-xl text-xl">
+    <div className={`mt-14 border w-72 shadow-md h-min pb-8 rounded-xl ${className}`}>
+      <div className="bg-emerald-900 text-white p-2 mb-4 font-bold rounded-t-xl text-xl">
         Filter
       </div>
       <div
