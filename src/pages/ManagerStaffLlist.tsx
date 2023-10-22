@@ -7,6 +7,7 @@ import { useAuth } from "../utilities/Auth";
 import ProgressBar from "../components/ProgressBar";
 import FilterBox from "../components/FilterBox";
 import LoadingState from "../components/loadingState";
+import confused_guy from "../assets/confused_guy.png";
 
 interface Staff {
   staff_id: number;
@@ -142,108 +143,118 @@ const ManagerStaffList = () => {
         <div className="w-3/4">
           {!loading ? (
             <>
-              <table className="min-w-full border border-collapse">
+              {allStaff.length === 0 ? (
+                <div className="flex flex-col items-center justify-center my-12 text-center">
+                  <img src={confused_guy} width={500} alt="Confused Guy" />
+                  <h2 className="text-2xl font-bold">
+                    No job openings match the selected filters, please try
+                    again.
+                  </h2>
+                </div>
+              ) : (
                 <table className="min-w-full border border-collapse">
-                  <thead className="border-b">
-                    <tr className="text-white bg-emerald-900">
-                      <th className="p-3">Staff Name</th>
-                      <th className="p-3">Staff ID</th>
-                      <th className="p-3">Email</th>
-                      <th className="p-3">Department</th>
-                      <th className="p-3">Skill Match</th>
-                      <th className="p-3">Country</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedStaff.map((staffMember, index) => (
-                      <tr
-                        key={index}
-                        className="border-b hover:bg-gray-100"
-                        onClick={() =>
-                          navigate(
-                            `/applicant-detail?user_id=${staffMember?.staff_id}`
-                          )
-                        }
-                      >
-                        <td className="p-2">
-                          {staffMember.staff_fname} {staffMember.staff_lname}
-                        </td>
-                        <td className="p-4">{staffMember.staff_id}</td>
-                        <td className="p-4">{staffMember.email}</td>
-                        <td className="p-4">{staffMember.dept}</td>
-                        <td className="p-4">
-                          <ProgressBar
-                            percentage={staffMember?.match_percentage}
-                          />
-                        </td>
-                        <td className="p-4">{staffMember.country}</td>
+                  <table className="min-w-full border border-collapse">
+                    <thead className="border-b">
+                      <tr className="text-white bg-emerald-900">
+                        <th className="p-3">Staff Name</th>
+                        <th className="p-3">Staff ID</th>
+                        <th className="p-3">Email</th>
+                        <th className="p-3">Department</th>
+                        <th className="p-3">Skill Match</th>
+                        <th className="p-3">Country</th>
                       </tr>
-                    ))}
-                  </tbody>
+                    </thead>
+                    <tbody>
+                      {paginatedStaff.map((staffMember, index) => (
+                        <tr
+                          key={index}
+                          className="border-b hover:bg-gray-100"
+                          onClick={() =>
+                            navigate(
+                              `/applicant-detail?user_id=${staffMember?.staff_id}`
+                            )
+                          }
+                        >
+                          <td className="p-2">
+                            {staffMember.staff_fname} {staffMember.staff_lname}
+                          </td>
+                          <td className="p-4">{staffMember.staff_id}</td>
+                          <td className="p-4">{staffMember.email}</td>
+                          <td className="p-4">{staffMember.dept}</td>
+                          <td className="p-4">
+                            <ProgressBar
+                              percentage={staffMember?.match_percentage}
+                            />
+                          </td>
+                          <td className="p-4">{staffMember.country}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </table>
-              </table>
+              )}
             </>
           ) : (
             <LoadingState />
           )}
         </div>
       </div>
-        <div className="w-1/2 mt-4 flex justify-between mx-auto mb-4">
-          <Button
-            onClick={() => handlePageChange(1)}
-            styleType={"underline"}
+      <div className="w-1/2 mt-4 flex justify-between mx-auto mb-4">
+        <Button
+          onClick={() => handlePageChange(1)}
+          styleType={"underline"}
+          className={
+            currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
+          }
+        >
+          FIRST
+        </Button>
+        <Button
+          onClick={() => handlePageChange(currentPage - 1)}
+          styleType={"underline"}
+          className={
+            currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
+          }
+        >
+          PREVIOUS
+        </Button>
+        {getPaginationNumbers().map((number) => (
+          <button
+            key={number}
+            onClick={() => handlePageChange(number)}
             className={
-              currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
+              number === currentPage
+                ? "bg-emerald-900 text-white px-2 rounded"
+                : ""
             }
           >
-            FIRST
-          </Button>
-          <Button
-            onClick={() => handlePageChange(currentPage - 1)}
-            styleType={"underline"}
-            className={
-              currentPage === 1 ? "cursor-not-allowed" : "hover:underline"
-            }
-          >
-            PREVIOUS
-          </Button>
-          {getPaginationNumbers().map((number) => (
-            <button
-              key={number}
-              onClick={() => handlePageChange(number)}
-              className={
-                number === currentPage
-                  ? "bg-emerald-900 text-white px-2 rounded"
-                  : ""
-              }
-            >
-              {number}
-            </button>
-          ))}
-          <Button
-            onClick={() => handlePageChange(currentPage + 1)}
-            styleType={"underline"}
-            className={
-              currentPage === totalPages
-                ? "cursor-not-allowed"
-                : "hover:underline"
-            }
-          >
-            NEXT
-          </Button>
-          <Button
-            onClick={() => handlePageChange(totalPages)}
-            styleType={"underline"}
-            className={
-              currentPage === totalPages
-                ? "cursor-not-allowed"
-                : "hover:underline"
-            }
-          >
-            LAST
-          </Button>
-        </div>
+            {number}
+          </button>
+        ))}
+        <Button
+          onClick={() => handlePageChange(currentPage + 1)}
+          styleType={"underline"}
+          className={
+            currentPage === totalPages
+              ? "cursor-not-allowed"
+              : "hover:underline"
+          }
+        >
+          NEXT
+        </Button>
+        <Button
+          onClick={() => handlePageChange(totalPages)}
+          styleType={"underline"}
+          className={
+            currentPage === totalPages
+              ? "cursor-not-allowed"
+              : "hover:underline"
+          }
+        >
+          LAST
+        </Button>
       </div>
+    </div>
   );
 };
 
