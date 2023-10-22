@@ -11,6 +11,7 @@ from api import (
     manager_rolelisting,
     listing,
     listing_manager,
+    new_data_handling
 )
 
 app = FastAPI()
@@ -31,3 +32,4 @@ app.include_router(application.router)
 app.include_router(listing.router)
 app.include_router(listing_manager.router)
 app.include_router(manager_rolelisting.router)
+app.include_router(new_data_handling.router)
