@@ -147,7 +147,7 @@ const ManagerStaffList = () => {
                 <div className="flex flex-col items-center justify-center my-12 text-center">
                   <img src={confused_guy} width={500} alt="Confused Guy" />
                   <h2 className="text-2xl font-bold">
-                    No job openings match the selected filters, please try
+                    No staff match the selected filters, please try
                     again.
                   </h2>
                 </div>
