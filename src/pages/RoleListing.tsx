@@ -191,6 +191,7 @@ const RoleListing: React.FC = () => {
 								</div>
 							)
 						)}
+						{loading && <LoadingState />}
 					</div>
 				</div>
 			)}

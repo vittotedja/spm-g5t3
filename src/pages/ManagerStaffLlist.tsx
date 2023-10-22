@@ -143,7 +143,7 @@ const ManagerStaffList = () => {
         <div className="w-3/4">
           {!loading ? (
             <>
-              {allStaff.length === 0 ? (
+              {!loading && allStaff.length === 0 ? (
                 <div className="flex flex-col items-center justify-center my-12 text-center">
                   <img src={confused_guy} width={500} alt="Confused Guy" />
                   <h2 className="text-2xl font-bold">
@@ -199,7 +199,7 @@ const ManagerStaffList = () => {
           )}
         </div>
       </div>
-      <div className="w-1/2 mt-4 flex justify-between mx-auto mb-4">
+     {!loading && (<div className="w-1/2 mt-4 flex justify-between mx-auto mb-4">
         <Button
           onClick={() => handlePageChange(1)}
           styleType={"underline"}
@@ -253,7 +253,7 @@ const ManagerStaffList = () => {
         >
           LAST
         </Button>
-      </div>
+      </div>)}
     </div>
   );
 };
