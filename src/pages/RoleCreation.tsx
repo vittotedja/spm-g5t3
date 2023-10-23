@@ -115,6 +115,7 @@ const RoleCreation: React.FC = () => {
 						alert('Error: ' + listingManagerData.error);
 					}
 				}
+				toast.success('Role Listing posted successfully');
 				navigate('/manager');
 			} else {
 				setIsLoading(false);
@@ -264,6 +265,7 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 ">
 											<input
+												data-testid="vacancy"
 												type="number"
 												min={1}
 												max={127}

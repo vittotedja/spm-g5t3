@@ -15,6 +15,14 @@ describe('HR workflow', () => {
 		cy.contains('All Posted Role Listings');
 		cy.contains('Add New Listing');
 
+		let noOfListings;
+		cy.get('[data-testid=manager-individual-role]')
+			.its('length')
+			.then((length) => {
+				cy.log(length.toString());
+				noOfListings = length;
+			});
+
 		cy.get('#add-new-listing').click();
 
 		cy.contains('New Role Listing');
@@ -23,13 +31,17 @@ describe('HR workflow', () => {
 
 		//shows error message if no data is entered
 		cy.get('#save-listing').click();
-		cy.contains('Please select at least one hiring manager');
+		cy.contains(
+			'Something went wrong, please check whether you have keyed in the right details'
+		);
 
 		//choose the role name
 		cy.get('.css-1xc3v61-indicatorContainer').first().click();
 		cy.get('#react-select-3-listbox').type('{downarrow}{enter}');
 		cy.get('#save-listing').click();
-		cy.contains('Please select at least one hiring manager');
+		cy.contains(
+			'Something went wrong, please check whether you have keyed in the right details'
+		);
 
 		// choose date
 		cy.get('[data-testid=datepicker]').click();
@@ -40,18 +52,40 @@ describe('HR workflow', () => {
 			.click()
 			.type('{esc}');
 		cy.get('#save-listing').click();
-		cy.contains('Please select at least one hiring manager');
+		cy.contains(
+			'Something went wrong, please check whether you have keyed in the right details'
+		);
 
 		// choose the location
 		cy.get('.css-1xc3v61-indicatorContainer').eq(1).click();
 		cy.get('#react-select-5-listbox').type('{downarrow}{enter}');
 		cy.get('#save-listing').click();
-		cy.contains('Please select at least one hiring manager');
+		cy.contains(
+			'Something went wrong, please check whether you have keyed in the right details'
+		);
+
+		// choose vacancy
+		cy.get('[data-testid=vacancy]')
+			.type('this is not a number')
+			.should('not.have.value', 'this is not a number');
+
+		cy.get('[data-testid=vacancy]').type('2').should('have.value', '2');
 
 		// choose a hiring manager
 		cy.get('.css-1xc3v61-indicatorContainer').last().click();
 		cy.get('#react-select-7-listbox').type(
 			'{downarrow}{enter}{downarrow}{downarrow}{enter}'
 		);
+
+		// all checks passed, save listing
+		cy.get('#save-listing').click();
+		cy.contains('Role Listing posted successfully');
+		cy.url().should('include', '/manager');
+
+		cy.get('[data-testid=manager-individual-role]')
+			.its('length')
+			.then((length) => {
+				expect(length).to.eq(noOfListings + 1);
+			});
 	});
 });
