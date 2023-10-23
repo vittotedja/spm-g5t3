@@ -45,6 +45,7 @@ const RoleCreation: React.FC = () => {
 	const [selectedRole, setSelectedRole] = useState<any>({});
 	const [selectedCountry, setSelectedCountry] = useState<any>({});
 	const [hrManager, setHrManager] = useState<any>({});
+	const [vacancy, setVacancy] = useState<number>(0);
 	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
 	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
@@ -89,11 +90,18 @@ const RoleCreation: React.FC = () => {
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setIsLoading(true);
-		if (hrManager.length > 0) {
+		if (vacancy > 127) {
+			toast.error('Vacancy should be less than 128');
+			setIsLoading(false);
+			setVacancy(0);
+			return;
+		}
+		if (hrManager.length > 0 && vacancy > 0) {
 			const response = await postAsync('api/listing', {
 				role_id: selectedRole.role_id,
 				application_close_date: date,
 				listing_location: selectedCountry.value,
+				vacancy: vacancy,
 			});
 			const data = await response.json();
 			if (data.success) {
@@ -111,11 +119,13 @@ const RoleCreation: React.FC = () => {
 			} else {
 				setIsLoading(false);
 				toast.error(
-					'Something went wrong, please check the form you are submitting'
+					'Something went wrong, please check whether you have keyed in the right details'
 				);
 			}
 		} else {
-			toast.error('Please select at least one hiring manager');
+			toast.error(
+				'Something went wrong, please check whether you have keyed in the right details'
+			);
 			setIsLoading(false);
 		}
 	};
@@ -173,9 +183,9 @@ const RoleCreation: React.FC = () => {
 				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
 					<form>
 						<div className="space-y-10">
-							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-3">
+							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-2">
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -192,7 +202,7 @@ const RoleCreation: React.FC = () => {
 									</div>
 								</div>
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -225,7 +235,7 @@ const RoleCreation: React.FC = () => {
 									</div>
 								</div>
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -242,6 +252,30 @@ const RoleCreation: React.FC = () => {
 												);
 											}}
 										/>
+									</div>
+								</div>
+								<div className="mt-10">
+									<div className="px-3 sm:col-span-3 text-start">
+										<label
+											htmlFor="vacancy"
+											className="font-bold leading-6 text-olive-green-dark"
+										>
+											Vacancy
+										</label>
+										<div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 ">
+											<input
+												type="number"
+												min={1}
+												max={127}
+												className="block flex-1 border-0 bg-transparent py-1.5 pl-2 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
+												placeholder={`How many people do you need?`}
+												onChange={(e) => {
+													setVacancy(
+														parseInt(e.target.value)
+													);
+												}}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>

@@ -43,6 +43,7 @@ export default function PostedRoleTable() {
 						<th className="py-2">Role Name</th>
 						<th>Role Id</th>
 						<th>No. of Applicants</th>
+						<th>Vacancy</th>
 						<th>Application Close Date</th>
 						<th> </th>
 						<th> </th>
@@ -52,6 +53,10 @@ export default function PostedRoleTable() {
 					{managerListing.map((listing: any) => {
 						return (
 							<ManagerIndividualRole
+								isDisabled={
+									new Date(listing.application_close_date) <
+									new Date()
+								}
 								key={listing.listing_id}
 								listing_id={listing.listing_id}
 								roleName={listing.role.role_name}
@@ -59,6 +64,7 @@ export default function PostedRoleTable() {
 								applicationEndDate={
 									listing.application_close_date
 								}
+								vacancy={listing.vacancy}
 								noOfApplicants={listing.application.length}
 							/>
 						);

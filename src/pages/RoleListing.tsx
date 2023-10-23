@@ -6,7 +6,7 @@ import SortComponent from '../components/SortComponent';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import confused_guy from '../assets/confused_guy.png';
 import {useAuth} from '../utilities/Auth';
-import Spinner from '../components/Spinner';
+import LoadingState from '../components/loadingState';
 
 interface Role {
 	role_name: string;
@@ -126,7 +126,7 @@ const RoleListing: React.FC = () => {
 		<>
 			{firstLoading ? (
 				<div>
-					<Spinner />
+					<LoadingState />
 				</div>
 			) : (
 				<div className="flex justify-around mt-4">
@@ -191,6 +191,7 @@ const RoleListing: React.FC = () => {
 								</div>
 							)
 						)}
+						{loading && <LoadingState />}
 					</div>
 				</div>
 			)}

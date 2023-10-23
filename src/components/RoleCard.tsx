@@ -48,17 +48,13 @@ const RoleCard: React.FC<RoleCardProps> = ({
 						</div>
 					)}
 				</div>
-				<div className="flex-col items-center justify-between w-64 my-auto mt-3">
+				<div className="flex-col items-center justify-between w-1/2 my-auto mt-3">
 					<p className="mb-2">Skill - Match %</p>
 					<ProgressBar
 						percentage={parseFloat(
 							role_percentage_match.toFixed(0)
 						)}
 					/>
-				</div>
-				<div className="flex-col items-center pt-3 my-auto">
-					<h4 className="mb-2 font-bold">Level</h4>
-					<h2>Senior</h2>
 				</div>
 				<div className="flex-col items-center pt-3 my-auto">
 					<h4 className="mb-2 font-bold">Application Close Date</h4>
