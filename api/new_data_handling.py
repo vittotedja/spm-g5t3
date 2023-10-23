@@ -28,12 +28,15 @@ router = APIRouter()
 
 @router.post("/new_data_handling/")
 async def new_data_handling(file: str):
-    filepath = '../src/dataset/' + file + '.csv'
+    filepath = './src/dataset/' + file + '.csv'
+    # print(filepath)
+    # print("Current working directory:", os.getcwd())
+
     if not os.path.exists(filepath):
         raise HTTPException(status_code=400, detail="File not found")
 
     df = pd.read_csv(filepath)
-
+    print(df.head())
     # Handling case insensitive column names
     email_column = next((col for col in df.columns if col.lower() == 'email'), None)
     if email_column is None:
@@ -41,6 +44,7 @@ async def new_data_handling(file: str):
 
     # Fetch all users
     response = await supabase.auth.api.get_users()
+    print(response)
     if response['error']:
         raise HTTPException(status_code=400, detail=response['error']['message'])   
 
