@@ -28,12 +28,15 @@ describe('Manager workflow', () => {
 			}
 		);
 		// click on first applicant
+		// TODO: set up staff to apply first
+		// TODO: give conditional check in case no applicants
 		let clickedApplicantsName = '';
 		cy.get('[data-testid=applicants-name]')
 			.first()
 			.then(($roleName) => {
 				clickedApplicantsName = $roleName.text();
 			});
+
 		cy.get('[data-testid=applicant-row]').then(($applicantRows) => {
 			if ($applicantRows.length > 0) {
 				cy.get('[data-testid=applicants-name]').click();
@@ -69,5 +72,29 @@ describe('Manager workflow', () => {
 		});
 
 		//check for shortlisted applicants
+		cy.get('[data-testid=shortlisted-button]').click();
+
+		let clickedShortlistedName = '';
+		cy.get('[data-testid=applicants-name]')
+			.first()
+			.then(($roleName) => {
+				clickedShortlistedName = $roleName.text();
+			});
+		cy.get('[data-testid=applicant-row]').then(($applicantRows) => {
+			if ($applicantRows.length > 0) {
+				cy.get('[data-testid=applicants-name]').click();
+			} else {
+				cy.contains('No Applied Applicants Yet');
+			}
+		});
+
+		cy.get('[data-testid=applicant-details-name]').should(
+			($roleDetailsName) => {
+				expect($roleDetailsName.text()).to.eq(clickedShortlistedName);
+			}
+		);
+		cy.contains('Shortlisted');
+
+		// TODO: reset DB
 	});
 });

@@ -201,7 +201,10 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<div className="w-full py-1 mt-2 align-middle border rounded-md">
 											<Popover>
-												<PopoverTrigger className="justify-center w-full align-middle">
+												<PopoverTrigger
+													className="justify-center w-full align-middle"
+													data-testid="datepicker"
+												>
 													{date
 														? formatDate(date)
 														: 'Select Date'}
@@ -295,6 +298,7 @@ const RoleCreation: React.FC = () => {
 
 						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
 							<Button
+								id="save-listing"
 								styleType="green"
 								loading={isLoading}
 								onClick={(e) => {

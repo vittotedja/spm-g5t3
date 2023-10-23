@@ -180,6 +180,7 @@ const ApplicantsListPage = () => {
 									borderBottomLeftRadius: '0',
 								}}
 								onClick={selectShortlist}
+								data-testid="shortlisted-button"
 							>
 								Shortlisted
 							</button>
