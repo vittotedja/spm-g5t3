@@ -43,16 +43,16 @@ async def new_data_handling(file: str):
         raise HTTPException(status_code=400, detail="Email column not found in CSV")
 
     # Fetch all users
-    response = await supabase.auth.api.get_users()
+    response = supabase.table('staff').select('*').execute()
     print(response)
     if response['error']:
         raise HTTPException(status_code=400, detail=response['error']['message'])   
 
-    existing_emails = [user['email'] for user in response['data']]
-
+    existing_emails = [user.email for user in response.data]
+    print(existing_emails)
     # Find the new staff emails using Pandas
     new_staff_df = df[~df[email_column].isin(existing_emails)]
-
+    
     for index, new_staff in new_staff_df.iterrows():
         # Create a new user for each new staff email
         insert_to_db = (await supabase.table('staff')
