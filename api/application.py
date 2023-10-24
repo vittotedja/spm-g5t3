@@ -61,7 +61,7 @@ async def application(
     application_id: int = None, staff_id: int = None, role_id: int = None
 ):
     if staff_id and role_id:
-        application = supabase.from_('application').select("*").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
+        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
         appliication_df = pd.DataFrame(application)
         sorted_application = appliication_df.sort_values(by='applied_at', ascending=False)
         return sorted_application.to_dict('records')

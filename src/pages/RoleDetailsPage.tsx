@@ -18,6 +18,17 @@ interface Application {
   application_reason: string;
   application_status: string;
   staff_id: number;
+  listing: {
+    listing_id: number;
+    role_id: number;
+    creation_date: string;
+    updated_at: string;
+    deleted_at: string;
+    updated_from: string;
+    listing_location: string;
+    application_close_date: string;
+    vacancy: number;
+  }
 }
 
 const RoleDetailsPage = () => {
@@ -147,8 +158,13 @@ const RoleDetailsPage = () => {
 
   switch (latestApplication?.application_status) {
     case "Applied":
-      buttonText = "Withdraw Application";
-      disabled = false;
+      if (new Date(latestApplication?.listing?.application_close_date) < new Date()) {
+        buttonText = "Listing Closed";
+        disabled = true;
+      } else {
+        buttonText = "Withdraw Application";
+        disabled = false;
+      }
       break;
     case "Shortlisted":
       buttonText = "Shortlisted";
@@ -163,8 +179,13 @@ const RoleDetailsPage = () => {
       disabled = true;
       break;
     default:
+      console.log(latestApplication?.listing?.application_close_date)
+      console.log(new Date(latestApplication?.listing?.application_close_date) < new Date())
       if (appliedCount >= 5 && listingApplications?.length === 0) {
         buttonText = "Maximum Active Applications Reached";
+        disabled = true;
+      } else if (new Date(latestApplication?.listing?.application_close_date) < new Date()) {
+        buttonText = "Listing Closed";
         disabled = true;
       } else {
         buttonText = "Apply";
