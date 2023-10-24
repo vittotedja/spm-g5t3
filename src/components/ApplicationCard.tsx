@@ -15,7 +15,7 @@ interface ApplicationCardProps {
     withdrawn_at: string
     staff_id: number
     application_reason: string
-    application_status: 'Applied' | 'Shortlisted' | 'Rejected'
+    application_status: 'Applied' | 'Shortlisted' | 'Rejected' | 'Withdrawn'
     updated_at: string
     listing_id: number
     listing: {
@@ -44,7 +44,8 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
   const statusColorMap = {
     Applied: "text-black",
     Shortlisted: "text-green",
-    Rejected: "text-red"
+    Rejected: "text-red",
+    Withdrawn : "text-gray-500"
   }
   
   return (

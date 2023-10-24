@@ -1,21 +1,23 @@
 import RoleDetails from "../components/RoleDetails";
 import SkillsMapComponent from "../components/SkillsMap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import Modal from "../components/Modal";
 import Button from "../components/Button";
-import { getAsync, postAsync, setInitial } from "../utilities/Services";
-import { useLocation } from "react-router-dom";
+import { postAsync, putAsync, setInitial } from "../utilities/Services";
 import { useAuth } from "../utilities/Auth";
 import LoadingState from "../components/loadingState";
 
-interface Staff {
+interface Application {
+  application_id: number;
+  applied_at: string;
+  updated_at: string;
+  withdrawn_at: string;
+  listing_id: number;
+  application_reason: string;
+  application_status: string;
   staff_id: number;
-  staff_name: string;
-  curr_role: string;
-  curr_dept: string;
-  location: string;
 }
 
 const RoleDetailsPage = () => {
@@ -30,70 +32,62 @@ const RoleDetailsPage = () => {
   const [reasonModal, setReasonModal] = useState(false);
   const [successModal, setSuccessModal] = useState(false);
   const [reason, setReason] = useState<string>("");
-  const [staff, setStaff] = useState<Staff>(Object);
   const [listingData, setListingData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const location = useLocation();
-  const staff_email = auth?.user?.email;
-  let listing_id;
-
-
+  const [listingApplications, setListingApplications] = useState<Application[]>(
+    []
+  );
+  const [latestApplication, setLatestApplication] =
+    useState<Application>(Object);
+  const [allApplications, setAllApplications] = useState<Application[]>([]);
+  const [appliedCount, setAppliedCount] = useState<number>(0);
+  const [withdrawModal, setWithdrawModal] = useState(false);
+  const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
+  const staff_id = auth?.staffId;
+  const listing_id = parseInt(param?.listing_id ?? "");
+  const navigate = useNavigate();
   //error handling the id
-  if (param.listing_id) {
-    if (/^\d+$/.test(param.listing_id)) {
-      listing_id = parseInt(param.listing_id);
-    } else {
-      return <div>Error 404: Invalid Listing Id</div>
-    }
+  if (isNaN(listing_id)) {
+    return <div>Error 404: Invalid Listing Id</div>;
   }
-
-  //fetch staff_id
-  useEffect(() => {
-    async function fetchFirst() {
-      setInitial(setStaff, `api/staff?email=${staff_email}`, false);
-    }
-    fetchFirst();
-  }, []);
-
-  const staff_id = staff.staff_id;
-  const listing_ID = listing_id;
 
   useEffect(() => {
     async function fetchSecond() {
-      setInitial(setListingData, `api/listing?listing_id=${listing_ID}`, false)
+      setInitial(setListingData, `api/listing?listing_id=${listing_id}`, false);
+      setInitial(
+        setListingApplications,
+        `api/application?staff_id=${staff_id}&role_id=${listing_id}`,
+        true
+      );
+      setInitial(
+        setAllApplications,
+        `api/application?staff_id=${staff_id}`,
+        true
+      );
       setLoading(false);
     }
     fetchSecond();
   }, []);
 
+  useEffect(() => {
+    listingApplications?.length > 0 &&
+      setLatestApplication(listingApplications[0]);
+    allApplications?.length > 0 &&
+      setAppliedCount(
+        allApplications?.filter(
+          (application) =>
+            application.application_status === "Applied" ||
+            application.application_status === "Shortlisted"
+        ).length
+      );
+  }, [allApplications]);
+
   const handleApply = async () => {
     try {
       setApplyLoading(true);
-      console.log(listing_ID);
-      console.log(staff_id);
-      const response = await getAsync(
-        `api/application?staff_id=${staff_id}&role_id=${listing_ID}`
-      );
-      const data = await response.json();
-      const response2 = await getAsync(`api/application?staff_id=${staff_id}`);
-      const data2 = await response2.json();
-      let appliedCount = 0;
-      console.log(data2);
-      console.log;
-      for (const application of data2) {
-        // Use 'of' instead of 'in'
-        if (
-          application.application_status === "Applied" ||
-          application.application_status === "Shortlisted"
-        ) {
-          // Use '===' for comparison, and change 'Application' to 'application'
-          appliedCount += 1; // Increment applicationCount
-        }
-      }
-      //check if user has applied to this role
-      if (data.length > 0) {
+      if (latestApplication?.application_status === "Applied") {
         // show have applied modal
-        setHaveAppliedModal(true);
+        setWithdrawModal(true);
         //check if user applied has reached max limit
       } else if (appliedCount >= 5) {
         // show max limit modal
@@ -118,16 +112,29 @@ const RoleDetailsPage = () => {
   };
   //handle confirm, and insert to db
   const handleConfirm = async () => {
-    const applyResponse = await postAsync("api/application", {
-      staff_id: staff_id,
-      listing_id: listing_ID,
-      application_status: "Applied",
-      application_reason: reason,
-    });
-    const applyData = await applyResponse.json();
-    if (applyData) {
-      setConfirmModal(false);
-      setSuccessModal(true);
+    if (latestApplication.application_status === "Applied") {
+      //withdraw application
+      const withdrawResponse = await putAsync("api/application", {
+        application_id: latestApplication.application_id,
+        application_status: "Withdrawn",
+      });
+      const withdrawData = await withdrawResponse.json();
+      if (withdrawData) {
+        setWithdrawModal(false);
+        setWithdrawSuccessModal(true);
+      }
+    } else {
+      const applyResponse = await postAsync("api/application", {
+        staff_id: staff_id,
+        listing_id: listing_id,
+        application_status: "Applied",
+        application_reason: reason,
+      });
+      const applyData = await applyResponse.json();
+      if (applyData) {
+        setConfirmModal(false);
+        setSuccessModal(true);
+      }
     }
   };
 
@@ -135,80 +142,126 @@ const RoleDetailsPage = () => {
     return null; // or a loading indicator
   }
 
-  if(loading){
-    return <LoadingState/> 
+  let buttonText;
+  let disabled;
+
+  switch (latestApplication?.application_status) {
+    case "Applied":
+      buttonText = "Withdraw Application";
+      disabled = false;
+      break;
+    case "Shortlisted":
+      buttonText = "Shortlisted";
+      disabled = true;
+      break;
+    case "Rejected":
+      buttonText = "Rejected";
+      disabled = true;
+      break;
+    case "Withdrawn":
+      buttonText = "Previously Withdrawn";
+      disabled = true;
+      break;
+    default:
+      if (appliedCount >= 5 && listingApplications?.length === 0) {
+        buttonText = "Maximum Active Applications Reached";
+        disabled = true;
+      } else {
+        buttonText = "Apply";
+        disabled = false;
+      }
   }
 
-
-  console.log(location.pathname)
-
-  return (
-    <div className="container">
-      <div className="flex items-start mb-4 mt-8">
-      <button
-        className="flex items-center text-emerald-900 hover:underline"
-        onClick={() => window.history.back()}
-      >
-        <AiOutlineArrowLeft />
-        {'Back to Previous Page'}
-      </button>
-      </div>
-      {!listingData ? (
+  if (listingData?.listing_id === undefined) {
+    return <div>Error 404: Invalid Listing Id</div>;
+  } else if (loading) {
+    return <LoadingState />;
+  } else {
+    return (
+      <div className="container">
+        <div className="flex items-start mb-4 mt-8">
+          <button
+            className="flex items-center text-emerald-900 hover:underline"
+            onClick={() => window.history.back()}
+          >
+            <AiOutlineArrowLeft />
+            {"Back to Previous Page"}
+          </button>
+        </div>
+        {loading ? <LoadingState /> : null}
+        {!listingData ? (
           <div>Error 404: Invalid Listing Id</div>
         ) : (
-        <div className="flex flex-col lg:flex-row">
-          <div className="lg:w-5/8">
-            <RoleDetails listing_id={listing_id} />
-          </div>
-          <div className="lg:w-3/8 relative">
-            <div className="lg:fixed">
-              <SkillsMapComponent staff_id={staff_id} listing_id={listing_id} />
-              <Button
-                styleType="green"
-                className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
-                onClick={handleApply}
-                loading={applyLoading}
-              >
-                Apply
-              </Button>
+          <div className="flex flex-col lg:flex-row">
+            <div className="lg:w-5/8">
+              <RoleDetails listing_id={listing_id} />
+            </div>
+            <div className="lg:w-3/8 relative">
+              <div className="lg:fixed">
+                <SkillsMapComponent
+                  staff_id={staff_id}
+                  listing_id={listing_id}
+                />
+                <Button
+                  styleType={disabled ? "disabled" : "green"}
+                  className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
+                  onClick={handleApply}
+                  loading={applyLoading}
+                >
+                  {buttonText}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
         )}
-      <Modal
-        modalType="fail"
-        message="You Have Applied to this Role"
-        isOpen={haveAppliedModal}
-        onClose={() => setHaveAppliedModal(false)}
-      />
-      <Modal
-        modalType="fail"
-        message="You Have Reached the Maximum Applications Limit "
-        isOpen={maxLimitModal}
-        onClose={() => setMaxLimitModal(false)}
-      />
-      <Modal
-        modalType="reason"
-        message="Enter your Reason for Applying to this role "
-        isOpen={reasonModal}
-        onClose={() => setReasonModal(false)}
-        onSubmit={handleReasonSubmit}
-      ></Modal>
-      <Modal
-        modalType="confirmation"
-        message="Are you sure you want to apply to this role?"
-        isOpen={confirmModal}
-        onClose={() => setConfirmModal(false)}
-        onSubmit={handleConfirm}
-      ></Modal>
-      <Modal
-        modalType="success"
-        message="You have successfully Applied to the Role"
-        isOpen={successModal}
-        onClose={() => setSuccessModal(false)}
-      ></Modal>
-    </div>
-  );
+        <Modal
+          modalType="fail"
+          message="You Have Applied to this Role"
+          isOpen={haveAppliedModal}
+          onClose={() => setHaveAppliedModal(false)}
+        />
+        <Modal
+          modalType="fail"
+          message="You Have Reached the Maximum Applications Limit "
+          isOpen={maxLimitModal}
+          onClose={() => setMaxLimitModal(false)}
+        />
+        <Modal
+          modalType="reason"
+          message="Enter your Reason for Applying to this role "
+          isOpen={reasonModal}
+          onClose={() => setReasonModal(false)}
+          onSubmit={handleReasonSubmit}
+        ></Modal>
+        <Modal
+          modalType="confirmation"
+          message="Are you sure you want to apply to this role?"
+          isOpen={confirmModal}
+          onClose={() => setConfirmModal(false)}
+          onSubmit={handleConfirm}
+        ></Modal>
+        <Modal
+          modalType="success"
+          message="You have successfully Applied to the Role"
+          isOpen={successModal}
+          onClose={() => navigate(`/profile`)}
+        ></Modal>
+        <Modal
+          modalType="confirmation"
+          message="Are you sure you want to withdraw your application? Upon withdrawal, you will not be able to apply to this role again."
+          isOpen={withdrawModal}
+          onClose={() => setWithdrawModal(false)}
+          onSubmit={handleConfirm}
+        ></Modal>
+        <Modal
+          modalType="success"
+          message="You have successfully withdrawn your application"
+          isOpen={withdrawSuccessModal}
+          onClose={() => navigate(`/profile`)}
+        ></Modal>
+      </div>
+    );
+  }
 };
 
 export default RoleDetailsPage;
