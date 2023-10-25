@@ -28,7 +28,7 @@ interface Application {
     listing_location: string;
     application_close_date: string;
     vacancy: number;
-  }
+  };
 }
 
 const RoleDetailsPage = () => {
@@ -54,6 +54,7 @@ const RoleDetailsPage = () => {
   const [appliedCount, setAppliedCount] = useState<number>(0);
   const [withdrawModal, setWithdrawModal] = useState(false);
   const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
+  const [rejectionCount, setRejectionCount] = useState<number>(0);
   const staff_id = auth?.staffId;
   const listing_id = parseInt(param?.listing_id ?? "");
   const navigate = useNavigate();
@@ -89,6 +90,12 @@ const RoleDetailsPage = () => {
           (application) =>
             application.application_status === "Applied" ||
             application.application_status === "Shortlisted"
+        ).length
+      );
+    allApplications?.length > 0 &&
+      setRejectionCount(
+        listingApplications?.filter(
+          (applicaton) => applicaton.application_status === "Rejected"
         ).length
       );
   }, [allApplications]);
@@ -158,7 +165,7 @@ const RoleDetailsPage = () => {
 
   switch (latestApplication?.application_status) {
     case "Applied":
-      if (new Date(latestApplication?.listing?.application_close_date) < new Date()) {
+      if (new Date(listingData?.application_close_date) < new Date()) {
         buttonText = "Listing Closed";
         disabled = true;
       } else {
@@ -171,20 +178,23 @@ const RoleDetailsPage = () => {
       disabled = true;
       break;
     case "Rejected":
-      buttonText = "Rejected";
-      disabled = true;
+      if (rejectionCount < 3) {
+        buttonText = "Reapply";
+        disabled = false;
+      } else {
+        buttonText = "Rejected";
+        disabled = true;
+      }
       break;
     case "Withdrawn":
       buttonText = "Previously Withdrawn";
       disabled = true;
       break;
     default:
-      console.log(latestApplication?.listing?.application_close_date)
-      console.log(new Date(latestApplication?.listing?.application_close_date) < new Date())
       if (appliedCount >= 5 && listingApplications?.length === 0) {
         buttonText = "Maximum Active Applications Reached";
         disabled = true;
-      } else if (new Date(latestApplication?.listing?.application_close_date) < new Date()) {
+      } else if (new Date(listingData?.application_close_date) < new Date()) {
         buttonText = "Listing Closed";
         disabled = true;
       } else {
@@ -219,6 +229,11 @@ const RoleDetailsPage = () => {
             </div>
             <div className="lg:w-3/8 relative">
               <div className="lg:fixed">
+                {listingApplications?.length > 0 && rejectionCount > 0 ? (
+                  <div className="text-left text-red">Rejected Count: {rejectionCount}</div>
+                ) : (
+                  ""
+                )}
                 <SkillsMapComponent
                   staff_id={staff_id}
                   listing_id={listing_id}
