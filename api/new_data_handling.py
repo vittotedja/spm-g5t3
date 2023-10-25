@@ -36,39 +36,51 @@ async def new_data_handling(file: str):
         raise HTTPException(status_code=400, detail="File not found")
 
     df = pd.read_csv(filepath)
-    print(df.head())
+    # print(df.head())
     # Handling case insensitive column names
     email_column = next((col for col in df.columns if col.lower() == 'email'), None)
     if email_column is None:
         raise HTTPException(status_code=400, detail="Email column not found in CSV")
 
     # Fetch all users
-    response = supabase.table('staff').select('*').execute()
-    print(response)
-    if response['error']:
-        raise HTTPException(status_code=400, detail=response['error']['message'])   
+    response = await supabase.table('staff').select('*').execute()
+    # print(response)
+    # if pd.isnull(response.data):
+    #     raise HTTPException(status_code=400, detail=response['error']['message'])   
 
-    existing_emails = [user.email for user in response.data]
-    print(existing_emails)
+    existing_emails = set(user['email'] for user in response.data)
+    # print(existing_emails)
     # Find the new staff emails using Pandas
     new_staff_df = df[~df[email_column].isin(existing_emails)]
-    
-    for index, new_staff in new_staff_df.iterrows():
+    # print(new_staff_df)
+    # print(type(new_staff_df))
+    new_staff_df = new_staff_df.rename(columns={'role': 'control_access'})
+    new_staff_dicts = new_staff_df.to_dict(orient='records')
+    print(new_staff_dicts)
+    for new_staff in new_staff_dicts:
         # Create a new user for each new staff email
-        insert_to_db = (await supabase.table('staff')
-                        .insert({
-                            "staff_id":new_staff['staff_id'],
-                            'staff_fname':new_staff['staff_fname'],
-                            'staff_lname':new_staff['staff_lname'],
-                            'dept':new_staff['dept'],
-                            'country':new_staff['country'],
-                            'email':new_staff['email'],
-                            'role':new_staff['role']
-                        })
-                        .execute())
+        # insert_to_db = (supabase.table('staff')
+        #                 .insert({
+        #                     "staff_id":new_staff['staff_id'],
+        #                     'staff_fname':new_staff['staff_fname'],
+        #                     'staff_lname':new_staff['staff_lname'],
+        #                     'dept':new_staff['dept'],
+        #                     'country':new_staff['country'],
+        #                     'email':new_staff['email'],
+        #                     'control_access':new_staff['role']
+        #                 })
+        #                 .execute())
         
         password = new_staff['email'].split('@')[0]
-        response = await supabase.auth.sign_up(email=new_staff['email'], password=password).execute()
+        response = supabase.auth.sign_up({
+            "email":new_staff['email'],
+            "password":password,
+            "options":{
+                "data": {
+                    "staff_id": new_staff['staff_id']
+                }
+            }
+            })
         if response['error']:
             raise HTTPException(status_code=400, detail='Error at:' + response['error']['message'])
 
