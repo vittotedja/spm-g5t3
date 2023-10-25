@@ -13,7 +13,11 @@ interface ApplicationCardProps {
 		withdrawn_at: string;
 		staff_id: number;
 		application_reason: string;
-		application_status: 'Applied' | 'Shortlisted' | 'Rejected';
+		application_status:
+			| 'Applied'
+			| 'Shortlisted'
+			| 'Rejected'
+			| 'Withdrawn';
 		updated_at: string;
 		listing_id: number;
 		listing: {
@@ -52,17 +56,18 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({application}) => {
 		Applied: 'text-black',
 		Shortlisted: 'text-green',
 		Rejected: 'text-red',
+		Withdrawn: 'text-gray-500',
 	};
 
 	return (
 		<>
 			<div
-				className="w-1/3 p-5 mb-4 mr-4 text-left rounded-lg shadow-md ring-2 ring-outset ring-emerald-900/20"
+				className="rounded-lg shadow-md ring-2 ring-outset ring-emerald-900/20 p-5 w-1/3 mb-4 mr-4 text-left"
 				onClick={roleCardButton}
 			>
 				<div className="text-left">
 					<div className="flex">
-						<p className="w-1/2 mb-1 text-sm text-gray-500">
+						<p className="w-1/2 text-sm text-gray-500 mb-1">
 							{role.role_department}
 						</p>
 						<p
@@ -73,26 +78,17 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({application}) => {
 							{application.application_status}
 						</p>
 					</div>
-					<h2
-						className="mb-1 text-xl font-bold"
-						data-testid="profile-rolename"
-					>
-						{role.role_name}
-					</h2>
+					<h2 className="text-xl font-bold mb-1">{role.role_name}</h2>
 					<div className="flex justify-start">
 						<AiFillEnvironment className="h-6 mr-1" />
 						{application.listing?.listing_location}
 					</div>
 
-					<div className="flex-col items-center justify-between mt-3">
+					<div className="flex-col justify-between items-center mt-5 mb-3">
 						<p className="mb-2 text-sm">Skill - Match %</p>
 						{skill && (
 							<ProgressBar percentage={skill.match_percentage} />
 						)}
-					</div>
-					<div className="flex-col items-center pt-3">
-						<h4 className="mb-2 text-sm">Level</h4>
-						<h2 className="text-base font-bold">Senior</h2>
 					</div>
 					<div className="flex-col items-center pt-3">
 						<h4 className="mb-2 text-sm">Application Close Date</h4>

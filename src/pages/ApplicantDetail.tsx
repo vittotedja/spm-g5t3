@@ -13,7 +13,7 @@ interface Application {
 	staff_id: number;
 	role_id: number;
 	application_status: string;
-	statement: string;
+	application_reason: string;
 	created_at: string;
 	updated_at: string;
 	withdrawn_at: string;
@@ -23,7 +23,6 @@ interface Application {
 			role_name: string;
 		};
 	};
-	application_reason: string;
 }
 
 interface Applicant {
@@ -208,10 +207,10 @@ export default function ApplicantDetail() {
 					</div>
 
 					<div className="container mt-8">
-						<p className="mb-3 text-2xl font-extrabold text-left">
+						<p className="font-extrabold text-left text-2xl mb-3">
 							Reason for Applying
 						</p>
-						<p className="font-medium text-left text-md">
+						<p className="font-medium text-md text-left">
 							{application.application_reason}
 						</p>
 					</div>
