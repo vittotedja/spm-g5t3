@@ -54,6 +54,8 @@ async def staff_role(
         all_listings_response = supabase.table("listing").select("*").execute()
         df_all_listings = pd.DataFrame(all_listings_response.data or [])
 
+        df_all_listings = df_all_listings[df_all_listings["deleted_at"].isnull()]
+
         # Fetch all role-skill associations
         all_role_skills_response = supabase.table(
             "role_skill").select("*").execute()

@@ -65,13 +65,13 @@ const RoleDetailsPage = () => {
 
   useEffect(() => {
     async function fetchSecond() {
-      setInitial(setListingData, `api/listing?listing_id=${listing_id}`, false);
-      setInitial(
+      await setInitial(setListingData, `api/listing?listing_id=${listing_id}`, false);
+      await setInitial(
         setListingApplications,
         `api/application?staff_id=${staff_id}&role_id=${listing_id}`,
         true
       );
-      setInitial(
+      await setInitial(
         setAllApplications,
         `api/application?staff_id=${staff_id}`,
         true
