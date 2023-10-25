@@ -26,6 +26,7 @@ jobs:
               working-directory: ./
 
     pytest-run:
+        needs: [setup-python-backend]
         strategy:
             fail-fast: false
         runs-on: ubuntu-latest
