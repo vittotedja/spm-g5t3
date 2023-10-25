@@ -3,7 +3,9 @@ name: SPM Push Pipeline
 on: [push]
 
 jobs:
-    setup-python-backend:
+    pytest-run:
+        strategy:
+            fail-fast: false
         runs-on: windows-latest
         steps:
             - name: Checkout
@@ -24,15 +26,6 @@ jobs:
                   SUPABASE_URL: ${{secrets.SUPABASE_URL}}
                   SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
               working-directory: ./
-
-    pytest-run:
-        needs: [setup-python-backend]
-        strategy:
-            fail-fast: false
-        runs-on: windows-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
             - name: Pytest Run
               run: pytest
               env:
@@ -43,11 +36,27 @@ jobs:
                   TEST_SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
 
     cypress-run:
-        needs: [setup-python-backend]
+        # needs: [setup-python-backend]
         runs-on: windows-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: |
+                  pip install -r requirements.txt
+              working-directory: ./
+            - name: Start FastAPI backend
+              run: |
+                  uvicorn main:app &
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+              working-directory: ./
             - name: Cypress run
               uses: cypress-io/github-action@v6
               with:
