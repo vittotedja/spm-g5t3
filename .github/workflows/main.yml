@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
     setup-python-backend:
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -29,7 +29,7 @@ jobs:
         needs: [setup-python-backend]
         strategy:
             fail-fast: false
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -44,7 +44,7 @@ jobs:
 
     cypress-run:
         needs: [setup-python-backend]
-        runs-on: ubuntu-latest
+        runs-on: windows-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4

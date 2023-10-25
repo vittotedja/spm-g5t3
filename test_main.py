@@ -14,23 +14,24 @@ test_key: str = os.getenv("TEST_SUPABASE_KEY")
 test_supabase: Client = create_client(test_url, test_key)
 
 tables = {
-    'access_control': [], 
-    'staff': [], 
-    'skill': [], 
-    'role': [], 
-    'staff_skill': [], 
-    'role_skill': [], 
-    'listing': [], 
-    'listing_manager': [], 
-    'application': []
+    "access_control": [],
+    "staff": [],
+    "skill": [],
+    "role": [],
+    "staff_skill": [],
+    "role_skill": [],
+    "listing": [],
+    "listing_manager": [],
+    "application": [],
 }
+
 
 # Pytest fixture to populate the test tables
 @pytest.fixture(scope="module", autouse=True)
 def populate_test_tables():
-    test_supabase.rpc('tes', {}).execute()
+    test_supabase.rpc("delete_all_rows", {}).execute()
     for table in tables:
-        response = supabase.from_(table).select('*').execute()
+        response = supabase.from_(table).select("*").execute()
         data = response.data
         test_supabase.table(table).upsert(data).execute()
 
@@ -39,16 +40,22 @@ def populate_test_tables():
     # Delete all rows from test tables
     # test_supabase.rpc('tes', {}).execute()
 
+
 # Pytest fixture for your FastAPI app client
 @pytest.fixture(scope="module")
 def app_client():
-    from main import app  # Replace 'main' with the actual name of your FastAPI app's main file
+    from main import (
+        app,
+    )  # Replace 'main' with the actual name of your FastAPI app's main file
+
     client = TestClient(app)
     return client
+
 
 def test_staff(app_client):
     response = app_client.get("/api/staff")
     assert response.status_code == 200
+
 
 # def test_staff_with_email(app_client):
 #     response = app_client.get("/api/staff?email=yee.lim@allinone.com.sg")
