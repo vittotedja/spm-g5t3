@@ -1,2 +1,10 @@
 staff_id,staff_fname,staff_lname,dept,country,email,role
 900001,yoza,test,spm,Singapore,yozafard.harold@allinone.com.sg,1
+900002,dennis,test,spm,Singapore,dennis.hard@allinone.com.sg,4
+900003,vitto,test,spm,Singapore,vitto.tedja@allinone.com.sg,3
+900004,vincent,test,spm,Singapore,vincent.lewi@allinone.com.sg,2
+900005,emil,test,spm,Singapore,emil.aurelia@allinone.com.sg,2
+900006,jordi,test,spm,Singapore,jordi.renaldi@allinone.com.sg,4
+130001,John,Sim,Chariman,Singapore,jack.sim@allinone.com.sg,1
+140001,Derek,Tan,Sales,Singapore,derek.tan@allinone.com.sg,3
+140002,Susan,Goh,Sales,Singapore,susan.goh@allinone.com.sg,2
