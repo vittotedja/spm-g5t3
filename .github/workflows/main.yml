@@ -3,15 +3,11 @@ name: SPM Push Pipeline
 on: [push]
 
 jobs:
-    checkout-code:
+    setup-python-backend:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
-    setup-python-backend:
-        needs: checkout-code
-        runs-on: ubuntu-latest
-        steps:
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
@@ -19,7 +15,7 @@ jobs:
             - name: Install dependencies
               run: |
                   pip install -r requirements.txt
-              working-directory: ../../
+              working-directory: ./
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &
@@ -30,7 +26,7 @@ jobs:
               working-directory: ./
 
     pytest-run:
-        needs: [checkout-code, setup-python-backend]
+        needs: [setup-python-backend]
         strategy:
             fail-fast: false
         runs-on: ubuntu-latest
@@ -39,7 +35,7 @@ jobs:
               run: pytest
 
     cypress-run:
-        needs: [checkout-code, setup-python-backend]
+        needs: [setup-python-backend]
         runs-on: ubuntu-latest
         steps:
             # - name: Checkout
