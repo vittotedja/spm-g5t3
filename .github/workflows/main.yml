@@ -19,7 +19,7 @@ jobs:
             - name: Install dependencies
               run: |
                   pip install -r requirements.txt
-              working-directory: ./
+              working-directory: ../
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &
