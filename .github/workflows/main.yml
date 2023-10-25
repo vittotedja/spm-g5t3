@@ -1,4 +1,4 @@
-name: Cypress Tests
+name: SPM Push Pipeline
 
 on: [push]
 
@@ -17,9 +17,7 @@ jobs:
               with:
                   python-version: 3.9
             - name: Install dependencies
-              run: |
-                  pip install -r requirements.txt
-              working-directory: ../
+              run: pip install -r requirements.txt
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &
