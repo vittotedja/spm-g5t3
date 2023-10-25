@@ -35,6 +35,12 @@ jobs:
               uses: actions/checkout@v4
             - name: Pytest Run
               run: pytest
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+                  TEST_SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  TEST_SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
 
     cypress-run:
         needs: [setup-python-backend]
