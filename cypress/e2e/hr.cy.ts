@@ -9,6 +9,8 @@ describe('HR workflow', () => {
 		cy.get('[data-testid = password]').type('arifin.saputra');
 		cy.get('[data-testid = submitBtn]').click();
 
+		cy.wait(6000);
+
 		cy.contains('Arifin Saputra');
 
 		cy.get('[data-testid=manager-link]').click();

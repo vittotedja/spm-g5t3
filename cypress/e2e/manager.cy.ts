@@ -9,6 +9,8 @@ describe('Manager workflow', () => {
 		cy.get('[data-testid = password]').type('chandra.pandey');
 		cy.get('[data-testid = submitBtn]').click();
 
+		cy.wait(6000);
+
 		cy.contains('Chandra Pandey');
 
 		cy.get('[data-testid=manager-link]').click();

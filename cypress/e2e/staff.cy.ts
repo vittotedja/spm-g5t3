@@ -9,6 +9,7 @@ describe('Staff workflow', () => {
 		cy.get('[data-testid = password]').type('logan.tan');
 		cy.get('[data-testid = submitBtn]').click();
 
+		cy.wait(6000);
 		cy.contains('Logan Tan');
 		let clickedRoleName = '';
 		cy.get('[data-testid = role-name]', {timeout: 10000})
@@ -42,6 +43,7 @@ describe('Staff workflow', () => {
 		cy.get('[data-testid = submitBtn]').click();
 
 		//Susan Goh has and will apply for more jobs
+		cy.wait(6000);
 		cy.contains('Susan Goh');
 
 		// opens role details
