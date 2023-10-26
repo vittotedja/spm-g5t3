@@ -106,6 +106,7 @@ describe('Staff workflow', () => {
 					cy.get('[data-testid=profile-rolename]')
 						.contains(clickedRoleName)
 						.click();
+					return false;
 				}
 			}
 		);
