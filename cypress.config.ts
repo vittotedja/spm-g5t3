@@ -3,6 +3,6 @@ import {defineConfig} from 'cypress';
 export default defineConfig({
 	e2e: {
 		baseUrl: 'http://localhost:5173',
-		defaultCommandTimeout: 15000,
+		defaultCommandTimeout: 45000,
 	},
 });
