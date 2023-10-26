@@ -12,7 +12,7 @@ export const CurrentUser: React.FC = () => {
 	// const [currentRole, setCurrentRole] = useState<any>(null);
 	const [staff, setStaff] = useState<any>(Object);
 	const staff_email = user?.email;
-
+	// console.log(staffId)
 	useEffect(() => {
 		if (staff_email) {
 			setInitial(setStaff, `api/staff?email=${staff_email}`, false);
@@ -35,10 +35,11 @@ export const CurrentUser: React.FC = () => {
 		};
 
 		fetchStaff();
+		console.log(currentUser)
 	}, [user?.email]); // Dependency array
 
 	const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
-	const currentRole = currentUser?.curr_role;
+	const currentDept = currentUser?.dept;
 	return loading ? (
 		<div className="text-white">Loading...</div>
 	) : error ? (
@@ -52,7 +53,7 @@ export const CurrentUser: React.FC = () => {
 			<Avatar name={userName} size="40" round={true} />
 			<div className="text-white">
 				<div className="font-bold">{userName}</div>
-				<div className="text-sm">{currentRole}</div>
+				<div className="text-sm">{currentDept}</div>
 			</div>
 		</Link>
 	);
