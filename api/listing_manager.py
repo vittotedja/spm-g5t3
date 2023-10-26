@@ -34,7 +34,7 @@ async def listing_manager(manager_id: int = None):
     if manager_id:
         listing = (
             supabase.from_("listing_manager")
-            .select("listing_id", "listing(*)")
+            .select("listing_id", "listing(*, role(*))")
             .eq("manager_id", manager_id)
             .execute()
             .data
