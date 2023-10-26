@@ -216,7 +216,7 @@ const RoleDetailsPage = () => {
 	} else {
 		return (
 			<div className="container">
-				<div className="flex items-start mb-4 mt-8">
+				<div className="flex items-start mt-8 mb-4">
 					<button
 						className="flex items-center text-emerald-900 hover:underline"
 						onClick={() => window.history.back()}
@@ -233,7 +233,7 @@ const RoleDetailsPage = () => {
 						<div className="lg:w-5/8">
 							<RoleDetails listing_id={listing_id} />
 						</div>
-						<div className="lg:w-3/8 relative">
+						<div className="relative lg:w-3/8">
 							<div className="lg:fixed">
 								{listingApplications?.length > 0 &&
 								rejectionCount > 0 ? (
@@ -249,8 +249,9 @@ const RoleDetailsPage = () => {
 								/>
 								<Button
 									styleType={disabled ? 'disabled' : 'green'}
-									className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
+									className="w-full px-6 py-2 mt-4 text-lg font-semibold text-white rounded-md bg-emerald-600 hover:bg-emerald-900"
 									onClick={handleApply}
+									id="apply-button"
 									loading={applyLoading}
 								>
 									{buttonText}

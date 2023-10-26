@@ -32,7 +32,7 @@ describe('Staff workflow', () => {
 		cy.get('[data-testid=logout-button]').click();
 	});
 
-	it('should allow staff to be able to apply for roles', () => {
+	it('should allow staff to be able to apply and withdraw for roles', () => {
 		cy.visit('/', {failOnStatusCode: false});
 
 		cy.contains('GlassWindow');
@@ -67,28 +67,55 @@ describe('Staff workflow', () => {
 		cy.get('#submit-button').click();
 		cy.get('#confirm-button').click();
 		cy.contains('You have successfully Applied to the Role');
-		cy.get('[data-testid=close-button]').last().click();
+		cy.get('[data-testid=close-button]').eq(4).click();
 
-		// applies for the same role again -- should show Failure message
-		cy.get('#apply-button').click();
-		cy.contains('You Have Applied to this Role');
-		cy.get('[data-testid=close-button]').first().click();
-
-		// goes to Profile
-		cy.get('[data-testid=current-user]').click();
-		//expects the applied role to show up
+		// user is redirected to profile page
+		cy.wait(6000);
 		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).to.include(clickedRoleName);
 			}
 		);
 
-		// checks if homepage has no more role that a user has just applied
-		cy.get('[data-testid=home-link]').click();
-		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).each(
 			($roleDetailsName) => {
-				expect($roleDetailsName.text()).not.to.eq(clickedRoleName);
+				if ($roleDetailsName.text() == clickedRoleName) {
+					cy.get('[data-testid=profile-rolename]')
+						.contains(clickedRoleName)
+						.click();
+				}
 			}
 		);
+
+		// applies for the same role again -- should show Failure message
+		cy.contains('Withdraw Application').click();
+		cy.get('[data-testid=modal]')
+			.eq(5)
+			.get('#confirm-button')
+			.click({force: true});
+		cy.contains('You have successfully withdrawn your application');
+		cy.get('[data-testid=close-button]').last().click();
+
+		cy.wait(6000);
+		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).each(
+			($roleDetailsName) => {
+				if ($roleDetailsName.text() == clickedRoleName) {
+					//expect to be withdrawn
+					cy.get('[data-testid=profile-rolename]')
+						.contains(clickedRoleName)
+						.click();
+				}
+			}
+		);
+
+		cy.get('#apply-button').should('be.disabled');
+
+		// // checks if homepage has no more role that a user has just applied
+		// cy.get('[data-testid=home-link]').click();
+		// cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+		// 	($roleDetailsName) => {
+		// 		expect($roleDetailsName.text()).not.to.eq(clickedRoleName);
+		// 	}
+		// );
 	});
 });

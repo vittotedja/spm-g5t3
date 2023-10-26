@@ -31,7 +31,7 @@ const Button: FC<ButtonProps> = ({
 		red: loading
 			? 'bg-red text-white'
 			: 'bg-red hover:bg-red-dark text-white',
-		disabled: 'bg-gray-400 cursor-not-allowed',
+		disabled: 'bg-gray-400 cursor-not-allowed hover: none',
 		underline:
 			'bg-transparent hover:bg-transparent text-emerald-900 text-underlined',
 		white: 'bg-white hover:bg-gray-100 text-emerald-900 rounded-3xl',
