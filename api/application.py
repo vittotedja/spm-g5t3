@@ -12,6 +12,7 @@ from datetime import datetime
 import pandas as pd
 
 from api.staff_role_skill import staff_role_skill
+from api.notification import send_email
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -179,4 +180,8 @@ async def application(application: PutApplication):
         .execute()
         .data
     )
+
+    await send_email(application.application_status, application.application_id)
+
+
     return update
