@@ -47,11 +47,8 @@ conf = ConnectionConfig(
 
 @app.post("/api/notification")
 @router.post("/api/notification")
-async def send_email( email: EmailStr, status: str, application_id: int):
+async def send_email(status: str, application_id: int):
 
-    #fetch staff and role from application id
-
-    #staff_email = staff[0]["staff_email"]
 
     application = (
             supabase.table("application")
@@ -61,13 +58,15 @@ async def send_email( email: EmailStr, status: str, application_id: int):
             .data
         )
     
-      
     role = (
         supabase.table("listing").select("*", "role(*)").eq("listing_id", application[0]["listing_id"]).execute().data
     )
     staff = (
            supabase.table("staff").select("*").eq("staff_id", application[0]["staff_id"]).execute().data
     )
+    
+    email = staff[0]["email"]
+
 
 
     if status == "Shortlisted":

@@ -58,7 +58,7 @@ const RoleDetailsPage = () => {
   const staff_id = auth?.staffId;
   const listing_id = parseInt(param?.listing_id ?? "");
   const navigate = useNavigate();
-  //error handling the id
+
   if (isNaN(listing_id)) {
     return <div>Error 404: Invalid Listing Id</div>;
   }
@@ -203,11 +203,12 @@ const RoleDetailsPage = () => {
       }
   }
 
-  if (listingData?.listing_id === undefined) {
-    return <div>Error 404: Invalid Listing Id</div>;
-  } else if (loading) {
+  if (loading) {
     return <LoadingState />;
-  } else {
+  }else if (listingData?.listing_id === undefined) {
+    return <div>Error 404: Invalid Listing Id</div>;
+  } 
+  else {
     return (
       <div className="container">
         <div className="flex items-start mb-4 mt-8">
@@ -225,7 +226,7 @@ const RoleDetailsPage = () => {
         ) : (
           <div className="flex flex-col lg:flex-row">
             <div className="lg:w-5/8">
-              <RoleDetails listing_id={listing_id} />
+              <RoleDetails listing_id={listing_id}/>
             </div>
             <div className="lg:w-3/8 relative">
               <div className="lg:fixed">
