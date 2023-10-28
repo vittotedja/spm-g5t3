@@ -4,7 +4,7 @@ import {FaArrowLeft} from 'react-icons/fa';
 import Button from '../components/Button';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import {getAsync, postAsync} from '../utilities/Services';
+import {getAsync, postAsync, putAsync} from '../utilities/Services';
 import {
 	Popover,
 	PopoverTrigger,
@@ -43,12 +43,13 @@ const RoleCreation: React.FC = () => {
 
 	//state for selected options
 	const [selectedRole, setSelectedRole] = useState<any>({});
-	const [selectedCountry, setSelectedCountry] = useState<any>({});
-	const [hrManager, setHrManager] = useState<any>({});
-	const [vacancy, setVacancy] = useState<number>(0);
+	const [selectedCountry, setSelectedCountry] = useState<any>(null);
+	const [hrManager, setHrManager] = useState<any>([]);
+	const [vacancy, setVacancy] = useState<any>(null);
 	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
 	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
+	const [listing, setListing] = useState<any>({});
 
 	//fetch data needed from DB
 	async function fetchRoleOptions() {
@@ -75,6 +76,21 @@ const RoleCreation: React.FC = () => {
 		setManagerOptions(cleanedData);
 	}
 
+	async function fetchListing() {
+		if (location.state?.isEdit){
+			let listing = await setInitial(setListing, `api/listing?listing_id=${location.state.listing_id}`, false)
+			const skill = await setInitial(setSkillsMap, `api/staff_role_skill?role_id=${listing.role.role_id}`)
+			setDate(new Date(listing.application_close_date))
+			setSelectedCountry({value: listing.listing_location, label: listing.listing_location})
+			setVacancy(listing.vacancy)
+			setHrManager(listing.listing_manager.map((manager: any) => ({value: manager.staff.staff_id, label: `${manager.staff.staff_fname} ${manager.staff.staff_lname}`})))
+			setSelectedRole(listing.role)
+		}
+		else{
+			setInitial(setSkillOptions, 'api/staff_role_skill')
+		}
+	}
+
 	//handle change for react-select
 	function handleChange(selectedOption: any) {
 		setSelectedRole(
@@ -97,31 +113,51 @@ const RoleCreation: React.FC = () => {
 			return;
 		}
 		if (hrManager.length > 0 && vacancy > 0) {
-			const response = await postAsync('api/listing', {
-				role_id: selectedRole.role_id,
-				application_close_date: date,
-				listing_location: selectedCountry.value,
-				vacancy: vacancy,
-			});
-			const data = await response.json();
-			if (data.success) {
-				for (let i = 0; i < hrManager.length; i++) {
-					const response = await postAsync('api/listing_manager', {
-						manager_id: hrManager[i].value,
-						listing_id: data.data.listing_id,
-					});
-					const listingManagerData = await response.json();
-					if (!listingManagerData.success) {
-						alert('Error: ' + listingManagerData.error);
-					}
+			let response
+			if (location.state.isEdit){
+				response = await putAsync('api/listing', {
+					application_close_date: date,
+					vacancy: vacancy,
+					manager: hrManager,
+					listing_id: listing.listing_id
+				});
+				if (response.ok) {
+					navigate(`/manager/applicants-list/${listing?.listing_id}`);
+				} else {
+					setIsLoading(false);
+					toast.error(
+						'Something went wrong, please check whether you have keyed in the right details'
+					);
 				}
-				navigate('/manager');
-			} else {
-				setIsLoading(false);
-				toast.error(
-					'Something went wrong, please check whether you have keyed in the right details'
-				);
 			}
+			else{
+				response = await postAsync('api/listing', {
+					role_id: selectedRole.role_id,
+					application_close_date: date,
+					listing_location: selectedCountry.value,
+					vacancy: vacancy,
+				});
+				const data = await response.json();
+				if (data.success) {
+					for (let i = 0; i < hrManager.length; i++) {
+						const response = await postAsync('api/listing_manager', {
+							manager_id: hrManager[i].value,
+							listing_id: data.data.listing_id,
+						});
+						const listingManagerData = await response.json();
+						if (!listingManagerData.success) {
+							alert('Error: ' + listingManagerData.error);
+						}
+					}
+					navigate('/manager');
+				} else {
+					setIsLoading(false);
+					toast.error(
+						'Something went wrong, please check whether you have keyed in the right details'
+					);
+				}
+			}
+			
 		} else {
 			toast.error(
 				'Something went wrong, please check whether you have keyed in the right details'
@@ -134,9 +170,11 @@ const RoleCreation: React.FC = () => {
 		setSkillOptions([]);
 		setManagerOptions([]);
 		setRoleOptions([]);
-		setInitial(setSkillOptions, 'api/staff_role_skill');
+		// setInitial(setSkillOptions, 'api/staff_role_skill');
 		fetchRoleOptions();
 		fetchManagerOptions();
+		fetchListing();
+		
 	}, []);
 
 	//disable dates before today
@@ -164,11 +202,11 @@ const RoleCreation: React.FC = () => {
 			fontStyle: 'italic',
 		}),
 	};
-
+	console.log(hrManager)
 	return (
 		<>
-			<div className="w-full mt-12 mb-10">
-				<div className="flex flex-col justify-start w-full ml-16 cursor-pointer sm:w-1/2 text-start">
+			<div className="container mt-12 mb-10">
+				<div className="flex flex-col justify-start w-full cursor-pointer sm:w-1/2 text-start">
 					<div
 						className="flex pb-2"
 						onClick={() => navigate('/manager')}
@@ -180,7 +218,7 @@ const RoleCreation: React.FC = () => {
 						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
-				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
+				<div className="justify-center mx-auto mt-4 align-middle border rounded">
 					<form>
 						<div className="space-y-10">
 							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-2">
@@ -192,13 +230,18 @@ const RoleCreation: React.FC = () => {
 										>
 											Role Name
 										</label>
-										<Select
+										{location.state?.isEdit 
+										? 
+										<p className="block flex-1 border-0 bg-transparent py-1.5 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"> {listing.role?.role_name}</p>
+										
+										: <Select
 											options={roleOptions}
 											className="mt-2 rounded-md shadow-sm basic-multi-select ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md"
 											onChange={(selectedOption) => {
 												handleChange(selectedOption);
 											}}
-										/>
+										/>}
+										
 									</div>
 								</div>
 								<div className="mt-10">
@@ -209,14 +252,16 @@ const RoleCreation: React.FC = () => {
 										>
 											Application Close Date
 										</label>
-										<div className="w-full py-1 mt-2 align-middle border rounded-md">
+										<div className="w-5/6 py-1 mt-2 align-middle border rounded-md">
 											<Popover>
-												<PopoverTrigger className="justify-center w-full align-middle">
+												<PopoverTrigger className="w-full text-left px-2">
 													{date
 														? formatDate(date)
-														: 'Select Date'}
+														: 'Select Date'
+													}
 												</PopoverTrigger>
 												<PopoverContent>
+
 													<Calendar
 														mode="single"
 														selected={date}
@@ -239,20 +284,26 @@ const RoleCreation: React.FC = () => {
 										>
 											Location
 										</label>
+										{location.state?.isEdit 
+										? 
+										<p className="block flex-1 border-0 bg-transparent py-1.5 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"> {listing?.listing_location}</p>
+										:
 										<Select
 											required
 											options={countryOptions}
 											className="mt-2 rounded-md shadow-sm basic-multi-select ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md"
+											value={selectedCountry}
 											onChange={(selectedOption) => {
 												setSelectedCountry(
 													selectedOption
 												);
 											}}
 										/>
+										}
 									</div>
 								</div>
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-3 text-start">
+									<div className="px-3 sm:col-span-3 text-start w-5/6">
 										<label
 											htmlFor="vacancy"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -265,6 +316,7 @@ const RoleCreation: React.FC = () => {
 												min={1}
 												max={127}
 												className="block flex-1 border-0 bg-transparent py-1.5 pl-2 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
+												value={vacancy}
 												placeholder={`How many people do you need?`}
 												onChange={(e) => {
 													setVacancy(
@@ -291,6 +343,7 @@ const RoleCreation: React.FC = () => {
 										className="mt-2 basic-multi-select"
 										styles={colorStyles}
 										components={animatedComponents}
+										value={hrManager}
 										onChange={(selectedOption) => {
 											setHrManager(selectedOption);
 										}}

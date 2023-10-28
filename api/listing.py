@@ -8,6 +8,7 @@ from supabase import create_client, Client
 from pydantic import BaseModel
 from datetime import datetime
 import pytz
+import pandas as pd
 
 
 load_dotenv()
@@ -33,6 +34,12 @@ class PostListing(BaseModel):
     creation_date: datetime = None
     application_close_date: datetime
 
+class PutListing(BaseModel):
+    application_close_date: datetime
+    vacancy: int
+    manager: list
+    listing_id: int
+
 
 @app.get("/api/listing")
 @router.get("/api/listing")
@@ -47,7 +54,7 @@ async def listing(listing_id: int = None):
                 "vacancy",
                 "listing_location",
                 "creation_date",
-                "role(*), application(*)",
+                "role(*), application(*), listing_manager(staff(*))",
             )
             .eq("listing_id", listing_id)
             .execute()
@@ -72,3 +79,59 @@ async def listing(listing: PostListing = Body(...)):
         return {"success": True, "data": data[1][0]}
     except Exception as e:
         return {"success": False, "error": e}
+
+@app.put("/api/listing")
+@router.put("/api/listing")
+async def listing(listing: PutListing):
+    update_data = {
+        "application_close_date": listing.application_close_date.strftime(
+        "%Y-%m-%d %H:%M:%S"
+        ),
+        "vacancy": listing.vacancy,
+        "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    listing_update = (
+        supabase.from_("listing")
+        .update(update_data)
+        .eq("listing_id", listing.listing_id)
+        .execute()
+        .data
+    )
+
+    # update listing manager
+    manager = pd.DataFrame(
+        supabase.table("listing_manager")
+        .select("*")
+        .eq("listing_id", listing.listing_id)
+        .execute()
+        .data
+    )
+    listing_id = listing.listing_id
+    new_manager = pd.DataFrame(listing.manager)
+    new_manager['listing_id'] = listing_id
+    new_manager.rename(columns={'value': 'manager_id'}, inplace=True)
+
+    #add listing manager
+    add_manager = new_manager[~new_manager["manager_id"].isin(manager["manager_id"])]
+    if len(add_manager) > 0:
+        add_manager = add_manager[["listing_id", "manager_id"]].to_json(orient='records')
+        adding_manager = (
+            supabase.table("listing_manager")
+            .insert(add_manager)
+            .execute()
+            .data
+        )
+    
+    #delete listing manager
+    # delete_manager = manager[~manager["manager_id"].isin(new_manager["manager_id"])]
+    # delete_manager = delete_manager[['listing_id', 'manager_id']].to_json(orient='records')
+    # if len(delete_manager) > 0:
+    #     deleting_manager = (
+    #         supabase.table("listing_manager")
+    #         .delete()
+    #         .eq("listing_id", delete_manager["listing_id"])
+    #         .eq("manager_id", delete_manager[["manager_id"]])
+    #         .execute()
+    #     )
+    return listing_update

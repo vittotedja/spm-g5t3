@@ -69,10 +69,6 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
           
           </div>
           <div className="flex-col items-center pt-3">
-            <h4 className="mb-2 text-sm">Level</h4>
-            <h2 className="font-bold text-base">Senior</h2>
-          </div>
-          <div className="flex-col items-center pt-3">
             <h4 className="mb-2 text-sm">Application Close Date</h4>
             <h2 className="font-bold">{formatDate(application.listing?.application_close_date? new Date(application.listing.application_close_date): null)}</h2>
           </div>

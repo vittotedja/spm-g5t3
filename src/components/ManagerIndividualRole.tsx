@@ -53,15 +53,16 @@ function ManagerIndividualRole({
 				{isHR && !isDisabled ? (
 					<div
 						className={
-							'mx-auto cursor-pointer hover:text-green hover:underline'
+							'mx-auto cursor-pointer hover:text-green hover:underline z-10'
 						}
-						onClick={() => {
-							navigate('/manager/role-listing', {
-								state: {isEdit: true},
+						onClick={(e) => {
+							e.stopPropagation();
+							navigate(`/listing-detail/${listing_id}/edit`, {
+								state: {isEdit: true, listing_id: listing_id},
 							});
-						}}
+						  }}
 					>
-						<HiPencilSquare />
+						<HiPencilSquare className="z-20" />
 					</div>
 				) : (
 					<div className="text-center text-red">CLOSED</div>
