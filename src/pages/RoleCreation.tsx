@@ -149,6 +149,7 @@ const RoleCreation: React.FC = () => {
 							alert('Error: ' + listingManagerData.error);
 						}
 					}
+					toast.success('Role Listing posted successfully');
 					navigate('/manager');
 				} else {
 					setIsLoading(false);
@@ -254,7 +255,10 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<div className="w-5/6 py-1 mt-2 align-middle border rounded-md">
 											<Popover>
-												<PopoverTrigger className="w-full text-left px-2">
+												<PopoverTrigger
+													className="w-full text-left px-2 justify-center align-middle"
+													data-testid="datepicker"
+												>
 													{date
 														? formatDate(date)
 														: 'Select Date'
@@ -312,6 +316,7 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 ">
 											<input
+												data-testid="vacancy"
 												type="number"
 												min={1}
 												max={127}
@@ -382,6 +387,7 @@ const RoleCreation: React.FC = () => {
 
 						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
 							<Button
+								id="save-listing"
 								styleType="green"
 								loading={isLoading}
 								onClick={(e) => {

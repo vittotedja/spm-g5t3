@@ -61,15 +61,31 @@ async def application(
     application_id: int = None, staff_id: int = None, role_id: int = None
 ):
     if staff_id and role_id:
-        application = (
-            supabase.from_("application")
-            .select("*")
-            .eq("staff_id", staff_id)
-            .eq("listing_id", role_id)
-            .execute()
-            .data
-        )
-        return application
+        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
+        application_df = pd.DataFrame(application)
+        
+        if application_df.empty:
+            listing_info = supabase.from_('listing').select("*").eq('listing_id', role_id).execute().data
+            print(listing_info)
+            listing_info_df = pd.DataFrame(listing_info)
+            
+            # Convert the DataFrame to the desired format
+            listing_dict = {
+                "application_id": None,
+                "applied_at": None,
+                "updated_at": None,
+                "withdrawn_at": None,
+                "listing_id": role_id,
+                "application_reason": None,
+                "application_status": None,
+                "staff_id": staff_id,
+                "listing": listing_info_df.to_dict('records')
+            }
+            
+            return [listing_dict]
+        
+        sorted_application = application_df.sort_values(by='applied_at', ascending=False)
+        return sorted_application.to_dict('records')
     elif application_id:
         application = (
             supabase.from_("application")

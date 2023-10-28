@@ -1,4 +1,4 @@
-import img from "../assets/glasswindow_green.png";
+import img from "../assets/glasswindow_loading.gif";
 
 const LoadingState = () => {
   return (
@@ -6,7 +6,7 @@ const LoadingState = () => {
       <img
         src={img}
         alt="Loading..."
-        className="w-20 h-20 animate-spin-slow mb-6"
+        className="w-20 h-20 mb-6"
       />
       <h5 className="text-emerald-700 font-medium">Loading...</h5>
     </div>
