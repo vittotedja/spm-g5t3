@@ -115,23 +115,29 @@ async def listing(listing: PutListing):
     #add listing manager
     add_manager = new_manager[~new_manager["manager_id"].isin(manager["manager_id"])]
     if len(add_manager) > 0:
-        add_manager = add_manager[["listing_id", "manager_id"]].to_json(orient='records')
+        add_manager = add_manager[["listing_id", "manager_id"]].to_dict(orient='records')
         adding_manager = (
-            supabase.table("listing_manager")
-            .insert(add_manager)
+            supabase.from_("listing_manager")
+            .upsert(add_manager)
             .execute()
             .data
         )
+    else:
+        adding_manager = []
     
     #delete listing manager
-    # delete_manager = manager[~manager["manager_id"].isin(new_manager["manager_id"])]
-    # delete_manager = delete_manager[['listing_id', 'manager_id']].to_json(orient='records')
-    # if len(delete_manager) > 0:
-    #     deleting_manager = (
-    #         supabase.table("listing_manager")
-    #         .delete()
-    #         .eq("listing_id", delete_manager["listing_id"])
-    #         .eq("manager_id", delete_manager[["manager_id"]])
-    #         .execute()
-    #     )
-    return listing_update
+    delete_manager = manager[~manager["manager_id"].isin(new_manager["manager_id"])]
+    if len(delete_manager) > 0:
+        delete_manager = delete_manager[['listing_id', 'manager_id']].to_dict(orient='records')
+        for del_man in delete_manager:
+            deleting_manager = (
+                supabase.table("listing_manager")
+                .delete()
+                .eq("listing_id", del_man["listing_id"])
+                .eq("manager_id", del_man["manager_id"])
+                .execute()
+                .data
+            )
+    else:
+        deleting_manager = []
+    return listing_update, adding_manager, deleting_manager

@@ -15,6 +15,8 @@ import formatDate from '../utilities/Utiliities';
 import Badge from '../components/Badge';
 import {setInitial} from '../utilities/Services';
 import {toast} from 'react-hot-toast';
+import LoadingState from "../components/loadingState";
+
 
 export type SkillProps = {
 	skill_id: string;
@@ -50,6 +52,7 @@ const RoleCreation: React.FC = () => {
 	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
 	const [listing, setListing] = useState<any>({});
+	let [loading, setLoading] = useState(true);
 
 	//fetch data needed from DB
 	async function fetchRoleOptions() {
@@ -89,6 +92,7 @@ const RoleCreation: React.FC = () => {
 		else{
 			setInitial(setSkillOptions, 'api/staff_role_skill')
 		}
+		setLoading(false)
 	}
 
 	//handle change for react-select
@@ -219,6 +223,9 @@ const RoleCreation: React.FC = () => {
 						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
+				{loading ? (
+					<LoadingState />
+				) : (
 				<div className="justify-center mx-auto mt-4 align-middle border rounded">
 					<form>
 						<div className="space-y-10">
@@ -268,6 +275,7 @@ const RoleCreation: React.FC = () => {
 
 													<Calendar
 														mode="single"
+														defaultMonth={date}
 														selected={date}
 														onSelect={setDate}
 														className="mx-auto"
@@ -399,6 +407,7 @@ const RoleCreation: React.FC = () => {
 						</div>
 					</form>
 				</div>
+				)}
 			</div>
 		</>
 	);
