@@ -82,7 +82,7 @@ const RoleCreation: React.FC = () => {
 	async function fetchListing() {
 		if (location.state?.isEdit){
 			let listing = await setInitial(setListing, `api/listing?listing_id=${location.state.listing_id}`, false)
-			const skill = await setInitial(setSkillsMap, `api/staff_role_skill?role_id=${listing.role.role_id}`)
+			await setInitial(setSkillsMap, `api/staff_role_skill?role_id=${listing.role.role_id}`)
 			setDate(new Date(listing.application_close_date))
 			setSelectedCountry({value: listing.listing_location, label: listing.listing_location})
 			setVacancy(listing.vacancy)
@@ -92,7 +92,7 @@ const RoleCreation: React.FC = () => {
 		else{
 			setInitial(setSkillOptions, 'api/staff_role_skill')
 		}
-		setLoading(false)
+		
 	}
 
 	//handle change for react-select
@@ -171,14 +171,20 @@ const RoleCreation: React.FC = () => {
 		}
 	};
 
+	async function promiseExecution() {
+		await Promise.all(
+			[fetchRoleOptions(),
+			fetchManagerOptions(),
+			fetchListing()]
+		);
+		setLoading(false)
+	}
+
 	useEffect(() => {
 		setSkillOptions([]);
 		setManagerOptions([]);
 		setRoleOptions([]);
-		// setInitial(setSkillOptions, 'api/staff_role_skill');
-		fetchRoleOptions();
-		fetchManagerOptions();
-		fetchListing();
+		promiseExecution();
 		
 	}, []);
 
