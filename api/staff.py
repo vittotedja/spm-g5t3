@@ -48,8 +48,12 @@ async def staff(
         df = pd.DataFrame(response.data)
         df = df[df["control_access"].isin([2, 3, 4])]
         df = df[df["staff_id"] != staff_id]
-        applied_staff = supabase.from_("application").select(
-            "staff_id").eq("listing_id", listing_id).execute().data
+        applied_staff = (
+            supabase.from_("application")
+            .select("staff_id")
+            .eq("listing_id", listing_id)
+            .execute().data
+        )
         applied_staff_ids = [item['staff_id'] for item in applied_staff]
         df = df[~df["staff_id"].isin(applied_staff_ids)]
         df["similarity"] = df.apply(

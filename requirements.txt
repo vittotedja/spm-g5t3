@@ -7,3 +7,5 @@ fuzzywuzzy==0.18.0
 Levenshtein==0.22.0
 python-Levenshtein==0.22.0
 rapidfuzz==3.4.0
+pytest==7.4.3
+pytest-mock==3.12.0
