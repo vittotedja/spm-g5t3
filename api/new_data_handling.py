@@ -26,7 +26,7 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@router.post("/new_data_handling/")
+@router.post("api/new_data_handling/")
 async def new_data_handling(file: str):
     filepath = './src/dataset/' + file + '.csv'
     # print(filepath)
