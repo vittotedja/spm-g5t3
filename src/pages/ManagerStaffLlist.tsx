@@ -279,7 +279,7 @@ const ManagerStaffList = () => {
                               className="border-b hover:bg-gray-100"
                               onClick={() =>
                                 navigate(
-                                  `/applicant-detail?user_id=${staffMember?.staff_id}`
+                                  `/manager/applicants-list/${staffMember?.staff_id}/applicant-detail/0`
                                 )
                               }
                             >
