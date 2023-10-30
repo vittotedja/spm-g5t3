@@ -9,6 +9,7 @@ import FilterBox from "../components/FilterBox";
 import LoadingState from "../components/loadingState";
 import confused_guy from "../assets/confused_guy.png";
 import SortComponent from "../components/SortComponent";
+import formatDate from "../utilities/Utiliities";
 
 interface Staff {
   staff_id: number;
@@ -53,14 +54,12 @@ interface Option {
 }
 
 const ManagerStaffList = () => {
-  const param = useParams<{ listing_id: string }>();
   const [allStaff, setAllStaff] = useState<Staff[]>([]);
   const [paginatedStaff, setPaginatedStaff] = useState<Staff[]>([]);
   const [searchResults, setSearchResults] = useState<Staff[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [staff, setStaff] = useState<any>(Object);
   const [loading, setLoading] = useState<boolean>(false);
-  const [listing, setListing] = useState<any>(Object);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [managerListings, setManagerListings] = useState<ManagerListing[]>([]);
   const [options, setOptions] = useState<Option[]>([]);
@@ -78,7 +77,6 @@ const ManagerStaffList = () => {
 
   useEffect(() => {
     setInitial(setStaff, `api/staff?email=${staff_email}`, false);
-    setInitial(setListing, `api/listing?listing_id=${selectedListing}`, false);
   }, [staff_email]);
   const navigate = useNavigate();
 
@@ -132,7 +130,7 @@ const ManagerStaffList = () => {
   const handleSearchChange = async (name: string) => {
     if (name.length > 0) {
       const response = await getAsync(
-        `api/staff?name=${name}&staff_id=${staff?.staff_id}&listing_id=${param?.listing_id}`
+        `api/staff?name=${name}&staff_id=${staff?.staff_id}&listing_id=${selectedListing}`
       );
       const data = await response.json();
       setSearchResults(data);
@@ -172,10 +170,13 @@ const ManagerStaffList = () => {
   }, [managerListings]);
 
   useEffect(() => {
-    const validOptions = validListings.map((item: ManagerListing) => ({
-      value: item?.listing_id.toString(),
-      name: `#${item?.listing_id} - ${item?.listing?.role.role_name} - ${item?.listing?.role?.role_department}`,
-    }));
+    const validOptions = validListings
+      .map((item: ManagerListing) => ({
+        value: item?.listing_id.toString(),
+        name: `#${item?.listing_id} - ${item?.listing?.role.role_name} - ${item?.listing?.role?.role_department}`,
+      }))
+      .sort((a, b) => parseInt(a.value) - parseInt(b.value));
+
     setOptions(validOptions);
     setSelectedListing(validOptions[0]?.value);
   }, [validListings]);
@@ -190,12 +191,12 @@ const ManagerStaffList = () => {
 
   return (
     <div className="container mx-auto mt-6">
-      {validListings.length > 0? (
+      {validListings.length > 0 ? (
         <>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between">
             <div className="text-2xl font-bold text-left">
               {validListings.length > 0 && (
-                <h2 className="text-2xl font-bold text-left">
+                <h2 className="text-xl font-bold text-left">
                   Head hunting for{" "}
                   {
                     validListings.find(
@@ -204,8 +205,25 @@ const ManagerStaffList = () => {
                   }
                 </h2>
               )}
-              <h4 className="text-xl font-semibold italic">
+              <hr className="my-1 bg-slate-500" />
+              <h4 className="text-base font-normal">
                 Listing ID: {selectedListing}
+              </h4>
+              <h4 className="text-base font-normal">
+                Department:{" "}
+                {validListings.find(
+                  (item) => item.listing_id.toString() === selectedListing
+                )?.listing?.role?.role_department ?? ""}
+              </h4>
+              <h4 className="text-base font-normal">
+                Application Close Date:{" "}
+                {formatDate(
+                  new Date(
+                    validListings.find(
+                      (item) => item.listing_id.toString() === selectedListing
+                    )?.listing?.application_close_date ?? ""
+                  )
+                )}
               </h4>
             </div>
             <SearchBar
@@ -349,10 +367,12 @@ const ManagerStaffList = () => {
           )}
         </>
       ) : (
-        <h1 className="my-auto mx-auto text-3xl text-bold w-1/2">
-          You currently do not have any active / vacant listings managed by you, please try
-          again.
-        </h1>
+        !loading && (
+          <h1 className="my-auto mx-auto text-3xl text-bold w-1/2">
+            You currently do not have any active / vacant listings managed by
+            you, please try again.
+          </h1>
+        )
       )}
     </div>
   );
