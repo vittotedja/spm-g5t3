@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getAsync, setInitial } from "../utilities/Services";
 import SearchBar from "../components/SearchBar";
 import Button from "../components/Button";
