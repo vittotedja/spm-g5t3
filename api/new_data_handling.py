@@ -35,7 +35,7 @@ def run_on_schedule():
     loop.run_until_complete(new_data_handling())
     loop.close()
 
-scheduler.add_job(run_on_schedule, 'cron', hour='*')
+scheduler.add_job(run_on_schedule, 'cron', hour=0)
 
 router = APIRouter()
 
