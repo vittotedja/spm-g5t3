@@ -47,7 +47,7 @@ conf = ConnectionConfig(
 
 @app.post("/api/notification")
 @router.post("/api/notification")
-async def send_email(status: str, application_id: int):
+async def send_email(status: str = None, application_id: int = None, listing_id: int = None):
 
 
     application = (
@@ -127,8 +127,8 @@ async def send_email(status: str, application_id: int):
             </html>
             """,           
         subtype="html")
-    elif status == "Updated":
-                message = MessageSchema(
+    elif listing_id:
+        message = MessageSchema(
         subject="Listing for "+ role[0]["role"]["role_name"] +" Updated",
         recipients=[email],
         body="""
