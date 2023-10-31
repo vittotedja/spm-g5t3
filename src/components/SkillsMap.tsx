@@ -24,10 +24,11 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
   const [role_id, setRoleId] = useState<number | null>(null);
   let [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     async function fetchData() {
       try {
-        let listingData = await setInitial(
+        await setInitial(
           setListingData,
           `api/listing?listing_id=${listing_id}`,
           false
