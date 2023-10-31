@@ -24,6 +24,7 @@
     "react-day-picker": "^8.8.2",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.47.0",
+    "react-hot-toast": "^2.4.1",
     "react-icons": "^4.11.0",
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^6.15.0",
@@ -39,13 +40,14 @@
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react-swc": "^3.3.2",
     "autoprefixer": "^10.4.15",
+    "cypress": "^13.3.1",
     "eslint": "^8.45.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "postcss": "^8.4.29",
     "supabase": "^1.106.1",
     "tailwindcss": "^3.3.3",
-    "typescript": "^5.0.2",
+    "typescript": "^5.2.2",
     "vite": "^4.4.5"
   }
 }

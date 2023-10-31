@@ -20,6 +20,7 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
 }) => {
   const [skillMatchData, setskillMatchData] = useState<any>(null);
   const [listingData, setListingData] = useState<any>(null);
+  const [role_id, setRoleId] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -28,26 +29,35 @@ const SkillsMapComponent: React.FC<SkillsMapProps> = ({
         `api/listing?listing_id=${listing_id}`,
         false
       );
-      const role_id = listingData ? listingData.role_id : null;
-      setInitial(
-        setskillMatchData,
-        `api/staff_role_skill?staff_id=${staff_id}&role_id=${role_id}`
-      );
+  
+      if (listingData) {
+        const roleId = listingData ? listingData.role_id : null;
+        setRoleId(roleId);
+  
+        if (roleId !== null) {
+          setInitial(
+            setskillMatchData,
+            `api/staff_role_skill?staff_id=${staff_id}&role_id=${roleId}`
+          );
+        }
+      }
     }
+  
     fetchData();
-  }, []);
+  }, [staff_id, listing_id]);
+  
 
-  if (skillMatchData === null) {
+  if (skillMatchData === null || role_id === null) {
     return null;
   }
 
-  console.log(listingData)
+  console.log(listingData);
 
-  const qualifiedSkills: Skill[] = skillMatchData.skill.filter(
+  const qualifiedSkills: Skill[] = skillMatchData?.skill.filter(
     (skill: Skill) => skill.qualified
   );
 
-  const unqualifiedSkills: Skill[] = skillMatchData.skill.filter(
+  const unqualifiedSkills: Skill[] = skillMatchData?.skill.filter(
     (skill: Skill) => !skill.qualified
   );
 

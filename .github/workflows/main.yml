@@ -1,0 +1,67 @@
+name: SPM Push Pipeline
+
+on: [push]
+
+jobs:
+    pytest-run:
+        strategy:
+            fail-fast: false
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: |
+                  pip install -r requirements.txt
+              working-directory: ./
+            - name: Start FastAPI backend
+              run: |
+                  uvicorn main:app &
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+              working-directory: ./
+            - name: Pytest Run
+              run: pytest
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+                  TEST_SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  TEST_SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+
+    cypress-run:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+            - name: Install dependencies
+              run: |
+                  pip install -r requirements.txt
+              working-directory: ./
+            - name: Start FastAPI backend
+              run: |
+                  uvicorn main:app &
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+              working-directory: ./
+            - name: Cypress run
+              uses: cypress-io/github-action@v6
+              with:
+                  build: npm run build
+                  start: npm run dev
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+                  VITE_NEWEST_URL: ${{secrets.VITE_NEWEST_URL}}
+                  VITE_NEWEST_KEY: ${{secrets.VITE_NEWEST_KEY}}

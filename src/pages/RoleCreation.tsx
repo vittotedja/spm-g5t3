@@ -14,6 +14,7 @@ import {Calendar} from '../components/ui/calendar';
 import formatDate from '../utilities/Utiliities';
 import Badge from '../components/Badge';
 import {setInitial} from '../utilities/Services';
+import {toast} from 'react-hot-toast';
 
 export type SkillProps = {
 	skill_id: string;
@@ -32,10 +33,19 @@ const RoleCreation: React.FC = () => {
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [skillOptions, setSkillOptions] = useState<any>([]);
 	const [managerOptions, setManagerOptions] = useState<any>([]);
+	const countryOptions = [
+		{value: 'Singapore', label: 'Singapore'},
+		{value: 'Indonesia', label: 'Indonesia'},
+		{value: 'Malaysia', label: 'Malaysia'},
+		{value: 'Vietnam', label: 'Vietnam'},
+		{value: 'Hong Kong', label: 'Hong Kong'},
+	];
 
 	//state for selected options
 	const [selectedRole, setSelectedRole] = useState<any>({});
+	const [selectedCountry, setSelectedCountry] = useState<any>({});
 	const [hrManager, setHrManager] = useState<any>({});
+	const [vacancy, setVacancy] = useState<number>(0);
 	const [skillsMap, setSkillsMap] = useState<Array<SkillProps>>([]);
 	const [roleOptions, setRoleOptions] = useState<any>([]);
 	const [date, setDate] = useState<Date | undefined>(new Date());
@@ -80,26 +90,44 @@ const RoleCreation: React.FC = () => {
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setIsLoading(true);
-		const response = await postAsync('api/listing', {
-			role_id: selectedRole.role_id,
-			application_close_date: date,
-		});
-		const data = await response.json();
-		if (data.success) {
-			for (let i = 0; i < hrManager.length; i++) {
-				const response = await postAsync('api/listing_manager', {
-					manager_id: hrManager[i].value,
-					listing_id: data.data.listing_id,
-				});
-				const listingManagerData = await response.json();
-				if (!listingManagerData.success) {
-					alert('Error: ' + listingManagerData.error);
-				}
-			}
-			navigate('/manager');
-		} else {
+		if (vacancy > 127) {
+			toast.error('Vacancy should be less than 128');
 			setIsLoading(false);
-			alert('Error: ' + data.error);
+			setVacancy(0);
+			return;
+		}
+		if (hrManager.length > 0 && vacancy > 0) {
+			const response = await postAsync('api/listing', {
+				role_id: selectedRole.role_id,
+				application_close_date: date,
+				listing_location: selectedCountry.value,
+				vacancy: vacancy,
+			});
+			const data = await response.json();
+			if (data.success) {
+				for (let i = 0; i < hrManager.length; i++) {
+					const response = await postAsync('api/listing_manager', {
+						manager_id: hrManager[i].value,
+						listing_id: data.data.listing_id,
+					});
+					const listingManagerData = await response.json();
+					if (!listingManagerData.success) {
+						alert('Error: ' + listingManagerData.error);
+					}
+				}
+				toast.success('Role Listing posted successfully');
+				navigate('/manager');
+			} else {
+				setIsLoading(false);
+				toast.error(
+					'Something went wrong, please check whether you have keyed in the right details'
+				);
+			}
+		} else {
+			toast.error(
+				'Something went wrong, please check whether you have keyed in the right details'
+			);
+			setIsLoading(false);
 		}
 	};
 
@@ -115,7 +143,7 @@ const RoleCreation: React.FC = () => {
 	//disable dates before today
 	const isDateDisabled = (date: Date) => {
 		// Disable dates before today
-		return date <= new Date();
+		return date < new Date();
 	};
 
 	//react-select styles
@@ -150,16 +178,15 @@ const RoleCreation: React.FC = () => {
 						<p>Back to Posted Role Listings</p>
 					</div>
 					<div className="text-3xl font-bold">
-						{/* TODO: change title based on edit or create */}
 						{location.state?.isEdit ? 'Edit' : 'New'} Role Listing
 					</div>
 				</div>
 				<div className="justify-center w-4/5 mx-auto mt-4 align-middle border rounded">
 					<form>
 						<div className="space-y-10">
-							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-3">
+							<div className="grid grid-cols-1 pb-12 border-b border-gray-900/10 sm:grid-cols-2">
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -176,7 +203,7 @@ const RoleCreation: React.FC = () => {
 									</div>
 								</div>
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
 											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
@@ -185,7 +212,10 @@ const RoleCreation: React.FC = () => {
 										</label>
 										<div className="w-full py-1 mt-2 align-middle border rounded-md">
 											<Popover>
-												<PopoverTrigger className="justify-center w-full align-middle">
+												<PopoverTrigger
+													className="justify-center w-full align-middle"
+													data-testid="datepicker"
+												>
 													{date
 														? formatDate(date)
 														: 'Select Date'}
@@ -206,24 +236,70 @@ const RoleCreation: React.FC = () => {
 									</div>
 								</div>
 								<div className="mt-10">
-									<div className="px-3 sm:col-span-4 text-start">
+									<div className="px-3 sm:col-span-3 text-start">
 										<label
-											htmlFor="level"
+											htmlFor="rolename"
 											className="font-bold leading-6 text-olive-green-dark"
 										>
-											Hiring Managers
+											Location
 										</label>
 										<Select
-											isMulti
-											options={managerOptions}
-											className="mt-2 basic-multi-select"
-											styles={colorStyles}
-											components={animatedComponents}
+											required
+											options={countryOptions}
+											className="mt-2 rounded-md shadow-sm basic-multi-select ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 sm:max-w-md"
 											onChange={(selectedOption) => {
-												setHrManager(selectedOption);
+												setSelectedCountry(
+													selectedOption
+												);
 											}}
 										/>
 									</div>
+								</div>
+								<div className="mt-10">
+									<div className="px-3 sm:col-span-3 text-start">
+										<label
+											htmlFor="vacancy"
+											className="font-bold leading-6 text-olive-green-dark"
+										>
+											Vacancy
+										</label>
+										<div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-emerald-600 ">
+											<input
+												data-testid="vacancy"
+												type="number"
+												min={1}
+												max={127}
+												className="block flex-1 border-0 bg-transparent py-1.5 pl-2 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 placeholder:pl-2"
+												placeholder={`How many people do you need?`}
+												onChange={(e) => {
+													setVacancy(
+														parseInt(e.target.value)
+													);
+												}}
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div className="pb-12 border-b border-gray-900/10 text-start">
+								<div className="px-3 sm:col-span-4 text-start">
+									<label
+										htmlFor="level"
+										className="font-bold leading-6 text-olive-green-dark"
+									>
+										Hiring Managers
+									</label>
+									<Select
+										isMulti
+										options={managerOptions}
+										className="mt-2 basic-multi-select"
+										styles={colorStyles}
+										components={animatedComponents}
+										onChange={(selectedOption) => {
+											setHrManager(selectedOption);
+										}}
+									/>
 								</div>
 							</div>
 
@@ -258,6 +334,7 @@ const RoleCreation: React.FC = () => {
 
 						<div className="flex items-center justify-end p-4 mt-4 text-small gap-x-6">
 							<Button
+								id="save-listing"
 								styleType="green"
 								loading={isLoading}
 								onClick={(e) => {

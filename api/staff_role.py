@@ -54,6 +54,8 @@ async def staff_role(
         all_listings_response = supabase.table("listing").select("*").execute()
         df_all_listings = pd.DataFrame(all_listings_response.data or [])
 
+        df_all_listings = df_all_listings[df_all_listings["deleted_at"].isnull()]
+
         # Fetch all role-skill associations
         all_role_skills_response = supabase.table(
             "role_skill").select("*").execute()
@@ -133,6 +135,12 @@ async def staff_role(
                 all_unapplied_roles = all_unapplied_roles.sort_values(
                     by=sort_field, ascending=(order != "desc")
                 )
+          # Fetch listings managed by the current staff
+        listing_manager_response = supabase.table("listing_manager").select("*").eq("manager_id", str(staff_id)).execute().data
+        if len(listing_manager_response) > 0:
+            df_current_staff = pd.DataFrame(listing_manager_response)
+            managed_listing_ids = df_current_staff["listing_id"].tolist()
+            all_unapplied_roles = all_unapplied_roles[~all_unapplied_roles["listing_id"].isin(managed_listing_ids)]
         
         df_exploded_filtered = all_unapplied_roles.explode("role_skill")
         df_merged_filtered = pd.merge(
@@ -197,13 +205,7 @@ async def staff_role(
             all_unapplied_roles = all_unapplied_roles[
                 all_unapplied_roles["listing_location"].isin(region_filters)
             ]
-        # Fetch listings managed by the current staff
-        listing_manager_response = supabase.table("listing_manager").select("*").eq("manager_id", str(staff_id)).execute().data
-        if len(listing_manager_response) > 0:
-            df_current_staff = pd.DataFrame(listing_manager_response)
-            managed_listing_ids = df_current_staff["listing_id"].tolist()
-            all_unapplied_roles = all_unapplied_roles[~all_unapplied_roles["listing_id"].isin(managed_listing_ids)]
-
+      
         unapplied_roles_df =all_unapplied_roles.iloc[offset: offset + limit]
         unapplied_roles_df = unapplied_roles_df.fillna(value="")
         unapplied_roles = unapplied_roles_df.to_dict("records")
