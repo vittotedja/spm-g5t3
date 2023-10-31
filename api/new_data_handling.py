@@ -4,7 +4,8 @@ import os
 import pandas as pd
 from supabase import create_client, Client
 from dotenv import load_dotenv
-# from dataset import new_staff
+import gdown
+
 load_dotenv()
 
 url: str = os.getenv("SUPABASE_URL")
@@ -26,21 +27,26 @@ app.add_middleware(
 )
 router = APIRouter()
 
-@router.post("api/new_data_handling/")
-async def new_data_handling(file: str):
-    filepath = './src/dataset/' + file + '.csv'
-    # print(filepath)
+@app.post('/api/new_data_handling')
+@router.post('/api/new_data_handling')
+async def new_data_handling():
+    filepath = './src/dataset/new_staff.xlsx'
+    file_id = os.getenv('file_id')
+    download_url = 'https://drive.google.com/uc?/export=download&id='+ file_id
+    # print(download_url)
+    gdown.download(download_url, output=filepath, quiet=True)
+    # download = requests.get(download_url)
+    # print(download)
+
     # print("Current working directory:", os.getcwd())
-
     if not os.path.exists(filepath):
-        raise HTTPException(status_code=400, detail="File not found")
+        raise HTTPException(status_code=400, detail="Download failed")
 
-    df = pd.read_csv(filepath)
-    # print(df.head())
+    df = pd.read_excel(filepath)
     # Handling case insensitive column names
-    email_column = next((col for col in df.columns if col.lower() == 'email'), None)
-    if email_column is None:
-        raise HTTPException(status_code=400, detail="Email column not found in CSV")
+    # email_column = next((col for col in df.columns if col.lower() == 'email'), None)
+    # if email_column is None:
+    #     raise HTTPException(status_code=400, detail="Email column not found in CSV")
 
     # Fetch all users
     response = supabase.table('staff').select('*').execute()
@@ -48,11 +54,11 @@ async def new_data_handling(file: str):
     # if pd.isnull(response.data):
     #     raise HTTPException(status_code=400, detail=response['error']['message'])   
 
-    existing_emails = set(user['email'] for user in response.data)
+    existing_id = set(user['staff_id'] for user in response.data)
     # print(existing_emails)
     # Find the new staff emails using Pandas
-    new_staff_df = df[~df[email_column].isin(existing_emails)]
-    # print(new_staff_df)
+    new_staff_df = df[~df['staff_id'].isin(existing_id)]
+    print(new_staff_df)
     # print(type(new_staff_df))
     new_staff_df = new_staff_df.rename(columns={'role': 'control_access'})
     new_staff_dicts = new_staff_df.to_dict(orient='records')
@@ -75,4 +81,4 @@ async def new_data_handling(file: str):
 
     return {"message": "Staff checked and accounts created if not existed"}
 
-app.include_router(router)
+# app.include_router(router)
