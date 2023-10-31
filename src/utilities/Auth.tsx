@@ -5,7 +5,7 @@ import {UserRole} from '../hocs/withRoleProtection';
 
 interface SignInData {
 	email: string;
-	password: string;
+	password: string; 
 }
 type AuthContextType = {
 	signInWithPassword: (data: SignInData) => Promise<any>;
