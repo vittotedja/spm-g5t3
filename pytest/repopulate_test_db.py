@@ -32,13 +32,15 @@ except postgrest_exceptions.APIError as e:
 
 # Get original data from main database
 supabase: Client = create_client(url, key)
+print('--------Getting data from main database--------')
 for table in tables:
-    print(table)
+    print('Getting data from table', table)
     data = supabase.from_(table).select('*').execute().data
     tables[table] = data
 
 # Repopulate test database
+print('--------Inserting data to test database--------')
 test_supabase: Client = create_client(test_url, test_key)
 for table in tables:
-    print(table)
+    print('Inserting to table', table)
     test_supabase.table(table).upsert(tables[table]).execute()

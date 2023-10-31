@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from enum import Enum
+from postgrest import exceptions
 
 import os
 from dotenv import load_dotenv
@@ -145,24 +146,19 @@ async def application(
 @router.post("/api/application")
 async def application(application: PostApplication = Body(...)):
     try:
-        data, error = (
-            supabase.table("application").insert([application.dict()]).execute()
+        response = supabase.table("application").insert([application.dict()]).execute()
+        return {
+            "success": True,
+            "data": response.data[0],
+        }
+    except exceptions.APIError as e:
+        raise HTTPException(
+            status_code = 400, 
+            detail = {
+                "success": False,
+                "data": e.json()
+            }
         )
-
-        print(application.application_id)
-
-        if error:
-            print(error)  # Log the error for debugging
-            return {"success": False, "error": error}
-        else:
-            return {
-                "success": True,
-                "data": data,
-            }  # Return the first item in the response
-
-    except Exception as e:
-        return {"success": False, "error": e}
-
 
 @app.put("/api/application")
 @router.put("/api/application")
@@ -171,12 +167,15 @@ async def application(application: PutApplication):
         "application_status": application.application_status,
         "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
     }
-
-    update = (
-        supabase.from_("application")
+    response = (
+        supabase.table("application")
         .update(update_data)
         .eq("application_id", application.application_id)
-        .execute()
-        .data
+        .execute().data
     )
-    return update
+    if response:
+        return response
+    else:
+        raise HTTPException(
+            status_code = 400
+        )

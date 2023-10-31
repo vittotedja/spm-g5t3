@@ -1,7 +1,7 @@
 def test_all_staff(app_client):
     response = app_client.get("/api/staff")
     assert response.status_code == 200
-    assert len(response.json()) == 349
+    assert len(response.json()) == 355
 
 def test_staff_with_staff_id(app_client):
     response = app_client.get("/api/staff?staff_id=140944")
