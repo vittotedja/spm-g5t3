@@ -128,34 +128,41 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
             """,           
         subtype="html")
     elif listing_id:
-        message = MessageSchema(
-        subject="Listing for "+ role[0]["role"]["role_name"] +" Updated",
-        recipients=[email],
-        body="""
-            <html>
-            <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
-                <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 30px;">
-                    <div style="background-color: #299B71; color: #ffffff; text-align: center; padding: 10px; border-radius: 10px 10px 0 0;">
-                            <img src="https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/glasswindow_white.png" alt="Your Image Description" style="max-width: 15%; margin-bottom: 10px;">
-                        <h1>Glass Window</h1>
+        staffs = supabase.table("application").select("staff_id").eq("listing_id", listing_id).execute().data[0]
+        emails = supabase.table("staff").select("email").eq("staff_id", staffs["staff_id"]).execute().data[0]
+
+        for email in emails.values():
+            message = MessageSchema(
+            subject="Listing for "+ role[0]["role"]["role_name"] +" Updated",
+            recipients=[email],
+            body="""
+                <html>
+                <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 30px;">
+                        <div style="background-color: #299B71; color: #ffffff; text-align: center; padding: 10px; border-radius: 10px 10px 0 0;">
+                                <img src="https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/glasswindow_white.png" alt="Your Image Description" style="max-width: 15%; margin-bottom: 10px;">
+                            <h1>Glass Window</h1>
+                        </div>
+                        <h1 style="color: #333333;">Listing Application Details</h1>
+                        <p style="color: #555555;">Dear """ + staff[0]["staff_fname"] + " " + staff[0]["staff_lname"]+ """,</p> 
+                        <p style="color: #555555;">We inform you that the Listing details for """ + role[0]["role"]["role_name"]+ """ has been Updated.</p>
+                        <p style="color: #555555;">Your Application is still submitted and will be considered.</p>
+                        <p style="color: #555555;">If you have any questions or would like feedback on your application, please feel free to reach out.</p>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <a href="https://glasswindow.vercel.app" style="display: inline-block; background-color: #299B71; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
+                                Go to Site
+                            </a>
+                        </div>
+                        <p style="color: #555555;">Best regards,</p>
+                        <p style="color: #555555;">All in One Hiring Team</p>
                     </div>
-                    <h1 style="color: #333333;">Listing Application Details</h1>
-                    <p style="color: #555555;">Dear """ + staff[0]["staff_fname"] + " " + staff[0]["staff_lname"]+ """,</p> 
-                    <p style="color: #555555;">We inform you that the Listing details for """ + role[0]["role"]["role_name"]+ """ has been Updated.</p>
-                    <p style="color: #555555;">Your Application is still submitted and will be considered.</p>
-                    <p style="color: #555555;">If you have any questions or would like feedback on your application, please feel free to reach out.</p>
-                    <div style="text-align: center; margin-top: 20px;">
-                        <a href="https://glasswindow.vercel.app" style="display: inline-block; background-color: #299B71; color: #ffffff; padding: 10px 20px; text-decoration: none; border-radius: 5px; transition: background-color 0.3s;">
-                            Go to Site
-                        </a>
-                    </div>
-                    <p style="color: #555555;">Best regards,</p>
-                    <p style="color: #555555;">All in One Hiring Team</p>
-                </div>
-            </body>
-            </html>
-            """,           
-        subtype="html")
+                </body>
+                </html>
+                """,           
+            subtype="html") 
+            fm = FastMail(conf)
+            await fm.send_message(message)
+            print(message)
 
     fm = FastMail(conf)
     await fm.send_message(message)
