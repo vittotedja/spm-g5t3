@@ -98,6 +98,9 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
             </html>
             """,           
         subtype="html")
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        print(message)
     elif status == "Rejected":
         message = MessageSchema(
         subject="Application for "+ role[0]["role"]["role_name"] +" Rejected",
@@ -127,6 +130,9 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
             </html>
             """,           
         subtype="html")
+        fm = FastMail(conf)
+        await fm.send_message(message)
+        print(message)
     elif listing_id:
         staffs = supabase.table("application").select("staff_id").eq("listing_id", listing_id).execute().data[0]
         emails = supabase.table("staff").select("email").eq("staff_id", staffs["staff_id"]).execute().data[0]
@@ -163,10 +169,6 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
             fm = FastMail(conf)
             await fm.send_message(message)
             print(message)
-
-    fm = FastMail(conf)
-    await fm.send_message(message)
-    print(message)
 
     return JSONResponse(status_code=200, content={"message": "email has been sent"})
     
