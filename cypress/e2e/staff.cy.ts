@@ -156,6 +156,5 @@ describe('Staff workflow', () => {
 		cy.contains('You Have Reached the Maximum Applications Limit');
 
 		//TODO: tear down database
-		cy;
 	});
 });
