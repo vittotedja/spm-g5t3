@@ -67,6 +67,7 @@ const ManagerStaffList = () => {
   const [selectedListing, setSelectedListing] = useState<String>(
     options[0]?.value
   );
+  const [selectedRoleId, setSelectedRoleId] = useState<String>("");
   const [selectedFilters, setSelectedFilters] = useState<
     Record<string, string[]>
   >({});
@@ -189,6 +190,9 @@ const ManagerStaffList = () => {
     setSelectedListing(field);
   };
 
+  const selectedRole =
+    validListings.find((item) => item.listing_id.toString() === selectedListing)
+      ?.listing?.role?.role_id ?? "";
   return (
     <div className="container mx-auto mt-6">
       {validListings.length > 0 ? (
@@ -279,7 +283,13 @@ const ManagerStaffList = () => {
                               className="border-b hover:bg-gray-100"
                               onClick={() =>
                                 navigate(
-                                  `/manager/applicants-list/${staffMember?.staff_id}/applicant-detail/0`
+                                  `/manager/applicants-list/${selectedListing}/applicant-detail/0`,
+                                  {
+                                    state: {
+                                      staff_id: staffMember?.staff_id,
+                                      role_id: selectedRole,
+                                    },
+                                  }
                                 )
                               }
                             >
