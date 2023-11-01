@@ -1,6 +1,3 @@
-from datetime import datetime
-import pytz
-
 def test_get_all_listing(app_client):
     response = app_client.get("/api/listing")
     assert response.status_code == 200
