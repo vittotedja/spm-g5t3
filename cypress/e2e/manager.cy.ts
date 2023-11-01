@@ -1,9 +1,4 @@
-import {createClient} from '@supabase/supabase-js';
-
 describe('Manager workflow', () => {
-	before(() => {
-		const supabase = createClient('SUPABASE_URL', 'SUPABASE_KEY');
-	});
 	it('should allow manager to view their posted roles, accept and reject users', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
