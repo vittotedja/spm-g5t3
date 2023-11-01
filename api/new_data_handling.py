@@ -46,7 +46,7 @@ async def new_data_handling():
     file_id = os.getenv('file_id')
     download_url = 'https://drive.google.com/uc?/export=download&id='+ file_id
     # print(download_url)
-    gdown.download(download_url, output=filepath, quiet=True)
+    gdown.download(download_url, output=filepath, quiet=False)
     #download = requests.get(download_url)
     
 
