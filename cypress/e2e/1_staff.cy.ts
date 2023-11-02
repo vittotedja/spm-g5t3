@@ -113,12 +113,48 @@ describe('Staff workflow', () => {
 
 		cy.get('#apply-button').should('be.disabled');
 
-		// // checks if homepage has no more role that a user has just applied
-		// cy.get('[data-testid=home-link]').click();
-		// cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
-		// 	($roleDetailsName) => {
-		// 		expect($roleDetailsName.text()).not.to.eq(clickedRoleName);
-		// 	}
-		// );
+		// checks if homepage has no more role that a user has just applied
+		cy.get('[data-testid=home-link]').click();
+		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+			($roleDetailsName) => {
+				expect($roleDetailsName.text()).not.to.eq(clickedRoleName);
+			}
+		);
+	});
+
+	it('should allow staff to only apply max of 5 jobs', () => {
+		cy.visit('/', {failOnStatusCode: false});
+
+		cy.get('[data-testid = email]').type('daniel.fu@allinone.com.sg');
+		cy.get('[data-testid = password]').type('daniel.fu');
+		cy.get('[data-testid = submitBtn]').click();
+
+		cy.wait(6000);
+		//checking that data is properly fetched
+		cy.contains('Daniel Fu');
+
+		//applies for 5 jobs
+		let i: number;
+		for (i = 0; i < 5; i++) {
+			cy.get('[data-testid = role-card]', {timeout: 10000})
+				.first()
+				.click();
+			cy.get('#apply-button').click();
+			cy.get('[data-testid = reason-input]').type(
+				'I am interested in this role ' + (i + 1) + ' application'
+			);
+			cy.get('#submit-button').click();
+			cy.get('#confirm-button').click();
+			cy.contains('You have successfully Applied to the Role');
+			cy.get('[data-testid=close-button]').eq(4).click();
+			cy.get('[data-testid=home-link]').click();
+		}
+
+		//should not be able to apply for the 6th role
+		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
+		cy.get('#apply-button').click();
+		cy.contains('You Have Reached the Maximum Applications Limit');
+
+		//TODO: tear down database
 	});
 });
