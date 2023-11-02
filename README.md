@@ -1,6 +1,6 @@
 # IS212 G5T3 Documentations
 
-This project is built and developed by [Dennis Hardianto](@DennisH18), [@emilyaurelia], [@jordianrenaldi], [@vincentlewi], [@vittotedja], [@yozafard] for IS212 Software Project Management for the client AllinOne.
+This project is built and developed by [Alexander Vincent Lewi](https://github.com/vincentlewi), [Dennis Hardianto](https://github.com/DennisH18), [Emily Aurelia](https://github.com/emilyaurelia), [Jordian Renaldi](https://github.com/jordianrenaldi), [Vitto Surya Tedja](https://github.com/vittotedja), [Yozafard Harold Siauheming](https://github.com/yozafard) for IS212 Software Project Management for the client AllinOne.
 
 ## How to access our app
 
