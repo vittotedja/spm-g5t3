@@ -137,7 +137,7 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
         fm = FastMail(conf)
         await fm.send_message(message)
         print(message)
-    elif status == "Invite" and listing_id and staff_id:
+    elif listing_id and staff_id: #for Invitation
         # Fetch role details
         role_response = supabase.table("listing").select("*", "role(*)").eq("listing_id", listing_id).execute()
         role = role_response.data if role_response.data else []
@@ -184,7 +184,7 @@ async def send_email(status: str = None, application_id: int = None, listing_id:
             fm = FastMail(conf)
             await fm.send_message(message)
             print(message)
-    elif listing_id:
+    elif listing_id and staff_id == None: # if staff_id is None, send email to all staffs if listing is edited
         role = (
             supabase.table("listing").select("*", "role(*)").eq("listing_id", listing_id).execute().data
         )
