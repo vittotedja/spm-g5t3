@@ -1,7 +1,4 @@
 describe('Manager workflow', () => {
-	before(() => {
-		cy.exec('py ./setup_db.py');
-	});
 	it('should allow manager to view their posted roles, accept and reject users', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');

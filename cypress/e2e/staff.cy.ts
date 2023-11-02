@@ -1,7 +1,4 @@
 describe('Staff workflow', () => {
-	before(() => {
-		cy.exec('py ./setup_db.py');
-	});
 	it('should allow staff to view open role listings', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
