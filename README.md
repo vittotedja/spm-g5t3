@@ -1,27 +1,57 @@
-# React + TypeScript + Vite
+# IS212 G5T3 Documentations
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is built and developed by [@DennisH18], [@emilyaurelia], [@jordianrenaldi], [@vincentlewi], [@vittotedja], [@yozafard] for IS212 Software Project Management for the client AllinOne.
 
-Currently, two official plugins are available:
+## How to access our app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Our app's first release is available in [glasswindow.vercel.app](https://glasswindow.vercel.app/). It should cover the basic five functions that the client require.
+To log in to our app you can use any of the staff's email with their username (in all lowercase) as their password
+`e.g: email: susan.goh@allinone.com.sg, password: susan.goh`
 
-## Expanding the ESLint configuration
+### Local Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+-   To use our app locally, first clone this repo to your local directory with
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+```bash
+git clone https://github.com/vittotedja/spm-g5t3.git
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+or download our app's [source code](https://github.com/vittotedja/spm-g5t3/archive/refs/heads/master.zip)
+
+-   Before starting our app, install all the required dependency with
+
+```bash
+npm install
+```
+
+-   To start our app you need to run two commands
+
+```bash
+npm run dev
+```
+
+and
+
+```bash
+uvicorn main:app --reload
+```
+
+### To locally test your code
+
+Ensuring that our application is stable, testing is crucial for our development. Although CI/CD has already been implemented, here is how to test the functionalities locally.
+
+-   To check for function
+
+```bash
+cd testing
+pytest
+```
+
+-   To check for End to End functionality
+
+```bash
+py ./setup_db.py
+npx cypress open
+```
+
+then run your cypress test locally and see if there are any errors
