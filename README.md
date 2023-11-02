@@ -22,6 +22,7 @@ or download our app's [source code](https://github.com/vittotedja/spm-g5t3/archi
 
 ```bash
 npm install
+pip install -r requirements.txt
 ```
 
 -   To start our app you need to run two commands
@@ -40,6 +41,9 @@ uvicorn main:app --reload
 
 Ensuring that our application is stable, testing is crucial for our development. Although CI/CD has already been implemented, here is how to test the functionalities locally.
 
+-   CI/CD function implemented through Github Actions
+    We have implemented CI/CD pipeline in github actions which can be seen from our [main.yml](https://github.com/vittotedja/spm-g5t3/blob/master/.github/workflows/main.yml), where we implemented [PyTest](https://docs.pytest.org/) for unit and integration testing, and [Cypress](https://www.cypress.io/) for End To End testing. Additionally, we have also used [Vercel](https://vercel.com/) to handle the CD pipeline to make sure that we always provide the latest release as fast as possible for the client.
+
 -   To check for function
 
 ```bash
@@ -54,4 +58,4 @@ py ./setup_db.py
 npx cypress open
 ```
 
-then run your cypress test locally and see if there are any errors
+then run your cypress test locally and see if there are any errors.
