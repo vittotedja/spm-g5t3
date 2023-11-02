@@ -42,3 +42,5 @@ api/__pycache__/
 api/__pycache__/*
 __pycache__/main.cpython-39.pyc
 __pycache__/main.cpython-39.pyc
+
+cypress.env.json
