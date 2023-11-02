@@ -1,4 +1,7 @@
 describe('HR workflow', () => {
+	before(() => {
+		cy.exec('py ./setup_db.py');
+	});
 	it('should allow HR to see all posted role listings and add more', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
