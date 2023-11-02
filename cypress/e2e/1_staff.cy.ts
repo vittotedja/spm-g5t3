@@ -35,18 +35,16 @@ describe('Staff workflow', () => {
 
 	it('should allow staff to be able to apply and withdraw for roles', () => {
 		cy.visit('/', {failOnStatusCode: false});
-
+		cy.contains('Please login to access this page');
 		cy.contains('GlassWindow');
 
-		cy.get('[data-testid = email]').type('susan.goh@allinone.com.sg');
-		cy.get('[data-testid = password]').type('susan.goh');
+		// Logan Tan has no job applications
+		cy.get('[data-testid = email]').type('bao.nguyen@allinone.com.sg');
+		cy.get('[data-testid = password]').type('bao.nguyen');
 		cy.get('[data-testid = submitBtn]').click();
 
-		//Susan Goh has and will apply for more jobs
 		cy.wait(6000);
-		cy.contains('Susan Goh');
-
-		// opens role details
+		cy.contains('Bao Nguyen');
 		let clickedRoleName = '';
 		cy.get('[data-testid = role-name]', {timeout: 10000})
 			.first()
@@ -154,7 +152,5 @@ describe('Staff workflow', () => {
 		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
 		cy.get('#apply-button').click();
 		cy.contains('You Have Reached the Maximum Applications Limit');
-
-		//TODO: tear down database
 	});
 });
