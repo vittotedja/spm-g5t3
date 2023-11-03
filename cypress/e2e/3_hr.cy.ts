@@ -1,5 +1,5 @@
 describe('HR workflow', () => {
-	it('should allow HR to see all posted role listings', () => {
+	it('should allow HR to see all posted role listings and add more', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
 		cy.contains('GlassWindow');
@@ -50,9 +50,16 @@ describe('HR workflow', () => {
 
 		const today = new Date();
 		const date = today.getDate();
-		cy.contains('button', date + 2)
-			.click()
-			.type('{esc}');
+		const month = today.getMonth();
+		if (month === 1 && date > 28) {
+			cy.contains('button', 2).click().type('{esc}');
+		} else if (date >= 30) {
+			cy.contains('button', 1).click().type('{esc}');
+		} else {
+			cy.contains('button', date + 2)
+				.click()
+				.type('{esc}');
+		}
 		cy.get('#save-listing').click();
 		cy.contains(
 			'Something went wrong, please check whether you have keyed in the right details'
