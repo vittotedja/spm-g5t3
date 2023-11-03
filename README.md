@@ -1,12 +1,12 @@
 # IS212 G5T3 Documentations
 
-This project is built and developed by [Alexander Vincent Lewi](https://github.com/vincentlewi), [Dennis Hardianto](https://github.com/DennisH18), [Emily Aurelia](https://github.com/emilyaurelia), [Jordian Renaldi](https://github.com/jordianrenaldi), [Vitto Surya Tedja](https://github.com/vittotedja), [Yozafard Harold Siauheming](https://github.com/yozafard) for IS212 Software Project Management for the client AllinOne.
+This project is built and developed by [Alexander Vincent Lewi](https://github.com/vincentlewi), [Dennis Hardianto](https://github.com/DennisH18), [Emily Aurelia](https://github.com/emilyaurelia), [Jordian Renaldi](https://github.com/jordianrenaldi), [Vitto Surya Tedja](https://github.com/vittotedja), [Yozafard Harold Siauheming](https://github.com/yozafard) for IS212 Software Project Management for the client All in One. Check out our [GitHub Repo](https://github.com/vittotedja/spm-g5t3)
 
 ## How to access our app
 
 Our app's first release is available in [glasswindow.vercel.app](https://glasswindow.vercel.app/). It should cover the basic five functions that the client require.
 To log in to our app you can use any of the staff's email with their username (in all lowercase) as their password
-`e.g: email: susan.goh@allinone.com.sg, password: susan.goh`
+`e.g: email: ji.han@allinone.com.sg, password: ji.han`
 
 ### Local Installation
 
@@ -37,6 +37,8 @@ and
 uvicorn main:app --reload
 ```
 
+-   To get access to the secret keys used inside our app. Please contact us!
+
 ### To locally test your code
 
 Ensuring that our application is stable, testing is crucial for our development. Although CI/CD has already been implemented, here is how to test the functionalities locally.
@@ -47,7 +49,7 @@ Ensuring that our application is stable, testing is crucial for our development.
 -   To check for function
 
 ```bash
-cd testing
+cd pytest
 pytest
 ```
 
@@ -57,3 +59,11 @@ pytest
 py ./setup_db.py
 npx cypress run
 ```
+
+### Additional apps used in this project
+
+-   [Supabase](https://supabase.com)
+    Supabase is a database service that is based from Postgres database. It allows authentication, instant APIs, Edge Functions, Realtime subscriptions, Storage and etc. Using Supabase ensures that our app is widely available. As developers, this allows us to focus more on building features rather than mantaining database.
+
+-   [Clickup](https://clickup.com/)
+    Clickup is a project management app that has helped us in tracking our progress. It allows us to assign user stories to individuals, create notes and documentations properly and can be integrated with GitHub to ease up our workflow.
