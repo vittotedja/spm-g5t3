@@ -57,10 +57,8 @@ pytest
 
 ```bash
 py ./setup_db.py
-npx cypress open
+npx cypress run
 ```
-
-then run your cypress test locally and see if there are any errors.
 
 ### Additional apps used in this project
 
