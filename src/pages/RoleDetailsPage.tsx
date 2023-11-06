@@ -32,36 +32,36 @@ interface Application {
 }
 
 const RoleDetailsPage = () => {
-  //const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
-  //TODO: change staffID to be dynamic
-  const auth = useAuth();
-  const param = useParams<{ listing_id: string }>();
-  const [applyLoading, setApplyLoading] = useState<any>(null);
-  const [haveAppliedModal, setHaveAppliedModal] = useState(false);
-  const [maxLimitModal, setMaxLimitModal] = useState(false);
-  const [confirmModal, setConfirmModal] = useState(false);
-  const [reasonModal, setReasonModal] = useState(false);
-  const [successModal, setSuccessModal] = useState(false);
-  const [reason, setReason] = useState<string>("");
-  const [listingData, setListingData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [listingApplications, setListingApplications] = useState<Application[]>(
-    []
-  );
-  const [latestApplication, setLatestApplication] =
-    useState<Application>(Object);
-  const [allApplications, setAllApplications] = useState<Application[]>([]);
-  const [appliedCount, setAppliedCount] = useState<number>(0);
-  const [withdrawModal, setWithdrawModal] = useState(false);
-  const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
-  const [rejectionCount, setRejectionCount] = useState<number>(0);
-  const staff_id = auth?.staffId;
-  const listing_id = parseInt(param?.listing_id ?? "");
-  const navigate = useNavigate();
+	//const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
+	//TODO: change staffID to be dynamic
+	const auth = useAuth();
+	const param = useParams<{listing_id: string}>();
+	const [applyLoading, setApplyLoading] = useState<any>(null);
+	const [haveAppliedModal, setHaveAppliedModal] = useState(false);
+	const [maxLimitModal, setMaxLimitModal] = useState(false);
+	const [confirmModal, setConfirmModal] = useState(false);
+	const [reasonModal, setReasonModal] = useState(false);
+	const [successModal, setSuccessModal] = useState(false);
+	const [reason, setReason] = useState<string>('');
+	const [listingData, setListingData] = useState<any>(null);
+	const [loading, setLoading] = useState(true);
+	const [listingApplications, setListingApplications] = useState<
+		Application[]
+	>([]);
+	const [latestApplication, setLatestApplication] =
+		useState<Application>(Object);
+	const [allApplications, setAllApplications] = useState<Application[]>([]);
+	const [appliedCount, setAppliedCount] = useState<number>(0);
+	const [withdrawModal, setWithdrawModal] = useState(false);
+	const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
+	const [rejectionCount, setRejectionCount] = useState<number>(0);
+	const staff_id = auth?.staffId;
+	const listing_id = parseInt(param?.listing_id ?? '');
+	const navigate = useNavigate();
 
-  if (isNaN(listing_id)) {
-    return <div>Error 404: Invalid Listing Id</div>;
-  }
+	if (isNaN(listing_id)) {
+		return <div>Error 404: Invalid Listing Id</div>;
+	}
 	useEffect(() => {
 		async function fetchSecond() {
 			await setInitial(
@@ -208,102 +208,105 @@ const RoleDetailsPage = () => {
 			}
 	}
 
-  if (loading) {
-    return <LoadingState />;
-  }else if (listingData?.listing_id === undefined) {
-    return <div>Error 404: Invalid Listing Id</div>;
-  } 
-  else {
-    return (
-      <div className="container">
-        <div className="flex items-start mb-4 mt-8">
-          <button
-            className="flex items-center text-emerald-900 hover:underline"
-            onClick={() => window.history.back()}
-          >
-            <AiOutlineArrowLeft />
-            {"Back to Previous Page"}
-          </button>
-        </div>
-        {loading ? <LoadingState /> : null}
-        {!listingData ? (
-          <div>Error 404: Invalid Listing Id</div>
-        ) : (
-          <div className="flex flex-col lg:flex-row">
-            <div className="lg:w-5/8">
-              <RoleDetails listing_id={listing_id}/>
-            </div>
-            <div className="lg:w-3/8 relative">
-              <div className="lg:fixed">
-                {listingApplications?.length > 0 && rejectionCount > 0 ? (
-                  <div className="text-left text-red">Rejected Count: {rejectionCount}</div>
-                ) : (
-                  ""
-                )}
-                <SkillsMapComponent
-                  staff_id={staff_id}
-                  listing_id={listing_id}
-                />
-                <Button
-                  styleType={disabled ? "disabled" : "green"}
-                  className="bg-emerald-600 text-white py-2 px-6 mt-4 rounded-md text-lg font-semibold hover:bg-emerald-900 w-full"
-                  onClick={handleApply}
-                  loading={applyLoading}
-                >
-                  {buttonText}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-        <Modal
-          modalType="fail"
-          message="You Have Applied to this Role"
-          isOpen={haveAppliedModal}
-          onClose={() => setHaveAppliedModal(false)}
-        />
-        <Modal
-          modalType="fail"
-          message="You Have Reached the Maximum Applications Limit "
-          isOpen={maxLimitModal}
-          onClose={() => setMaxLimitModal(false)}
-        />
-        <Modal
-          modalType="reason"
-          message="Enter your Reason for Applying to this role "
-          isOpen={reasonModal}
-          onClose={() => setReasonModal(false)}
-          onSubmit={handleReasonSubmit}
-        ></Modal>
-        <Modal
-          modalType="confirmation"
-          message="Are you sure you want to apply to this role?"
-          isOpen={confirmModal}
-          onClose={() => setConfirmModal(false)}
-          onSubmit={handleConfirm}
-        ></Modal>
-        <Modal
-          modalType="success"
-          message="You have successfully Applied to the Role"
-          isOpen={successModal}
-          onClose={() => navigate(`/profile`)}
-        ></Modal>
-        <Modal
-          modalType="confirmation"
-          message="Are you sure you want to withdraw your application? Upon withdrawal, you will not be able to apply to this role again."
-          isOpen={withdrawModal}
-          onClose={() => setWithdrawModal(false)}
-          onSubmit={handleConfirm}
-        ></Modal>
-        <Modal
-          modalType="success"
-          message="You have successfully withdrawn your application"
-          isOpen={withdrawSuccessModal}
-          onClose={() => navigate(`/profile`)}
-        ></Modal>
-      </div>
-    );
-  }
+	if (loading) {
+		return <LoadingState />;
+	} else if (listingData?.listing_id === undefined) {
+		return <div>Error 404: Invalid Listing Id</div>;
+	} else {
+		return (
+			<div className="container">
+				<div className="flex items-start mt-8 mb-4">
+					<button
+						className="flex items-center text-emerald-900 hover:underline"
+						onClick={() => window.history.back()}
+					>
+						<AiOutlineArrowLeft />
+						{'Back to Previous Page'}
+					</button>
+				</div>
+				{loading ? <LoadingState /> : null}
+				{!listingData ? (
+					<div>Error 404: Invalid Listing Id</div>
+				) : (
+					<div className="flex flex-col lg:flex-row">
+						<div className="lg:w-5/8">
+							<RoleDetails listing_id={listing_id} />
+						</div>
+						<div className="relative lg:w-3/8">
+							<div className="lg:fixed">
+								{listingApplications?.length > 0 &&
+								rejectionCount > 0 ? (
+									<div className="text-left text-red">
+										Rejected Count: {rejectionCount}
+									</div>
+								) : (
+									''
+								)}
+								<SkillsMapComponent
+									staff_id={staff_id}
+									listing_id={listing_id}
+								/>
+								<Button
+									id="apply-button"
+									styleType={disabled ? 'disabled' : 'green'}
+									className="w-full px-6 py-2 mt-4 text-lg font-semibold text-white rounded-md bg-emerald-600 hover:bg-emerald-900"
+									onClick={handleApply}
+									loading={applyLoading}
+								>
+									{buttonText}
+								</Button>
+							</div>
+						</div>
+					</div>
+				)}
+				<Modal
+					modalType="fail"
+					message="You Have Applied to this Role"
+					isOpen={haveAppliedModal}
+					onClose={() => setHaveAppliedModal(false)}
+				/>
+				<Modal
+					modalType="fail"
+					message="You Have Reached the Maximum Applications Limit "
+					isOpen={maxLimitModal}
+					onClose={() => setMaxLimitModal(false)}
+				/>
+				<Modal
+					modalType="reason"
+					message="Enter your Reason for Applying to this role "
+					isOpen={reasonModal}
+					onClose={() => setReasonModal(false)}
+					onSubmit={handleReasonSubmit}
+				></Modal>
+				<Modal
+					modalType="confirmation"
+					message="Are you sure you want to apply to this role?"
+					isOpen={confirmModal}
+					onClose={() => setConfirmModal(false)}
+					onSubmit={handleConfirm}
+				></Modal>
+				<Modal
+					modalType="success"
+					message="You have successfully Applied to the Role"
+					isOpen={successModal}
+					onClose={() => navigate(`/profile`)}
+				></Modal>
+				<Modal
+					modalType="confirmation"
+					message="Are you sure you want to withdraw your application? Upon withdrawal, you will not be able to apply to this role again."
+					isOpen={withdrawModal}
+					onClose={() => setWithdrawModal(false)}
+					onSubmit={handleConfirm}
+				></Modal>
+				<Modal
+					modalType="success"
+					message="You have successfully withdrawn your application"
+					isOpen={withdrawSuccessModal}
+					onClose={() => navigate(`/profile`)}
+				></Modal>
+			</div>
+		);
+	}
 };
 
 export default RoleDetailsPage;
