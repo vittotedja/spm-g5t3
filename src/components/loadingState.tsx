@@ -1,10 +1,9 @@
-import img from "../assets/glasswindow_loading.gif";
 
 const LoadingState = () => {
   return (
     <div className="flex flex-col items-center justify-center mt-60">
       <img
-        src={img}
+        src="https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/glasswindow_loading.gif"
         alt="Loading..."
         className="w-20 h-20 mb-6"
       />
