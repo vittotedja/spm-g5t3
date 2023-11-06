@@ -53,8 +53,8 @@ jobs:
                   uvicorn main:app &
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
               working-directory: ./
             - name: Cypress run
               uses: cypress-io/github-action@v6
@@ -63,5 +63,5 @@ jobs:
                   start: npm run dev
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  VITE_NEWEST_URL: ${{secrets.VITE_NEWEST_URL}}
-                  VITE_NEWEST_KEY: ${{secrets.VITE_NEWEST_KEY}}
+                  VITE_NEWEST_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  VITE_NEWEST_KEY: ${{secrets.TEST_SUPABASE_KEY}}
