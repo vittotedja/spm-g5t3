@@ -8,10 +8,9 @@ from api import (
     role,
     skill,
     application,
-    manager_rolelisting,
     listing,
     listing_manager,
-    notification
+    notification,
 )
 
 app = FastAPI()
@@ -32,5 +31,4 @@ app.include_router(skill.router)
 app.include_router(application.router)
 app.include_router(listing.router)
 app.include_router(listing_manager.router)
-app.include_router(manager_rolelisting.router)
 app.include_router(notification.router)

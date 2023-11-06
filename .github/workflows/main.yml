@@ -18,25 +18,18 @@ jobs:
               run: |
                   pip install -r requirements.txt
               working-directory: ./
-            - name: Start FastAPI backend
-              run: |
-                  uvicorn main:app &
-              env:
-                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
-              working-directory: ./
             - name: Pytest Run
               run: pytest
+              working-directory: ./pytest
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
-                  TEST_SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
-                  TEST_SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
 
     cypress-run:
         runs-on: ubuntu-latest
+        if: ${{ always() }}
+        needs: pytest-run
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -48,6 +41,13 @@ jobs:
               run: |
                   pip install -r requirements.txt
               working-directory: ./
+            - name: Set Up Database
+              run: |
+                  python ./setup_db.py
+              working-directory: ./
+              env:
+                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &

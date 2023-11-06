@@ -66,7 +66,7 @@ const ManagerStaffList = () => {
       async function fetchData() {
         setLoading(true);
         const staff_reponse = await getAsync(
-          `api/staff?isManager=${true}&staff_id=${staff?.staff_id}&listing_id=${
+          `api/staff?is_manager=${true}&staff_id=${staff?.staff_id}&listing_id=${
             param?.listing_id
           }&filters=${JSON.stringify(selectedFilters)}`
         );
