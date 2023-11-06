@@ -27,7 +27,7 @@ router = APIRouter()
 @app.get("/api/staff")
 @router.get("/api/staff")
 async def staff(
-    email: str = None, staff_id: int = None, name: str = None, isManager: bool = None, listing_id: int = None, filters: str = "{}"
+    email: str = None, staff_id: int = None, name: str = None, is_manager: bool = None, listing_id: int = None, filters: str = "{}"
 ):
     if email:
         staff = supabase.from_("staff").select(
@@ -48,8 +48,12 @@ async def staff(
         df = pd.DataFrame(response.data)
         df = df[df["control_access"].isin([2, 3, 4])]
         df = df[df["staff_id"] != staff_id]
-        applied_staff = supabase.from_("application").select(
-            "staff_id").eq("listing_id", listing_id).execute().data
+        applied_staff = (
+            supabase.from_("application")
+            .select("staff_id")
+            .eq("listing_id", listing_id)
+            .execute().data
+        )
         applied_staff_ids = [item['staff_id'] for item in applied_staff]
         df = df[~df["staff_id"].isin(applied_staff_ids)]
         df["similarity"] = df.apply(
@@ -66,7 +70,7 @@ async def staff(
         sorted_df = sorted_df[sorted_df["staff_id"] != staff_id]
         sorted_data = sorted_df.to_dict(orient="records")[0:5]
         return sorted_data
-    elif isManager and staff_id and listing_id:
+    elif is_manager and staff_id and listing_id:
         parsed_filters = json.loads(filters)
         staff_data = supabase.from_("staff").select("*").execute().data
         staff_df = pd.DataFrame(staff_data)
