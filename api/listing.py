@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Body
+from fastapi import FastAPI, APIRouter, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
@@ -8,6 +8,8 @@ from supabase import create_client, Client
 from pydantic import BaseModel
 from datetime import datetime
 import pytz
+
+import pandas as pd
 
 
 load_dotenv()
@@ -32,6 +34,12 @@ class PostListing(BaseModel):
     vacancy: int
     creation_date: datetime = None
     application_close_date: datetime
+
+class PutListing(BaseModel):
+    application_close_date: datetime
+    vacancy: int
+    manager: list
+    listing_id: int
 
 
 @app.get("/api/listing")
@@ -71,4 +79,12 @@ async def listing(listing: PostListing = Body(...)):
         data, count = supabase.table("listing").insert(post).execute()
         return {"success": True, "data": data[1][0]}
     except Exception as e:
-        return {"success": False, "error": e}
+        raise HTTPException(
+            status_code = 400, 
+            detail = {
+                "success": False,
+                "data": e.json()
+            }
+        )
+    
+

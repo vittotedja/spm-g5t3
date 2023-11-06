@@ -59,14 +59,14 @@ class PutApplication(BaseModel):
 @app.get("/api/application")
 @router.get("/api/application")
 async def application(
-    application_id: int = None, staff_id: int = None, role_id: int = None
+    application_id: int = None, staff_id: int = None, listing_id: int = None
 ):
-    if staff_id and role_id:
-        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
+    if staff_id and listing_id:
+        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', listing_id).execute().data
         application_df = pd.DataFrame(application)
         
         if application_df.empty:
-            listing_info = supabase.from_('listing').select("*").eq('listing_id', role_id).execute().data
+            listing_info = supabase.from_('listing').select("*").eq('listing_id', listing_id).execute().data
             print(listing_info)
             listing_info_df = pd.DataFrame(listing_info)
             
@@ -76,7 +76,7 @@ async def application(
                 "applied_at": None,
                 "updated_at": None,
                 "withdrawn_at": None,
-                "listing_id": role_id,
+                "listing_id": listing_id,
                 "application_reason": None,
                 "application_status": None,
                 "staff_id": staff_id,
@@ -108,11 +108,11 @@ async def application(
             .data
         )
         return application
-    elif role_id:
+    elif listing_id:
         response = (
             supabase.table("application")
             .select("*, staff  (*)")
-            .eq("listing_id", role_id)
+            .eq("listing_id", listing_id)
             .execute()
             .data
         )
@@ -122,7 +122,7 @@ async def application(
         role = (
             supabase.table("listing")
             .select("role_id")
-            .eq("listing_id", role_id)
+            .eq("listing_id", listing_id)
             .execute()
             .data
         )
@@ -177,5 +177,6 @@ async def application(application: PutApplication):
         return response
     else:
         raise HTTPException(
-            status_code = 400
+            status_code=400, 
+            detail=f'Application_id {application.application_id} is not found'
         )

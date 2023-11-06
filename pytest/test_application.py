@@ -1,15 +1,34 @@
 def test_get_application(app_client):
-    response = app_client.get("/api/application?application_id=1")
+    response = app_client.get("/api/application?application_id=103")
     assert response.status_code == 200
-    assert response.json()[0]["staff_id"] == 140015
-    assert response.json()[0]["listing_id"] == 2
+    assert response.json()[0]["staff_id"] == 140736
+    assert response.json()[0]["listing_id"] == 1
     assert response.json()[0]["application_reason"] == "Test"
     assert response.json()[0]["application_status"] == "Applied"
-    assert response.json()[0]["applied_at"] == "2023-10-17T12:56:58.489861+00:00"
-    assert response.json()[0]["updated_at"] == None
-    assert response.json()[0]["withdrawn_at"] == None
-    assert response.json()[0]["listing"]["listing_id"] == 2
-    assert response.json()[0]["listing"]["role"]["role_name"] == "Sales Manager"
+    assert response.json()[0]["listing"]["listing_id"] == 1
+    assert response.json()[0]["listing"]["role_id"] == 2
+    assert response.json()[0]["listing"]["role"]["role_name"] == "Admin Executive"
+    assert response.json()[0]["listing"]["role"]["role_department"] == "HR And Admin"
+
+def test_get_application_by_staff_id(app_client):
+    response = app_client.get("/api/application?staff_id=140736")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
+
+def test_get_application_by_listing_id(app_client):
+    response = app_client.get("/api/application?listing_id=14")
+    assert response.status_code == 200
+    assert len(response.json()) == 6
+
+def test_get_application_by_staff_id_and_listing_id(app_client):
+    response = app_client.get("/api/application?staff_id=150138&listing_id=14")
+    assert response.status_code == 200
+    assert response.json()[0]["application_id"] == 132
+    assert response.json()[0]["staff_id"] == 150138
+    assert response.json()[0]["listing_id"] == 14
+    assert response.json()[0]["application_status"] == "Applied"
+    assert response.json()[0]["application_reason"] == "I am interested in this role 4 application"
+    assert response.json()[0]["listing"]["role_id"] == 13
 
 def test_create_application(app_client):
     response = app_client.post(
@@ -60,17 +79,16 @@ def test_update_application(app_client):
     response = app_client.put(
         "/api/application",
         json={
-            "application_id": 1,
+            "application_id": 103,
             "application_status": "Shortlisted"
         }
     )
     assert response.status_code == 200
-    assert response.json()[0]["application_id"] == 1
-    assert response.json()[0]["staff_id"] == 140015
-    assert response.json()[0]["listing_id"] == 2
+    assert response.json()[0]["application_id"] == 103
+    assert response.json()[0]["staff_id"] == 140736
+    assert response.json()[0]["listing_id"] == 1
     assert response.json()[0]["application_reason"] == "Test"
     assert response.json()[0]["application_status"] == "Shortlisted"
-    assert response.json()[0]["applied_at"] == "2023-10-17T12:56:58.489861+00:00"
 
 def test_update_application_with_invalid_application_id(app_client):
     application_id = -1
@@ -82,3 +100,4 @@ def test_update_application_with_invalid_application_id(app_client):
         }
     )
     assert response.status_code == 400
+    assert response.json()["detail"] == f'Application_id {application_id} is not found'
