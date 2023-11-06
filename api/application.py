@@ -13,6 +13,7 @@ from datetime import datetime
 import pandas as pd
 
 from api.staff_role_skill import staff_role_skill
+from api.notification import send_email
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -62,14 +63,27 @@ async def application(
     application_id: int = None, staff_id: int = None, role_id: int = None
 ):
     if staff_id and role_id:
-        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', role_id).execute().data
+        application = (
+            supabase.from_("application")
+            .select("*,listing(*)")
+            .eq("staff_id", staff_id)
+            .eq("listing_id", role_id)
+            .execute()
+            .data
+        )
         application_df = pd.DataFrame(application)
-        
+
         if application_df.empty:
-            listing_info = supabase.from_('listing').select("*").eq('listing_id', role_id).execute().data
+            listing_info = (
+                supabase.from_("listing")
+                .select("*")
+                .eq("listing_id", role_id)
+                .execute()
+                .data
+            )
             print(listing_info)
             listing_info_df = pd.DataFrame(listing_info)
-            
+
             # Convert the DataFrame to the desired format
             listing_dict = {
                 "application_id": None,
@@ -80,13 +94,15 @@ async def application(
                 "application_reason": None,
                 "application_status": None,
                 "staff_id": staff_id,
-                "listing": listing_info_df.to_dict('records')
+                "listing": listing_info_df.to_dict("records"),
             }
-            
+
             return [listing_dict]
-        
-        sorted_application = application_df.sort_values(by='applied_at', ascending=False)
-        return sorted_application.to_dict('records')
+
+        sorted_application = application_df.sort_values(
+            by="applied_at", ascending=False
+        )
+        return sorted_application.to_dict("records")
     elif application_id:
         application = (
             supabase.from_("application")
@@ -146,19 +162,24 @@ async def application(
 @router.post("/api/application")
 async def application(application: PostApplication = Body(...)):
     try:
-        response = supabase.table("application").insert([application.dict()]).execute()
-        return {
-            "success": True,
-            "data": response.data[0],
-        }
-    except exceptions.APIError as e:
-        raise HTTPException(
-            status_code = 400, 
-            detail = {
-                "success": False,
-                "data": e.json()
-            }
+        data, error = (
+            supabase.table("application").insert([application.dict()]).execute()
         )
+
+        print(application.application_id)
+
+        if error:
+            print(error)  # Log the error for debugging
+            return {"success": False, "error": error}
+        else:
+            return {
+                "success": True,
+                "data": data,
+            }  # Return the first item in the response
+
+    except Exception as e:
+        return {"success": False, "error": e}
+
 
 @app.put("/api/application")
 @router.put("/api/application")
@@ -171,11 +192,11 @@ async def application(application: PutApplication):
         supabase.table("application")
         .update(update_data)
         .eq("application_id", application.application_id)
-        .execute().data
+        .execute()
+        .data
     )
     if response:
+        await send_email(application.application_status, application.application_id)
         return response
     else:
-        raise HTTPException(
-            status_code = 400
-        )
+        raise HTTPException(status_code=400)
