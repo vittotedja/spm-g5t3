@@ -46,8 +46,8 @@ jobs:
                   python ./setup_db.py
               working-directory: ./
               env:
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &
