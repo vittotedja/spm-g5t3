@@ -21,6 +21,7 @@ dist-ssr
 .env.development
 .env.test
 .env.production
+pytest.ini
 
 # Editor directories and files
 .vscode/*

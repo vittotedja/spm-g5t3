@@ -135,11 +135,11 @@ describe('Manager workflow', () => {
 
 		let clickedRoleName = '';
 		cy.get('[data-testid=rolename-manager]')
-			.first()
+			.last()
 			.then(($roleName) => {
 				clickedRoleName = $roleName.text();
 			});
-		cy.get('[data-testid=manager-individual-role]').first().click();
+		cy.get('[data-testid=manager-individual-role]').last().click();
 		cy.get('[data-testid=applicantslist-rolename]').should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).to.eq(clickedRoleName);
