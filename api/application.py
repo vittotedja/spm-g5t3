@@ -63,11 +63,24 @@ async def application(
     application_id: int = None, staff_id: int = None, listing_id: int = None
 ):
     if staff_id and listing_id:
-        application = supabase.from_('application').select("*,listing(*)").eq('staff_id', staff_id).eq('listing_id', listing_id).execute().data
+        application = (
+            supabase.from_("application")
+            .select("*,listing(*)")
+            .eq("staff_id", staff_id)
+            .eq("listing_id", listing_id)
+            .execute()
+            .data
+        )
         application_df = pd.DataFrame(application)
 
         if application_df.empty:
-            listing_info = supabase.from_('listing').select("*").eq('listing_id', listing_id).execute().data
+            listing_info = (
+                supabase.from_("listing")
+                .select("*")
+                .eq("listing_id", listing_id)
+                .execute()
+                .data
+            )
             print(listing_info)
             listing_info_df = pd.DataFrame(listing_info)
 
@@ -148,21 +161,19 @@ async def application(
 @app.post("/api/application")
 @router.post("/api/application")
 async def application(application: PostApplication = Body(...)):
+    print(application.dict())
     try:
         data, error = (
             supabase.table("application").insert([application.dict()]).execute()
         )
-
-        print(application.application_id)
-
-        if error:
-            print(error)  # Log the error for debugging
-            return {"success": False, "error": error}
-        else:
+        if data:
             return {
                 "success": True,
                 "data": data,
-            }  # Return the first item in the response
+            }
+        elif error:
+            print(error)  # Log the error for debugging
+            return {"success": False, "error": error}
 
     except Exception as e:
         return {"success": False, "error": e}
@@ -187,6 +198,6 @@ async def application(application: PutApplication):
         return response
     else:
         raise HTTPException(
-            status_code=400, 
-            detail=f'Application_id {application.application_id} is not found'
+            status_code=400,
+            detail=f"Application_id {application.application_id} is not found",
         )

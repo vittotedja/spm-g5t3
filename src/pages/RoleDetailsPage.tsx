@@ -32,16 +32,19 @@ interface Application {
 }
 
 const RoleDetailsPage = () => {
-	//const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
-	//TODO: change staffID to be dynamic
 	const auth = useAuth();
+	const staff_id = auth?.staffId;
+
 	const param = useParams<{listing_id: string}>();
 	const [applyLoading, setApplyLoading] = useState<any>(null);
 	const [haveAppliedModal, setHaveAppliedModal] = useState(false);
+
+	// modal states
 	const [maxLimitModal, setMaxLimitModal] = useState(false);
 	const [confirmModal, setConfirmModal] = useState(false);
 	const [reasonModal, setReasonModal] = useState(false);
 	const [successModal, setSuccessModal] = useState(false);
+
 	const [reason, setReason] = useState<string>('');
 	const [listingData, setListingData] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
@@ -55,7 +58,6 @@ const RoleDetailsPage = () => {
 	const [withdrawModal, setWithdrawModal] = useState(false);
 	const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
 	const [rejectionCount, setRejectionCount] = useState<number>(0);
-	const staff_id = auth?.staffId;
 	const listing_id = parseInt(param?.listing_id ?? '');
 	const navigate = useNavigate();
 
@@ -71,7 +73,7 @@ const RoleDetailsPage = () => {
 			);
 			await setInitial(
 				setListingApplications,
-				`api/application?staff_id=${staff_id}&role_id=${listing_id}`,
+				`api/application?staff_id=${staff_id}&listing_id=${listing_id}`,
 				true
 			);
 			await setInitial(

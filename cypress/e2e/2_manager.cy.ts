@@ -6,7 +6,7 @@ describe('Manager workflow', () => {
 
 		// Chandra Pandey is a manager who has job listings
 		cy.get('[data-testid = email]').type('chandra.pandey@allinone.com.sg');
-		cy.get('[data-testid = password]').type('chandra.pandey');
+		cy.get('[data-testid = password]').type('Chandra.Pandey');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
@@ -93,7 +93,7 @@ describe('Manager workflow', () => {
 
 		// Yee Lim is a manager who has no job listings
 		cy.get('[data-testid = email]').type('yee.lim@allinone.com.sg');
-		cy.get('[data-testid = password]').type('yee.lim');
+		cy.get('[data-testid = password]').type('Yee.Lim');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
@@ -124,7 +124,7 @@ describe('Manager workflow', () => {
 
 		// Yee Lim is a manager who has no job listings
 		cy.get('[data-testid = email]').type('siti.abdullah@allinone.com.sg');
-		cy.get('[data-testid = password]').type('siti.abdullah');
+		cy.get('[data-testid = password]').type('Siti.Abdullah');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
