@@ -10,6 +10,7 @@ from api import (
     application,
     listing,
     listing_manager,
+    new_data_handling,
     notification,
 )
 
@@ -31,4 +32,5 @@ app.include_router(skill.router)
 app.include_router(application.router)
 app.include_router(listing.router)
 app.include_router(listing_manager.router)
+app.include_router(new_data_handling.router)
 app.include_router(notification.router)
