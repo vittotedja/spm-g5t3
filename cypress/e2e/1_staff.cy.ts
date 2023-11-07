@@ -6,7 +6,7 @@ describe('Staff workflow', () => {
 
 		// Logan Tan has no job applications
 		cy.get('[data-testid = email]').type('logan.tan@allinone.com.sg');
-		cy.get('[data-testid = password]').type('logan.tan');
+		cy.get('[data-testid = password]').type('Logan.Tan');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
@@ -40,7 +40,7 @@ describe('Staff workflow', () => {
 
 		// Logan Tan has no job applications
 		cy.get('[data-testid = email]').type('bao.nguyen@allinone.com.sg');
-		cy.get('[data-testid = password]').type('bao.nguyen');
+		cy.get('[data-testid = password]').type('Bao.Nguyen');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
@@ -124,7 +124,7 @@ describe('Staff workflow', () => {
 		cy.visit('/', {failOnStatusCode: false});
 
 		cy.get('[data-testid = email]').type('daniel.fu@allinone.com.sg');
-		cy.get('[data-testid = password]').type('daniel.fu');
+		cy.get('[data-testid = password]').type('Daniel.Fu');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);

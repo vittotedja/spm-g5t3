@@ -45,7 +45,7 @@ def test_staff_search_oneself(app_client):
 def test_staff_headhunt(app_client):
     response = app_client.get('/api/staff?is_manager=True&staff_id=140944&listing_id=1')
     assert response.status_code == 200
-    assert len(response.json()['data']) == 335
+    assert len(response.json()['data']) == 334
     assert response.json()['data'][0]['match_percentage'] == 28.57142857142857
     assert response.json()['unique_dept'] == ['Sales', 'Solutioning', 'Engineering', 'HR', 'Finance', 'Consultancy', 'IT']
     assert response.json()['unique_country'] == ['Singapore', 'Malaysia', 'Indonesia', 'Vietnam', 'Hong Kong']
