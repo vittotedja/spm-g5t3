@@ -25,6 +25,9 @@ jobs:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                   SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
                   SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+                  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+                  MAIL_PORT: ${{secrets.MAIL_PORT}}
 
     cypress-run:
         runs-on: ubuntu-latest
@@ -68,3 +71,6 @@ jobs:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                   VITE_NEWEST_URL: ${{secrets.TEST_SUPABASE_URL}}
                   VITE_NEWEST_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+                  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+                  MAIL_PORT: ${{secrets.MAIL_PORT}}
