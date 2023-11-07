@@ -21,6 +21,7 @@ dist-ssr
 .env.development
 .env.test
 .env.production
+pytest.ini
 
 # Editor directories and files
 .vscode/*
@@ -42,3 +43,5 @@ api/__pycache__/
 api/__pycache__/*
 __pycache__/main.cpython-39.pyc
 __pycache__/main.cpython-39.pyc
+
+cypress.env.json
