@@ -58,11 +58,10 @@ const RoleDetailsPage = () => {
 	const staff_id = auth?.staffId;
 	const listing_id = parseInt(param?.listing_id ?? '');
 	const navigate = useNavigate();
-	//error handling the id
+
 	if (isNaN(listing_id)) {
 		return <div>Error 404: Invalid Listing Id</div>;
 	}
-
 	useEffect(() => {
 		async function fetchSecond() {
 			await setInitial(
@@ -209,10 +208,10 @@ const RoleDetailsPage = () => {
 			}
 	}
 
-	if (listingData?.listing_id === undefined) {
-		return <div>Error 404: Invalid Listing Id</div>;
-	} else if (loading) {
+	if (loading) {
 		return <LoadingState />;
+	} else if (listingData?.listing_id === undefined) {
+		return <div>Error 404: Invalid Listing Id</div>;
 	} else {
 		return (
 			<div className="container">
@@ -248,10 +247,10 @@ const RoleDetailsPage = () => {
 									listing_id={listing_id}
 								/>
 								<Button
+									id="apply-button"
 									styleType={disabled ? 'disabled' : 'green'}
 									className="w-full px-6 py-2 mt-4 text-lg font-semibold text-white rounded-md bg-emerald-600 hover:bg-emerald-900"
 									onClick={handleApply}
-									id="apply-button"
 									loading={applyLoading}
 								>
 									{buttonText}
