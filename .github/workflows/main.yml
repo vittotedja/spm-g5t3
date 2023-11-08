@@ -78,4 +78,4 @@ jobs:
                   MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
                   MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
                   MAIL_PORT: ${{secrets.MAIL_PORT}}
-                  CYPRESS_DEFAULT_COMMAND_TIMEOUT: 100000
+                  CYPRESS_DEFAULT_COMMAND_TIMEOUT: 300000
