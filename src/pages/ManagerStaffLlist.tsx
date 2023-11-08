@@ -7,7 +7,6 @@ import { useAuth } from "../utilities/Auth";
 import ProgressBar from "../components/ProgressBar";
 import FilterBox from "../components/FilterBox";
 import LoadingState from "../components/loadingState";
-import confused_guy from "../assets/confused_guy.png";
 import SortComponent from "../components/SortComponent";
 import formatDate from "../utilities/Utiliities";
 
