@@ -96,7 +96,10 @@ describe('Staff workflow', () => {
 		cy.contains('You have successfully withdrawn your application');
 		cy.get('[data-testid=close-button]').last().click();
 
-		cy.wait(6000);
+		// Make sure listing card exist
+		cy.get('body').should('contain', 'Call Centre')
+
+		// loop through all the listing cards in the profile page
 		cy.get('[data-testid=profile-rolename]').each(
 			($roleDetailsName) => {
 				if ($roleDetailsName.text() == clickedRoleName) {
