@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, Body
+from fastapi import FastAPI, APIRouter, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
@@ -98,6 +98,13 @@ async def listing(listing: PutListing):
         .execute()
         .data
     )
+    if listing_update:
+         pass
+    else:
+        raise HTTPException(
+            status_code=400, 
+            detail=f'Listing ID {listing.listing_id} is not found'
+        )
 
     # update listing manager
     manager = pd.DataFrame(
@@ -122,6 +129,13 @@ async def listing(listing: PutListing):
             .execute()
             .data
         )
+        if adding_manager:
+            pass
+        else:
+            raise HTTPException(
+                status_code=400, 
+                detail=f'Unable to add the hiring managers.'
+            )
     else:
         adding_manager = []
     
@@ -138,6 +152,13 @@ async def listing(listing: PutListing):
                 .execute()
                 .data
             )
+            if deleting_manager:
+                pass
+            else:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f'Hiring manager with manager ID {del_man["manager_id"]} is not found.'
+                )
     else:
         deleting_manager = []
     return listing_update, adding_manager, deleting_manager
