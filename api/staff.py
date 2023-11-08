@@ -128,7 +128,6 @@ async def staff(
         # 9. Sort by match percentage.
         grouped.sort_values(by=["match_percentage"],
                             ascending=False, inplace=True)
-
         return {"data": grouped.to_dict(orient="records"), "unique_dept": unique_dept, "unique_country": unique_country}
     elif staff_id:
         # get all staff if staff_id = 0

@@ -70,7 +70,7 @@ const ManagerStaffList = () => {
     Record<string, string[]>
   >({});
   const itemsPerPage = 10;
-  const totalPages = Math.ceil(allStaff.length / itemsPerPage);
+  const totalPages = Math.ceil(allStaff?.length / itemsPerPage);
   const auth = useAuth();
   const staff_email = auth?.user?.email;
 
@@ -91,9 +91,9 @@ const ManagerStaffList = () => {
       async function fetchData() {
         setLoading(true);
         const staff_reponse = await getAsync(
-          `api/staff?isManager=${true}&staff_id=${
+          `api/staff?staff_id=${
             staff?.staff_id
-          }&listing_id=${selectedListing}&filters=${JSON.stringify(
+          }&is_manager=${true}&listing_id=${selectedListing}&filters=${JSON.stringify(
             selectedFilters
           )}`
         );
@@ -121,8 +121,8 @@ const ManagerStaffList = () => {
   }, [staff.staff_id]);
 
   useEffect(() => {
-    if (allStaff.length > 0) {
-      setPaginatedStaff(allStaff.slice(0, itemsPerPage));
+    if (allStaff?.length > 0) {
+      setPaginatedStaff(allStaff?.slice(0, itemsPerPage));
     }
   }, [allStaff]);
 
@@ -188,6 +188,9 @@ const ManagerStaffList = () => {
     setSelectedListing(field);
   };
 
+  const selectedRole =
+    validListings.find((item) => item.listing_id.toString() === selectedListing)
+      ?.listing?.role?.role_id ?? "";
   return (
     <div className="container mx-auto mt-6">
       {validListings.length > 0 ? (
@@ -228,7 +231,9 @@ const ManagerStaffList = () => {
             <SearchBar
               results={searchResults}
               onSearchChange={handleSearchChange}
-              placeholder="Search staff..."
+                placeholder="Search staff..."
+                listingId={selectedListing?.toString()}
+                roleId={selectedRole?.toString()}
             />
           </div>
           <div className="flex overflow-x-auto">
@@ -251,7 +256,7 @@ const ManagerStaffList = () => {
               )}
               {!loading ? (
                 <>
-                  {!loading && allStaff.length === 0 ? (
+                  {!loading && allStaff?.length === 0 ? (
                     <div className="flex flex-col items-center justify-center my-12 text-center">
                       <img src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/confused_guy.png' width={500} alt="Confused Guy" />
                       <h2 className="text-2xl font-bold">
@@ -278,7 +283,13 @@ const ManagerStaffList = () => {
                               className="border-b hover:bg-gray-100"
                               onClick={() =>
                                 navigate(
-                                  `/manager/applicants-list/${staffMember?.staff_id}/applicant-detail/0`
+                                  `/manager/applicants-list/${selectedListing}/applicant-detail/0`,
+                                  {
+                                    state: {
+                                      staff_id: staffMember?.staff_id,
+                                      role_id: selectedRole,
+                                    },
+                                  }
                                 )
                               }
                             >
