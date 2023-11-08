@@ -27,14 +27,14 @@ export const Navbar: React.FC = () => {
 	useEffect(() => {
 		const {data: authListener} = supabase.auth.onAuthStateChange(
 			(event, session) => {
-				console.log('Auth event:', event);
+				// console.log('Auth event:', event);
 
-				if (event === 'SIGNED_IN') {
-					console.log('User signed in!', session?.user);
-				}
+				// if (event === 'SIGNED_IN') {
+				// 	console.log('User signed in!', session?.user);
+				// }
 
 				if (event === 'SIGNED_OUT') {
-					console.log('User signed out!');
+					// console.log('User signed out!');
 					navigate('/login');
 				}
 			}

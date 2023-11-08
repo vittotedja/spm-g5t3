@@ -79,8 +79,8 @@ export function AuthProvider({children}: AuthProviderProps) {
 	}, []);
 
 	useEffect(() => {
-		console.log(userRole);
-		console.log(staffId);
+		// console.log(userRole);
+		// console.log(staffId);
 	}, [userRole, staffId]);
 	// Will be passed down to Signup, Login and Dashboard components
 

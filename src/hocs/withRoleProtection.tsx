@@ -21,14 +21,14 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 	const staffId = auth?.staffId;
 	console.log(user?.email);
 	// console.log(userRole);
-	console.log(staffId);
+	// console.log(staffId);
 	useEffect(() => {
 		if (!auth) {
 			console.error('Auth context is not available!');
 			return;
 		}
 
-		console.log('Current UserRole', userRole);
+		// console.log('Current UserRole', userRole);
 		if (userRole === 'loading') return;
 
 		if (!userRole) {
