@@ -10,7 +10,6 @@ from datetime import datetime
 import pytz
 import pandas as pd
 
-
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
@@ -33,6 +32,7 @@ class PostListing(BaseModel):
     vacancy: int
     creation_date: datetime = None
     application_close_date: datetime
+
 
 class PutListing(BaseModel):
     application_close_date: datetime
@@ -70,15 +70,31 @@ async def listing(listing_id: int = None):
 @router.post("/api/listing")
 async def listing(listing: PostListing = Body(...)):
     post = listing.dict()
-    post["creation_date"] = datetime.now(pytz.utc).strftime("%Y-%m-%d %H:%M:%S")
+    post["creation_date"] = datetime.now(pytz.utc).strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+    print(post["application_close_date"])
     post["application_close_date"] = post["application_close_date"].strftime(
-        "%Y-%m-%d %H:%M:%S"
+        "%Y-%m-%d %H:%M:%S.%f%z"
     )
+    print(post["application_close_date"])
     try:
         data, count = supabase.table("listing").insert(post).execute()
         return {"success": True, "data": data[1][0]}
     except Exception as e:
-        return {"success": False, "error": e}
+        raise HTTPException(
+            status_code=400, detail={"success": False, "data": e.json()}
+        )
+
+
+def custom_strftime(dt: datetime) -> str:
+    # Format the datetime without the timezone
+    dt_str = dt.strftime("%Y-%m-%dT%H:%M:%S.%f")
+
+    # Add the timezone manually in the +00:00 format
+    tz_str = (
+        f"{dt.utcoffset().seconds // 3600:02}:{(dt.utcoffset().seconds // 60) % 60:02}"
+    )
+
+    return f"{dt_str}{tz_str}"
 
 @app.put("/api/listing")
 @router.put("/api/listing")

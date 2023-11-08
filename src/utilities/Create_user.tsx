@@ -32,8 +32,8 @@ export const useCreateAcc = () => {
         staff.map(async (member) => {
             const { email } = member;
             const password = email.split('@')[0];
-            console.log(email)
-            console.log(password)
+            // console.log(email)
+            // console.log(password)
             try {
                 const { error } = await supabase.auth.signUp({
                     email,
@@ -49,7 +49,7 @@ export const useCreateAcc = () => {
                     // Handle error - like user already exists or other signup issues
                     console.error('Error creating account for', email, 'and ', password, ':', error.message);
                 } else {
-                    console.log('Account created for:', email);
+                    // console.log('Account created for:', email);
                 }
             } catch (error) {
                 console.error('Error during signup:', error);

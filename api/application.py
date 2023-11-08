@@ -60,14 +60,14 @@ class PutApplication(BaseModel):
 @app.get("/api/application")
 @router.get("/api/application")
 async def application(
-    application_id: int = None, staff_id: int = None, role_id: int = None
+    application_id: int = None, staff_id: int = None, listing_id: int = None
 ):
-    if staff_id and role_id:
+    if staff_id and listing_id:
         application = (
             supabase.from_("application")
             .select("*,listing(*)")
             .eq("staff_id", staff_id)
-            .eq("listing_id", role_id)
+            .eq("listing_id", listing_id)
             .execute()
             .data
         )
@@ -77,7 +77,7 @@ async def application(
             listing_info = (
                 supabase.from_("listing")
                 .select("*")
-                .eq("listing_id", role_id)
+                .eq("listing_id", listing_id)
                 .execute()
                 .data
             )
@@ -90,7 +90,7 @@ async def application(
                 "applied_at": None,
                 "updated_at": None,
                 "withdrawn_at": None,
-                "listing_id": role_id,
+                "listing_id": listing_id,
                 "application_reason": None,
                 "application_status": None,
                 "staff_id": staff_id,
@@ -124,11 +124,11 @@ async def application(
             .data
         )
         return application
-    elif role_id:
+    elif listing_id:
         response = (
             supabase.table("application")
             .select("*, staff  (*)")
-            .eq("listing_id", role_id)
+            .eq("listing_id", listing_id)
             .execute()
             .data
         )
@@ -138,7 +138,7 @@ async def application(
         role = (
             supabase.table("listing")
             .select("role_id")
-            .eq("listing_id", role_id)
+            .eq("listing_id", listing_id)
             .execute()
             .data
         )
@@ -161,21 +161,19 @@ async def application(
 @app.post("/api/application")
 @router.post("/api/application")
 async def application(application: PostApplication = Body(...)):
+    print(application.dict())
     try:
         data, error = (
             supabase.table("application").insert([application.dict()]).execute()
         )
-
-        print(application.application_id)
-
-        if error:
-            print(error)  # Log the error for debugging
-            return {"success": False, "error": error}
-        else:
+        if data:
             return {
                 "success": True,
                 "data": data,
-            }  # Return the first item in the response
+            }
+        elif error:
+            print(error)  # Log the error for debugging
+            return {"success": False, "error": error}
 
     except Exception as e:
         return {"success": False, "error": e}
@@ -199,4 +197,7 @@ async def application(application: PutApplication):
         await send_email(application.application_status, application.application_id)
         return response
     else:
-        raise HTTPException(status_code=400)
+        raise HTTPException(
+            status_code=400,
+            detail=f"Application_id {application.application_id} is not found",
+        )

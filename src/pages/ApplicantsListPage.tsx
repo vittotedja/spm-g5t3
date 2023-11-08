@@ -48,7 +48,7 @@ const ApplicantsListPage = () => {
 			);
 			await setInitial(
 				setApplicantsData,
-				`api/application?role_id=${listing_id}`
+				`api/application?listing_id=${listing_id}`
 			);
 			setLoading(false);
 		}
