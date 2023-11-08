@@ -1,6 +1,5 @@
 import React from 'react';
 import ProgressBar from './ProgressBar';
-import maps_pointer from '../assets/maps_pointer.svg';
 import {Link} from 'react-router-dom';
 import formatDate from '../utilities/Utiliities';
 
@@ -43,7 +42,7 @@ const RoleCard: React.FC<RoleCardProps> = ({
 					</h2>
 					{listing_location && (
 						<div className="flex justify-start">
-							<img src={maps_pointer} className="mr-2"></img>{' '}
+							<img src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/maps_pointer.svg' className="mr-2"></img>{' '}
 							{listing_location}
 						</div>
 					)}

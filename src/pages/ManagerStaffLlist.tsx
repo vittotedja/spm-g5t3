@@ -7,7 +7,6 @@ import { useAuth } from "../utilities/Auth";
 import ProgressBar from "../components/ProgressBar";
 import FilterBox from "../components/FilterBox";
 import LoadingState from "../components/loadingState";
-import confused_guy from "../assets/confused_guy.png";
 
 interface Staff {
   staff_id: number;
@@ -145,7 +144,7 @@ const ManagerStaffList = () => {
             <>
               {!loading && allStaff.length === 0 ? (
                 <div className="flex flex-col items-center justify-center my-12 text-center">
-                  <img src={confused_guy} width={500} alt="Confused Guy" />
+                  <img src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/confused_guy.png' width={500} alt="Confused Guy" />
                   <h2 className="text-2xl font-bold">
                     No staff match the selected filters, please try
                     again.
