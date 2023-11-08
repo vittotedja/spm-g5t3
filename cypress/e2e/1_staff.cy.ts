@@ -12,14 +12,14 @@ describe('Staff workflow', () => {
 		cy.wait(6000);
 		cy.contains('Logan Tan');
 		let clickedRoleName = '';
-		cy.get('[data-testid = role-name]', {timeout: 10000})
+		cy.get('[data-testid = role-name]')
 			.first()
 			.then(($roleName) => {
 				clickedRoleName = $roleName.text();
 			});
 
-		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
-		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+		cy.get('[data-testid = role-card]').first().click();
+		cy.get('[data-testid=role-details-name]').should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).to.eq(clickedRoleName);
 			}
@@ -46,14 +46,14 @@ describe('Staff workflow', () => {
 		cy.wait(6000);
 		cy.contains('Bao Nguyen');
 		let clickedRoleName = '';
-		cy.get('[data-testid = role-name]', {timeout: 10000})
+		cy.get('[data-testid = role-name]')
 			.first()
 			.then(($roleName) => {
 				clickedRoleName = $roleName.text();
 			});
 
-		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
-		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+		cy.get('[data-testid = role-card]').first().click();
+		cy.get('[data-testid=role-details-name]').should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).to.eq(clickedRoleName);
 			}
@@ -71,13 +71,13 @@ describe('Staff workflow', () => {
 
 		// user is redirected to profile page
 		cy.wait(6000);
-		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).should(
+		cy.get('[data-testid=profile-rolename]').should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).to.include(clickedRoleName);
 			}
 		);
 
-		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).each(
+		cy.get('[data-testid=profile-rolename]').each(
 			($roleDetailsName) => {
 				if ($roleDetailsName.text() == clickedRoleName) {
 					cy.get('[data-testid=profile-rolename]')
@@ -96,8 +96,11 @@ describe('Staff workflow', () => {
 		cy.contains('You have successfully withdrawn your application');
 		cy.get('[data-testid=close-button]').last().click();
 
-		cy.wait(6000);
-		cy.get('[data-testid=profile-rolename]', {timeout: 10000}).each(
+		// Make sure listing card exist
+		cy.get('body').should('contain', 'Call Centre')
+
+		// loop through all the listing cards in the profile page
+		cy.get('[data-testid=profile-rolename]').each(
 			($roleDetailsName) => {
 				if ($roleDetailsName.text() == clickedRoleName) {
 					//expect to be withdrawn
@@ -113,7 +116,7 @@ describe('Staff workflow', () => {
 
 		// checks if homepage has no more role that a user has just applied
 		cy.get('[data-testid=home-link]').click();
-		cy.get('[data-testid=role-details-name]', {timeout: 10000}).should(
+		cy.get('[data-testid=role-details-name]').should(
 			($roleDetailsName) => {
 				expect($roleDetailsName.text()).not.to.eq(clickedRoleName);
 			}
@@ -134,7 +137,7 @@ describe('Staff workflow', () => {
 		//applies for 5 jobs
 		let i: number;
 		for (i = 0; i < 5; i++) {
-			cy.get('[data-testid = role-card]', {timeout: 10000})
+			cy.get('[data-testid = role-card]')
 				.first()
 				.click();
 			cy.get('#apply-button').click();
@@ -149,7 +152,7 @@ describe('Staff workflow', () => {
 		}
 
 		//should not be able to apply for the 6th role
-		cy.get('[data-testid = role-card]', {timeout: 10000}).first().click();
+		cy.get('[data-testid = role-card]').first().click();
 		cy.get('#apply-button').click();
 		cy.contains('You Have Reached the Maximum Applications Limit');
 	});
