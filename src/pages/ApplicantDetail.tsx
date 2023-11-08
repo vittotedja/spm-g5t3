@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ProgressBar from "../components/ProgressBar";
-import { putAsync, setInitial } from "../utilities/Services";
+import { postAsync, putAsync, setInitial } from "../utilities/Services";
 import Badge from "../components/Badge";
 import Button from "../components/Button";
 import { useNavigate } from "react-router-dom";
@@ -130,6 +130,14 @@ export default function ApplicantDetail() {
       : alert("Error updating application status");
   }
 
+  const inviteToApply = async () => {
+    let res = await postAsync(`api/notification?listing_id=${listing_id}&staff_id=${location?.state?.staff_id}`,"");
+    console.log(res)
+    res.ok
+      ? alert("Invitation sent!")
+      : alert("Error sending invitation");
+  }
+
   // TODO: show which role this application is for
   return (
     <>
@@ -145,7 +153,7 @@ export default function ApplicantDetail() {
         <p>Loading...</p>
       ) : (
         <div className="container w-4/5 px-4 mx-auto mt-10">
-          {role && (
+          {role && listing && !loading && (
             <div className="text-2xl font-bold text-left mb-8">
               <h2 className="text-xl font-bold text-left">
                 Head hunting for {role?.role_name}
@@ -167,7 +175,7 @@ export default function ApplicantDetail() {
             </div>
           )}
           <div className="container space-y-6 md:flex">
-            <div className="container flex p-0 space-x-6 md:w-9/12">
+           {<div className="container flex p-0 space-x-6 md:w-9/12">
               <div className="text-left">
                 <Avatar
                   name={`${applicant.staff_fname} ${applicant.staff_lname}`}
@@ -192,13 +200,13 @@ export default function ApplicantDetail() {
                   {applicant.curr_role.role_location}
                 </p>
               </div>
-            </div>
+            </div>}
             {application_id && application_id == "0" && (
               <div className="flex w-3/12 space-x-2 text-right md:justify-end">
                 <Button
                   styleType="green"
                   id="shortlist-button"
-                  onClick={() => update_application("Shortlisted")}
+                  onClick={() => inviteToApply()}
                 >
                   Invite to Apply
                 </Button>
