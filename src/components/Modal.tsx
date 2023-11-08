@@ -1,5 +1,4 @@
 import React from 'react';
-import close from '../assets/close.png';
 import Button from './Button';
 import {useState} from 'react';
 import {FcCheckmark, FcHighPriority, FcQuestions} from 'react-icons/fc';
@@ -48,7 +47,7 @@ const Modal: React.FC<ModalProps> = ({
 								onClick={onClose}
 								data-testid="close-button"
 							>
-								<img src={close} width={13} />
+								<img src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/close.png' width={13} />
 							</button>
 						</div>
 						<div className="max-h-screen pb-3">

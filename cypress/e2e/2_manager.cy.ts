@@ -14,7 +14,7 @@ describe('Manager workflow', () => {
 		cy.contains('Chandra Pandey');
 
 		cy.get('[data-testid=manager-link]').click();
-		cy.contains('All Posted Role Listings');
+		cy.contains('Your Posted Role Listings');
 
 		let clickedRoleName = '';
 		cy.get('[data-testid=rolename-manager]')
