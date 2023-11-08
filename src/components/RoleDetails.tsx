@@ -49,8 +49,6 @@ const RoleDetails: React.FC<RoleDetailsProps> = ({ listing_id }) => {
       : null
   );
 
-  console.log(loading)
-
   return (
     <div className="w-full mb-8 lg:mb-0">
       <section className="rounded-lg mr-2 p-8 min-h-[600px] relative border border-solid border-gray-200">

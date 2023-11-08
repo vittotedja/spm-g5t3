@@ -5,7 +5,7 @@ import {UserRole} from '../hocs/withRoleProtection';
 
 interface SignInData {
 	email: string;
-	password: string;
+	password: string; 
 }
 type AuthContextType = {
 	signInWithPassword: (data: SignInData) => Promise<any>;
@@ -79,8 +79,8 @@ export function AuthProvider({children}: AuthProviderProps) {
 	}, []);
 
 	useEffect(() => {
-		console.log(userRole);
-		console.log(staffId);
+		// console.log(userRole);
+		// console.log(staffId);
 	}, [userRole, staffId]);
 	// Will be passed down to Signup, Login and Dashboard components
 
