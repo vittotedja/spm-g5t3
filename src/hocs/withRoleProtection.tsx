@@ -18,7 +18,7 @@ export const RoleProtection: React.FC<ProtectedProps> = ({
 	const auth = useAuth();
 	const user = auth?.user;
 	const userRole = auth?.userRole;
-	const staffId = auth?.staffId;
+	// const staffId = auth?.staffId;
 	console.log(user?.email);
 	// console.log(userRole);
 	// console.log(staffId);

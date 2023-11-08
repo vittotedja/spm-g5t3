@@ -31,7 +31,7 @@ export const useCreateAcc = () => {
       await Promise.all(
         staff.map(async (member) => {
             const { email } = member;
-            // const password = email.split('@')[0];
+            const password = email.split('@')[0];
             // console.log(email)
             // console.log(password)
             try {

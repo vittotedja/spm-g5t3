@@ -26,7 +26,7 @@ export const Navbar: React.FC = () => {
 
 	useEffect(() => {
 		const {data: authListener} = supabase.auth.onAuthStateChange(
-			(event, session) => {
+			(event) => {
 				// console.log('Auth event:', event);
 
 				// if (event === 'SIGNED_IN') {
