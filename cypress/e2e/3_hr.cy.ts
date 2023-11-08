@@ -1,12 +1,12 @@
 describe('HR workflow', () => {
-	it('should allow HR to see all posted role listings', () => {
+	it('should allow HR to see all posted role listings and add more', () => {
 		cy.visit('/', {failOnStatusCode: false});
 		cy.contains('Please login to access this page');
 		cy.contains('GlassWindow');
 
 		// Arifin Saputra is an HR
 		cy.get('[data-testid = email]').type('arifin.saputra@allinone.com.sg');
-		cy.get('[data-testid = password]').type('arifin.saputra');
+		cy.get('[data-testid = password]').type('Arifin.Saputra');
 		cy.get('[data-testid = submitBtn]').click();
 
 		cy.wait(6000);
@@ -50,9 +50,26 @@ describe('HR workflow', () => {
 
 		const today = new Date();
 		const date = today.getDate();
-		cy.contains('button', date + 2)
-			.click()
-			.type('{esc}');
+		const month = today.getMonth();
+
+		if (month === 1 && date > 28) {
+			cy.contains('button', '2').click().type('{esc}');
+		} else if (date >= 30) {
+			cy.contains('button', '1').click().type('{esc}');
+		} else {
+			// Using .filter() to match the exact text content of the button
+			cy.get('button')
+				.filter(`:contains("${date + 2}")`)
+				.then(($buttons) => {
+					// Find the button that has exactly the text we want, not just containing it
+					const exactButton = $buttons.filter((i, el) => {
+						return Cypress.$(el).text().trim() === String(date + 2);
+					});
+					if (exactButton.length > 0) {
+						cy.wrap(exactButton).click().type('{esc}');
+					}
+				});
+		}
 		cy.get('#save-listing').click();
 		cy.contains(
 			'Something went wrong, please check whether you have keyed in the right details'

@@ -32,16 +32,19 @@ interface Application {
 }
 
 const RoleDetailsPage = () => {
-	//const user.staffId = typeof session?.user === 'string' ? session?.user : undefined;
-	//TODO: change staffID to be dynamic
 	const auth = useAuth();
+	const staff_id = auth?.staffId;
+
 	const param = useParams<{listing_id: string}>();
 	const [applyLoading, setApplyLoading] = useState<any>(null);
 	const [haveAppliedModal, setHaveAppliedModal] = useState(false);
+
+	// modal states
 	const [maxLimitModal, setMaxLimitModal] = useState(false);
 	const [confirmModal, setConfirmModal] = useState(false);
 	const [reasonModal, setReasonModal] = useState(false);
 	const [successModal, setSuccessModal] = useState(false);
+
 	const [reason, setReason] = useState<string>('');
 	const [listingData, setListingData] = useState<any>(null);
 	const [loading, setLoading] = useState(true);
@@ -55,14 +58,12 @@ const RoleDetailsPage = () => {
 	const [withdrawModal, setWithdrawModal] = useState(false);
 	const [withdrawSuccessModal, setWithdrawSuccessModal] = useState(false);
 	const [rejectionCount, setRejectionCount] = useState<number>(0);
-	const staff_id = auth?.staffId;
 	const listing_id = parseInt(param?.listing_id ?? '');
 	const navigate = useNavigate();
-	//error handling the id
+
 	if (isNaN(listing_id)) {
 		return <div>Error 404: Invalid Listing Id</div>;
 	}
-
 	useEffect(() => {
 		async function fetchSecond() {
 			await setInitial(
@@ -72,7 +73,7 @@ const RoleDetailsPage = () => {
 			);
 			await setInitial(
 				setListingApplications,
-				`api/application?staff_id=${staff_id}&role_id=${listing_id}`,
+				`api/application?staff_id=${staff_id}&listing_id=${listing_id}`,
 				true
 			);
 			await setInitial(
@@ -209,10 +210,10 @@ const RoleDetailsPage = () => {
 			}
 	}
 
-	if (listingData?.listing_id === undefined) {
-		return <div>Error 404: Invalid Listing Id</div>;
-	} else if (loading) {
+	if (loading) {
 		return <LoadingState />;
+	} else if (listingData?.listing_id === undefined) {
+		return <div>Error 404: Invalid Listing Id</div>;
 	} else {
 		return (
 			<div className="container">
@@ -248,10 +249,10 @@ const RoleDetailsPage = () => {
 									listing_id={listing_id}
 								/>
 								<Button
+									id="apply-button"
 									styleType={disabled ? 'disabled' : 'green'}
 									className="w-full px-6 py-2 mt-4 text-lg font-semibold text-white rounded-md bg-emerald-600 hover:bg-emerald-900"
 									onClick={handleApply}
-									id="apply-button"
 									loading={applyLoading}
 								>
 									{buttonText}
