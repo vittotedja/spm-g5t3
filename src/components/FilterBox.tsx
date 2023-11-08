@@ -1,6 +1,4 @@
 import { useState } from "react";
-import arrowDown from "../assets/down-arrow 1.svg";
-import arrowUp from "../assets/down-arrow 2.svg";
 
 interface FilterItem {
   name: string;
@@ -55,7 +53,7 @@ const FilterBox: React.FC<FilterBoxProps> = ({
           >
             {filter.name}
             <img
-              src={openFilters.includes(filter.name) ? arrowUp : arrowDown}
+              src={openFilters.includes(filter.name) ? 'https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/down-arrow%201.svg' : 'https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/down-arrow%201.svg'}
             ></img>
           </div>
           {openFilters.includes(filter.name) && (

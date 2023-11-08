@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import arrowDown from "../assets/down-arrow 1.svg";
-import arrowUp from "../assets/down-arrow 2.svg";
 
 interface Option {
   value: string;
@@ -57,7 +55,7 @@ const SortComponent: React.FC<SortProps> = ({
           onClick={toggleOrder}
           className="flex items-center justify-between"
         >
-          <img className="mr-2" src={order === "asc" ? arrowUp : arrowDown} alt="Order Icon"></img>
+          <img className="mr-2" src={order === "asc" ? 'https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/down-arrow%201.svg' : 'https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/down-arrow%201.svg'} alt="Order Icon"></img>
           {order === "asc" ? "Ascending" : "Descending"}
         </button>
       )}
