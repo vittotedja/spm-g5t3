@@ -15,7 +15,7 @@ function ManagerRoleDetails() {
 			<div className="container items-center justify-center w-4/5 h-screen mx-auto">
 				<div className="flex flex-row items-center justify-between px-3 pt-5">
 					<h1 className="text-3xl font-bold text-start">
-						All Posted Role Listings
+						{isHR ? 'All' : 'Your'} Posted Role Listings
 					</h1>
 					{isHR && (
 						<Button

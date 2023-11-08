@@ -49,37 +49,38 @@ function ManagerIndividualRole({
 					applicationEndDate ? new Date(applicationEndDate) : null
 				)}
 			</td>
-			<td
-				colSpan={isHR && !isDisabled ? 1 : 2}
-				className="justify-center align-middle"
-			>
-				{isHR && !isDisabled ? (
-					<div
-						className={
-							'mx-auto cursor-pointer hover:text-green hover:underline'
-						}
-						onClick={() => {
-							navigate('/manager/role-listing', {
-								state: {isEdit: true},
-							});
-						}}
-					>
-						<HiPencilSquare />
-					</div>
-				) : (
-					<div className="text-center text-red">CLOSED</div>
-				)}
-			</td>
-			{isHR && !isDisabled && (
-				<td className="justify-center align-middle">
-					<div
-						className={
-							'mx-auto cursor-pointer hover:text-red hover:underline d-flex justify-center align-middle'
-						}
-					>
-						<HiTrash className="h-full" />
-					</div>
-				</td>
+			{isHR ? (
+				<>
+					<td className="justify-center align-middle">
+						<div
+							className={
+								'mx-auto cursor-pointer hover:text-green hover:underline'
+							}
+							onClick={() => {
+								navigate('/manager/role-listing', {
+									state: {isEdit: true},
+								});
+							}}
+						>
+							<HiPencilSquare />
+						</div>
+					</td>
+
+					<td className="justify-center align-middle">
+						<div
+							className={
+								'mx-auto cursor-pointer hover:text-red hover:underline d-flex justify-center align-middle'
+							}
+						>
+							<HiTrash className="h-full" />
+						</div>
+					</td>
+				</>
+			) : (
+				<>
+					<td> </td>
+					<td> </td>
+				</>
 			)}
 		</tr>
 	);
