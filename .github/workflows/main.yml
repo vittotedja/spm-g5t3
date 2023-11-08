@@ -2,60 +2,69 @@ name: SPM Push Pipeline
 
 on: [push]
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
+
 jobs:
     pytest-run:
         strategy:
             fail-fast: false
-        runs-on: windows-latest
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v4
             - name: Set up Python
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v4
               with:
                   python-version: 3.9
             - name: Install dependencies
               run: |
                   pip install -r requirements.txt
-              working-directory: ./
-            - name: Start FastAPI backend
-              run: |
-                  uvicorn main:app &
-              env:
-                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
               working-directory: ./
             - name: Pytest Run
               run: pytest
+              working-directory: ./pytest
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
-                  TEST_SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
-                  TEST_SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+                  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+                  MAIL_PORT: ${{secrets.MAIL_PORT}}
 
     cypress-run:
-        # needs: [setup-python-backend]
-        runs-on: windows-latest
+        runs-on: ubuntu-latest
+        if: ${{ always() }}
+        needs: pytest-run
         steps:
             - name: Checkout
               uses: actions/checkout@v4
             - name: Set up Python
-              uses: actions/setup-python@v2
+              uses: actions/setup-python@v4
               with:
                   python-version: 3.9
             - name: Install dependencies
               run: |
                   pip install -r requirements.txt
               working-directory: ./
+            - name: Set Up Database
+              run: |
+                  python ./setup_db.py
+              working-directory: ./
+              env:
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
             - name: Start FastAPI backend
               run: |
                   uvicorn main:app &
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-                  SUPABASE_KEY: ${{secrets.SUPABASE_KEY}}
+                  SUPABASE_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  SUPABASE_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+                  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+                  MAIL_PORT: ${{secrets.MAIL_PORT}}
               working-directory: ./
             - name: Cypress run
               uses: cypress-io/github-action@v6
@@ -64,5 +73,9 @@ jobs:
                   start: npm run dev
               env:
                   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-                  VITE_NEWEST_URL: ${{secrets.VITE_NEWEST_URL}}
-                  VITE_NEWEST_KEY: ${{secrets.VITE_NEWEST_KEY}}
+                  VITE_NEWEST_URL: ${{secrets.TEST_SUPABASE_URL}}
+                  VITE_NEWEST_KEY: ${{secrets.TEST_SUPABASE_KEY}}
+                  MAIL_USERNAME: ${{secrets.MAIL_USERNAME}}
+                  MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+                  MAIL_PORT: ${{secrets.MAIL_PORT}}
+                  CYPRESS_DEFAULT_COMMAND_TIMEOUT: 300000

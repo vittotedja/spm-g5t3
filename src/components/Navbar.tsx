@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect} from 'react';
 import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {useAuth} from '../utilities/Auth';
-import glasswindow_white from '../assets/glasswindow_white.png';
 import {CurrentUser} from '../components/CurrentUser';
 import {Button2} from './ui/button';
 import supabase from '../utilities/supabase';
@@ -26,15 +25,15 @@ export const Navbar: React.FC = () => {
 
 	useEffect(() => {
 		const {data: authListener} = supabase.auth.onAuthStateChange(
-			(event, session) => {
-				console.log('Auth event:', event);
+			(event) => {
+				// console.log('Auth event:', event);
 
-				if (event === 'SIGNED_IN') {
-					console.log('User signed in!', session?.user);
-				}
+				// if (event === 'SIGNED_IN') {
+				// 	console.log('User signed in!', session?.user);
+				// }
 
 				if (event === 'SIGNED_OUT') {
-					console.log('User signed out!');
+					// console.log('User signed out!');
 					navigate('/login');
 				}
 			}
@@ -51,7 +50,7 @@ export const Navbar: React.FC = () => {
 				<div className="flex-grow-0 flex-shrink-0">
           <Link to="/" data-testid="home-link">
 					  <img
-              src={glasswindow_white}
+              src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/glasswindow_white.png'
               alt="Brand Logo"
               className="h-12"
 					  />

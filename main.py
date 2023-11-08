@@ -8,9 +8,10 @@ from api import (
     role,
     skill,
     application,
-    manager_rolelisting,
     listing,
     listing_manager,
+    new_data_handling,
+    notification,
 )
 
 app = FastAPI()
@@ -21,6 +22,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 app.include_router(staff.router)
 app.include_router(staff_role.router)
 app.include_router(staff_skill.router)
@@ -30,4 +32,5 @@ app.include_router(skill.router)
 app.include_router(application.router)
 app.include_router(listing.router)
 app.include_router(listing_manager.router)
-app.include_router(manager_rolelisting.router)
+app.include_router(new_data_handling.router)
+app.include_router(notification.router)

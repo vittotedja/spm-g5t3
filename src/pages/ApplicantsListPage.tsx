@@ -41,7 +41,7 @@ const ApplicantsListPage = () => {
 			);
 			await setInitial(
 				setApplicantsData,
-				`api/application?role_id=${listing_id}`
+				`api/application?listing_id=${listing_id}`
 			);
 			setLoading(false);
 		}
@@ -103,7 +103,10 @@ const ApplicantsListPage = () => {
 							<div className="flex flex-col max-w-4xl p-8 pb-0 pl-10 lg:flex-row">
 								<div className="flex flex-col lg:flex-row">
 									<div className="w-full lg:pr-96 lg:mr-60">
-										<h2 className="mb-3 text-3xl font-bold text-left text-gray-800 whitespace-normal max-h-16">
+										<h2
+											className="mb-3 text-3xl font-bold text-left text-gray-800 whitespace-normal max-h-16"
+											data-testid="applicantslist-rolename"
+										>
 											{roleName}
 										</h2>
 										<p className="mb-1 text-left text-gray-600 text-l whitespace-nowrap">
@@ -177,6 +180,7 @@ const ApplicantsListPage = () => {
 									borderBottomLeftRadius: '0',
 								}}
 								onClick={selectShortlist}
+								data-testid="shortlisted-button"
 							>
 								Shortlisted
 							</button>
@@ -250,13 +254,17 @@ const ApplicantsListPage = () => {
 																<tr
 																	key={i}
 																	className="border-b hover:bg-gray-100"
+																	data-testid="applicant-row"
 																	onClick={() =>
 																		navigate(
 																			`applicant-detail/${applicationId}`
 																		)
 																	}
 																>
-																	<td className="p-2">
+																	<td
+																		className="p-2"
+																		data-testid="applicants-name"
+																	>
 																		{
 																			staff.staff_fname
 																		}{' '}
@@ -307,7 +315,10 @@ const ApplicantsListPage = () => {
 													}
 													if (rows.length == 0) {
 														return (
-															<tr className="border-b">
+															<tr
+																className="border-b"
+																data-testid="applicant-row"
+															>
 																<td
 																	colSpan={7}
 																	className="p-4 text-center"

@@ -35,9 +35,12 @@ function ManagerIndividualRole({
 					? 'text-slate-500 bg-slate-200'
 					: ' hover:bg-slate-100'
 			}`}
+			data-testid="manager-individual-role"
 			onClick={() => navigate(`/manager/applicants-list/${listing_id}`)}
 		>
-			<td className="py-2">{roleName ? roleName : 'role name'}</td>
+			<td className="py-2" data-testid="rolename-manager">
+				{roleName ? roleName : 'role name'}
+			</td>
 			<td>{roleID ? roleID : 'role id'}</td>
 			<td>{noOfApplicants ? noOfApplicants : '0'}</td>
 			<td>{vacancy ? vacancy : '0'}</td>
@@ -46,37 +49,38 @@ function ManagerIndividualRole({
 					applicationEndDate ? new Date(applicationEndDate) : null
 				)}
 			</td>
-			<td
-				colSpan={isHR && !isDisabled ? 1 : 2}
-				className="justify-center align-middle"
-			>
-				{isHR && !isDisabled ? (
-					<div
-						className={
-							'mx-auto cursor-pointer hover:text-green hover:underline'
-						}
-						onClick={() => {
-							navigate('/manager/role-listing', {
-								state: {isEdit: true},
-							});
-						}}
-					>
-						<HiPencilSquare />
-					</div>
-				) : (
-					<div className="text-center text-red">CLOSED</div>
-				)}
-			</td>
-			{isHR && !isDisabled && (
-				<td className="justify-center align-middle">
-					<div
-						className={
-							'mx-auto cursor-pointer hover:text-red hover:underline d-flex justify-center align-middle'
-						}
-					>
-						<HiTrash className="h-full" />
-					</div>
-				</td>
+			{isHR ? (
+				<>
+					<td className="justify-center align-middle">
+						<div
+							className={
+								'mx-auto cursor-pointer hover:text-green hover:underline'
+							}
+							onClick={() => {
+								navigate('/manager/role-listing', {
+									state: {isEdit: true},
+								});
+							}}
+						>
+							<HiPencilSquare />
+						</div>
+					</td>
+
+					<td className="justify-center align-middle">
+						<div
+							className={
+								'mx-auto cursor-pointer hover:text-red hover:underline d-flex justify-center align-middle'
+							}
+						>
+							<HiTrash className="h-full" />
+						</div>
+					</td>
+				</>
+			) : (
+				<>
+					<td> </td>
+					<td> </td>
+				</>
 			)}
 		</tr>
 	);

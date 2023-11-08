@@ -1,5 +1,7 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+from postgrest import exceptions
 
 import os
 from dotenv import load_dotenv
@@ -26,11 +28,14 @@ router = APIRouter()
 @app.get("/api/staff_skill")
 @router.get("/api/staff_skill")
 async def staff_skill(staff_id: int):
-    staff_skill = pd.DataFrame.from_dict(
-        supabase.from_("staff_skill")
-        .select("skill(*)")
-        .eq("staff_id", staff_id)
-        .execute()
-        .data
-    )["skill"]
-    return staff_skill.to_list()
+    try:
+        staff_skill = pd.DataFrame.from_dict(
+            supabase.from_("staff_skill")
+            .select("skill(*)")
+            .eq("staff_id", staff_id)
+            .execute()
+            .data
+        )["skill"]
+        return staff_skill.to_list()
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Staff ID {staff_id} is invalid")

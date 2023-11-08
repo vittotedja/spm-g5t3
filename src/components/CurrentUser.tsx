@@ -35,8 +35,7 @@ export const CurrentUser: React.FC = () => {
 		};
 
 		fetchStaff();
-		console.log(currentUser)
-	}, [user?.email]); // Dependency array
+	}, [staff_email]); // Dependency array
 
 	const userName = staff?.staff_fname + ' ' + staff?.staff_lname;
 	const currentDept = currentUser?.dept;
