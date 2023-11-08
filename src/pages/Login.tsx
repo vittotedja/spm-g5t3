@@ -7,6 +7,7 @@ import {useAuth} from '../utilities/Auth';
 // import { useCreateAcc } from '../utilities/Create_user';
 // import { useHistory } from 'react-router-dom';
 import {useNavigate} from 'react-router-dom';
+import {toast} from 'react-hot-toast';
 
 // const supabaseUrl:string = import.meta.env.VITE_NEWEST_URL || ''
 // const supabaseKey:string = import.meta.env.VITE_NEWEST_KEY || ''
@@ -59,7 +60,7 @@ export function Login() {
 			// }
 			alert(errorMessage);
 		} else {
-			alert('Log In Succesful');
+			toast.success('Log In Succesful');
 			navigate('/');
 		}
 	}

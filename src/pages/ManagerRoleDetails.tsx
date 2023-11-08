@@ -20,6 +20,7 @@ function ManagerRoleDetails() {
 					{isHR && (
 						<Button
 							styleType="green"
+							id="add-new-listing"
 							onClick={() =>
 								navigate('/manager/role-listing', {
 									state: {isEdit: false},
@@ -27,7 +28,7 @@ function ManagerRoleDetails() {
 							}
 							className="text-black bg-green"
 						>
-							+ Add New Role
+							+ Add New Listing
 						</Button>
 					)}
 				</div>

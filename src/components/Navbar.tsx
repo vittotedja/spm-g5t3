@@ -8,7 +8,6 @@ import supabase from '../utilities/supabase';
 
 export const Navbar: React.FC = () => {
 	const {userRole, signOut} = useAuth() || {};
-
 	const location = useLocation();
 	const navigate = useNavigate();
 
@@ -27,15 +26,15 @@ export const Navbar: React.FC = () => {
 
 	useEffect(() => {
 		const {data: authListener} = supabase.auth.onAuthStateChange(
-			(event, session) => {
-				console.log('Auth event:', event);
+			(event) => {
+				// console.log('Auth event:', event);
 
-				if (event === 'SIGNED_IN') {
-					console.log('User signed in!', session?.user);
-				}
+				// if (event === 'SIGNED_IN') {
+				// 	console.log('User signed in!', session?.user);
+				// }
 
 				if (event === 'SIGNED_OUT') {
-					console.log('User signed out!');
+					// console.log('User signed out!');
 					navigate('/login');
 				}
 			}
@@ -50,28 +49,50 @@ export const Navbar: React.FC = () => {
 		<nav className="p-4 shadow-lg bg-green">
 			<div className="container flex items-center justify-between mx-auto">
 				<div className="flex-grow-0 flex-shrink-0">
-					<img
-						src={glasswindow_white}
-						alt="Brand Logo"
-						className="h-12"
-					/>
+          <Link to="/" data-testid="home-link">
+					  <img
+              src={glasswindow_white}
+              alt="Brand Logo"
+              className="h-12"
+					  />
+          </Link>
 				</div>
 
-				<div className="flex justify-center flex-grow space-x-48">
+
+        <div className="flex justify-center flex-grow space-x-48">
+        {(userRole === 2) && (
+						<div
+							className="text-white transition duration-300 hover:text-gray-300"
+							// data-testid="manager-link"
+						>
+							GlassWindow
+						</div>
+					)}
+				{/* <div className="flex justify-center flex-grow space-x-48">
 					<Link
 						to="/"
 						className="text-white transition duration-300 hover:text-gray-300"
 						data-testid="home-link"
 					>
 						Role Listing
-					</Link>
+					</Link> */}
 					{(userRole === 1 || userRole === 3 || userRole === 4) && (
 						<Link
 							to="/manager"
-							className="text-white transition duration-300 hover:text-gray-300"
+              className={`text-white transition duration-300 hover:text-gray-300 ${location.pathname === '/manager' ? 'underline' : ''}`}
 							data-testid="manager-link"
 						>
 							Manager Page
+						</Link>
+					)}
+
+          {(userRole === 1 || userRole === 3 || userRole === 4) && (
+						<Link
+							to="/manager/staff-list/"
+              className={`text-white transition duration-300 hover:text-gray-300 ${location.pathname === '/manager/staff-list/' ? 'underline' : ''}`}
+							// data-testid="manager-link"
+						>
+							Head Hunt Page
 						</Link>
 					)}
 				</div>

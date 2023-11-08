@@ -38,8 +38,9 @@ async def staff_role(
     parsed_filters = json.loads(filters)
     if staff_id:
         offset = (page - 1) * limit
-        all_skills = (supabase.table("skill").select(
-            "skill_id, skill_name").execute().data)
+        all_skills = (
+            supabase.table("skill").select("skill_id, skill_name").execute().data
+        )
         df_skills = pd.DataFrame(all_skills)
 
         # Fetch all roles from the database
@@ -54,9 +55,10 @@ async def staff_role(
         all_listings_response = supabase.table("listing").select("*").execute()
         df_all_listings = pd.DataFrame(all_listings_response.data or [])
 
+        df_all_listings = df_all_listings[df_all_listings["deleted_at"].isnull()]
+
         # Fetch all role-skill associations
-        all_role_skills_response = supabase.table(
-            "role_skill").select("*").execute()
+        all_role_skills_response = supabase.table("role_skill").select("*").execute()
         df_role_skills = pd.DataFrame(all_role_skills_response.data or [])
 
         if len(df_all_listings) == 0:
@@ -102,16 +104,15 @@ async def staff_role(
             df_unapplied_listings, df_all_roles, on="role_id", how="left"
         )
         today = datetime.utcnow().replace(tzinfo=timezone.utc)
+        df_unapplied_listings["application_close_date_dt"] = pd.to_datetime(
+            df_unapplied_listings["application_close_date"], errors="coerce", utc=True
+        )
         roles_with_date = df_unapplied_listings[
-            (df_unapplied_listings["application_close_date"].notnull())
-            & (
-                pd.to_datetime(
-                    df_unapplied_listings["application_close_date"], utc=True
-                )
-                >= today
-            )
+            (df_unapplied_listings["application_close_date_dt"].notnull())
+            & (df_unapplied_listings["application_close_date_dt"] >= today)
             & (~df_unapplied_listings["listing_id"].isin(applied_listing_IDs))
         ]
+        df_unapplied_listings.drop("application_close_date_dt", axis=1, inplace=True)
         roles_without_date = df_unapplied_listings[
             (df_unapplied_listings["application_close_date"].isnull())
             & (~df_unapplied_listings["listing_id"].isin(applied_listing_IDs))
@@ -120,11 +121,9 @@ async def staff_role(
             roles_with_date = roles_with_date.sort_values(
                 by="application_close_date", ascending=(order != "desc")
             )
-            all_unapplied_roles = pd.concat(
-                [roles_with_date, roles_without_date])
+            all_unapplied_roles = pd.concat([roles_with_date, roles_without_date])
         else:
-            all_unapplied_roles = pd.concat(
-                [roles_with_date, roles_without_date])
+            all_unapplied_roles = pd.concat([roles_with_date, roles_without_date])
             if sort_field in ["creation_date", "application_close_date"]:
                 all_unapplied_roles = all_unapplied_roles.sort_values(
                     by=sort_field, ascending=(order != "desc")
@@ -133,13 +132,21 @@ async def staff_role(
                 all_unapplied_roles = all_unapplied_roles.sort_values(
                     by=sort_field, ascending=(order != "desc")
                 )
-          # Fetch listings managed by the current staff
-        listing_manager_response = supabase.table("listing_manager").select("*").eq("manager_id", str(staff_id)).execute().data
+        # Fetch listings managed by the current staff
+        listing_manager_response = (
+            supabase.table("listing_manager")
+            .select("*")
+            .eq("manager_id", str(staff_id))
+            .execute()
+            .data
+        )
         if len(listing_manager_response) > 0:
             df_current_staff = pd.DataFrame(listing_manager_response)
             managed_listing_ids = df_current_staff["listing_id"].tolist()
-            all_unapplied_roles = all_unapplied_roles[~all_unapplied_roles["listing_id"].isin(managed_listing_ids)]
-        
+            all_unapplied_roles = all_unapplied_roles[
+                ~all_unapplied_roles["listing_id"].isin(managed_listing_ids)
+            ]
+
         df_exploded_filtered = all_unapplied_roles.explode("role_skill")
         df_merged_filtered = pd.merge(
             df_exploded_filtered,
@@ -148,8 +155,9 @@ async def staff_role(
             right_on="skill_id",
             how="inner",
         )
-        unique_skills = df_merged_filtered["skill_name"].drop_duplicates(
-        ).sort_values().tolist()
+        unique_skills = (
+            df_merged_filtered["skill_name"].drop_duplicates().sort_values().tolist()
+        )
 
         unique_role_names = (
             df_merged_filtered["role_name"]
@@ -181,8 +189,7 @@ async def staff_role(
             ]["skill_id"].tolist()
             all_unapplied_roles = all_unapplied_roles[
                 all_unapplied_roles["role_skill"].apply(
-                    lambda x: any(
-                        skill_id in matching_skill_ids for skill_id in x)
+                    lambda x: any(skill_id in matching_skill_ids for skill_id in x)
                 )
             ]
 
@@ -203,8 +210,8 @@ async def staff_role(
             all_unapplied_roles = all_unapplied_roles[
                 all_unapplied_roles["listing_location"].isin(region_filters)
             ]
-      
-        unapplied_roles_df =all_unapplied_roles.iloc[offset: offset + limit]
+
+        unapplied_roles_df = all_unapplied_roles.iloc[offset : offset + limit]
         unapplied_roles_df = unapplied_roles_df.fillna(value="")
         unapplied_roles = unapplied_roles_df.to_dict("records")
         staff_skill_response = (
@@ -218,8 +225,7 @@ async def staff_role(
         )
         for role in unapplied_roles:
             role_skill_id_set = {skill for skill in role.get("role_skill", [])}
-            matched_skills = staff_skill_ids_set.intersection(
-                role_skill_id_set)
+            matched_skills = staff_skill_ids_set.intersection(role_skill_id_set)
             percentage_match = (
                 (len(matched_skills) / len(role_skill_id_set)) * 100
                 if role_skill_id_set
@@ -250,7 +256,8 @@ async def staff_role(
 def parse_datetime(datetime_str):
     formats = [
         "%Y-%m-%dT%H:%M:%S.%f%z",  # With fractional seconds
-        "%Y-%m-%dT%H:%M:%S%z",  # Without fractional seconds
+        "%Y-%m-%dT%H:%M:%S%z",
+        "%Y-%m-%d %H:%M:%S%z",  # Without fractional seconds
     ]
 
     for fmt in formats:
@@ -259,8 +266,7 @@ def parse_datetime(datetime_str):
         except ValueError:
             continue
 
-    raise ValueError(
-        f"time data {datetime_str!r} does not match any known formats")
+    raise ValueError(f"time data {datetime_str!r} does not match any known formats")
 
 
 def fetch_all_skill():
