@@ -127,6 +127,7 @@ const RoleCreation: React.FC = () => {
 				});
 				if (response.ok) {
 					navigate(`/manager/applicants-list/${listing?.listing_id}`);
+					
 				} else {
 					setIsLoading(false);
 					toast.error(
