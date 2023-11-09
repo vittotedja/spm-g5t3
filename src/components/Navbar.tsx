@@ -87,7 +87,7 @@ export const Navbar: React.FC = () => {
 
           {(userRole === 1 || userRole === 3 || userRole === 4) && (
 						<Link
-							to="/manager/staff-list/"
+							to="/manager/staff-list"
               className={`text-white transition duration-300 hover:text-gray-300 ${location.pathname === '/manager/staff-list/' ? 'underline' : ''}`}
 							// data-testid="manager-link"
 						>
