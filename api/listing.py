@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from datetime import datetime
 import pytz
 import pandas as pd
+from api.notification import send_email
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -177,4 +178,6 @@ async def listing(listing: PutListing):
                 )
     else:
         deleting_manager = []
+
+    await send_email(None, None, listing.listing_id, None)
     return listing_update, adding_manager, deleting_manager

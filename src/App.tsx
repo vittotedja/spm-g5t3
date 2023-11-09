@@ -53,7 +53,15 @@ function App() {
 						}
 					/>
 					<Route
-						path="/manager/staff-list/:listing_id"
+						path="/listing-detail/:listing_id/edit"
+						element={
+							<RoleProtection requiredRoles={[1, 3, 4]}>
+								{(_role) => <RoleCreation />}
+							</RoleProtection>
+						}
+					/>
+					<Route
+						path="/manager/staff-list"
 						element={
 							<RoleProtection requiredRoles={[1, 3, 4]}>
 								{(_role) => <ManagerStaffList />}

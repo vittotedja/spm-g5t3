@@ -4,7 +4,6 @@ import {getAsync} from '../utilities/Services';
 import FilterBox from '../components/FilterBox';
 import SortComponent from '../components/SortComponent';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import confused_guy from '../assets/confused_guy.png';
 import {useAuth} from '../utilities/Auth';
 import LoadingState from '../components/loadingState';
 
@@ -180,7 +179,7 @@ const RoleListing: React.FC = () => {
 							!loading && (
 								<div className="flex flex-col items-center justify-center my-12 text-center">
 									<img
-										src={confused_guy}
+										src='https://ujjnudccckrqqtttlkoo.supabase.co/storage/v1/object/public/spm-assets/confused_guy.png'
 										width={500}
 										alt="Confused Guy"
 									/>
