@@ -49,6 +49,7 @@ Ensuring that our application is stable, testing is crucial for our development.
 -   To check for function
 
 ```bash
+pip install pytest
 cd pytest
 pytest
 ```
