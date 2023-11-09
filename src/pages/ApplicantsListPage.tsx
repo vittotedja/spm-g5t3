@@ -7,6 +7,9 @@ import LoadingState from '../components/loadingState';
 import {setInitial} from '../utilities/Services';
 import formatDate from '../utilities/Utiliities';
 import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../utilities/Auth';
+import Button from '../components/Button';
+import {HiPencilSquare} from 'react-icons/hi2';
 
 const ApplicantsListPage = () => {
 	const navigate = useNavigate();
@@ -17,6 +20,10 @@ const ApplicantsListPage = () => {
 	let [loading, setLoading] = useState(true);
 
 	let listing_id: number;
+
+	const {userRole} = useAuth() || {};
+	const isHR = userRole === 4;
+	
 
 	if (param.listing_id) {
 		if (/^\d+$/.test(param.listing_id)) {
@@ -58,6 +65,8 @@ const ApplicantsListPage = () => {
 
 	const roleName = role ? role.role_name : null;
 	const roleDept = role ? role.role_department : null;
+	const isDisabled = new Date(listingData.application_close_date) <
+					new Date()
 
 	let totalRows = 0;
 
@@ -93,6 +102,24 @@ const ApplicantsListPage = () => {
 					<AiOutlineArrowLeft />
 					Back to Posted Role Listings
 				</button>
+								
+				{isHR && (
+						<Button
+							styleType={!isDisabled ? "green" : "disabled"}
+							id="add-new-listing"
+							onClick={() =>
+								navigate(`/listing-detail/${listing_id}/edit`, {
+									state: {isEdit: true, listing_id: listing_id},
+								})
+							}
+							className="text-black bg-green"
+						>
+							<div className="flex">
+								<HiPencilSquare size="24" className="mr-2"/>Update Listing
+							</div>
+							
+						</Button>
+					)}
 			</div>
 			{loading ? (
 				<LoadingState />

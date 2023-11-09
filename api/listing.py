@@ -8,9 +8,8 @@ from supabase import create_client, Client
 from pydantic import BaseModel
 from datetime import datetime
 import pytz
-
 import pandas as pd
-
+from api.notification import send_email
 
 load_dotenv()
 url: str = os.getenv("SUPABASE_URL")
@@ -56,7 +55,7 @@ async def listing(listing_id: int = None):
                 "vacancy",
                 "listing_location",
                 "creation_date",
-                "role(*), application(*)",
+                "role(*), application(*), listing_manager(staff(*))",
             )
             .eq("listing_id", listing_id)
             .execute()
@@ -97,3 +96,88 @@ def custom_strftime(dt: datetime) -> str:
     )
 
     return f"{dt_str}{tz_str}"
+
+@app.put("/api/listing")
+@router.put("/api/listing")
+async def listing(listing: PutListing):
+    update_data = {
+        "application_close_date": listing.application_close_date.strftime(
+        "%Y-%m-%d %H:%M:%S"
+        ),
+        "vacancy": listing.vacancy,
+        "updated_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+    }
+
+    listing_update = (
+        supabase.from_("listing")
+        .update(update_data)
+        .eq("listing_id", listing.listing_id)
+        .execute()
+        .data
+    )
+    if listing_update:
+         pass
+    else:
+        raise HTTPException(
+            status_code=400, 
+            detail=f'Listing ID {listing.listing_id} is not found'
+        )
+
+    # update listing manager
+    manager = pd.DataFrame(
+        supabase.table("listing_manager")
+        .select("*")
+        .eq("listing_id", listing.listing_id)
+        .execute()
+        .data
+    )
+    listing_id = listing.listing_id
+    new_manager = pd.DataFrame(listing.manager)
+    new_manager['listing_id'] = listing_id
+    new_manager.rename(columns={'value': 'manager_id'}, inplace=True)
+
+    #add listing manager
+    add_manager = new_manager[~new_manager["manager_id"].isin(manager["manager_id"])]
+    if len(add_manager) > 0:
+        add_manager = add_manager[["listing_id", "manager_id"]].to_dict(orient='records')
+        adding_manager = (
+            supabase.from_("listing_manager")
+            .upsert(add_manager)
+            .execute()
+            .data
+        )
+        if adding_manager:
+            pass
+        else:
+            raise HTTPException(
+                status_code=400, 
+                detail=f'Unable to add the hiring managers.'
+            )
+    else:
+        adding_manager = []
+    
+    #delete listing manager
+    delete_manager = manager[~manager["manager_id"].isin(new_manager["manager_id"])]
+    if len(delete_manager) > 0:
+        delete_manager = delete_manager[['listing_id', 'manager_id']].to_dict(orient='records')
+        for del_man in delete_manager:
+            deleting_manager = (
+                supabase.table("listing_manager")
+                .delete()
+                .eq("listing_id", del_man["listing_id"])
+                .eq("manager_id", del_man["manager_id"])
+                .execute()
+                .data
+            )
+            if deleting_manager:
+                pass
+            else:
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f'Hiring manager with manager ID {del_man["manager_id"]} is not found.'
+                )
+    else:
+        deleting_manager = []
+
+    await send_email(None, None, listing.listing_id, None)
+    return listing_update, adding_manager, deleting_manager
